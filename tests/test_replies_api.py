@@ -1,4 +1,8 @@
+import pytest
 from fastapi.testclient import TestClient
+
+from app.schemas.reply import ReplyRead
+from app.schemas.error import ErrorResponse, ValidationErrorResponse
 
 from app.main import create_app
 from app.ports import GatewayBadResponse, GatewayUnavailable
@@ -126,3 +130,94 @@ def test_no_nested_reply_endpoint():
     client, _, _, _ = setup_client()
     r = client.post(ROUTE + '/nested-reply/replies', json={'author_id': 'user-1', 'content': 'Hola'})
     assert r.status_code == 404
+
+
+@pytest.mark.parametrize('field,value', [
+    ('content', ''), ('content', ' \t\n '), ('content', 'x' * 4001),
+    ('content', None), ('content', 12), ('content', []),
+    ('author_id', ''), ('author_id', ' \t '), ('author_id', 'x' * 129),
+    ('author_id', None), ('author_id', 12), ('author_id', {}),
+])
+def test_invalid_input_never_writes(field, value):
+    client, repo, _, _ = setup_client()
+    body = {'author_id': 'user-1', 'content': 'Hola', field: value}
+    response = client.post(ROUTE, json=body)
+    assert response.status_code == 422
+    ValidationErrorResponse.model_validate(response.json())
+    assert not repo.rows and not repo.events
+
+
+@pytest.mark.parametrize('body', [{}, {'author_id': 'user-1'}, {'content': 'Hola'}])
+def test_missing_fields(body):
+    client, repo, _, _ = setup_client()
+    assert client.post(ROUTE, json=body).status_code == 422
+    assert not repo.rows and not repo.events
+
+
+@pytest.mark.parametrize('length', [1, 4000])
+def test_content_boundaries_apply_after_trimming(length):
+    client, _, _, _ = setup_client()
+    response = client.post(ROUTE, json={'author_id': ' ' + 'a' * 128 + ' ',
+                                      'content': ' \t' + 'x' * length + '\n '})
+    assert response.status_code == 201
+    assert response.json()['content'] == 'x' * length
+    assert response.json()['author_id'] == 'a' * 128
+
+
+@pytest.mark.parametrize('gateway', ['users', 'messages'])
+@pytest.mark.parametrize('error,status,detail', [
+    (GatewayUnavailable, 503, 'Dependent service unavailable'),
+    (GatewayBadResponse, 502, 'Dependent service failed'),
+])
+def test_gateway_error_contract(gateway, error, status, detail):
+    client, repo, users, messages = setup_client()
+    target = users if gateway == 'users' else messages
+    target.error = error('private upstream response')
+    response = client.post(ROUTE, json={'author_id': 'user-1', 'content': 'Hola'})
+    assert response.status_code == status
+    assert response.json() == {'detail': detail}
+    assert not repo.rows and not repo.events
+    if gateway == 'messages':
+        response = client.get(ROUTE)
+        assert response.status_code == status
+        assert response.json() == {'detail': detail}
+
+
+def test_business_error_bodies():
+    client, repo, users, messages = setup_client()
+    messages.is_found = False
+    assert client.get(ROUTE).json() == {'detail': 'Root message not found in channel'}
+    messages.is_found = True
+    users.is_found = False
+    assert client.post(ROUTE, json={'author_id': 'user-1', 'content': 'Hola'}).json() == {
+        'detail': 'Author does not exist'}
+    assert not repo.events
+
+
+def test_openapi_documents_success_errors_schemas_and_examples():
+    client, _, _, _ = setup_client()
+    schema = client.get('/openapi.json').json()
+    path = '/api/v1/channels/{channel_id}/messages/{message_id}/replies'
+    for method, success in [('post', '201'), ('get', '200')]:
+        operation = schema['paths'][path][method]
+        assert set([success, '404', '422', '500', '502', '503']) <= operation['responses'].keys()
+        for status in ['404', '422', '500', '502', '503']:
+            content = operation['responses'][status]['content']['application/json']
+            assert content['schema']
+            for example in content['examples'].values():
+                value = example['value']
+                model = ValidationErrorResponse if isinstance(value['detail'], list) else ErrorResponse
+                model.model_validate(value)
+        content = operation['responses'][success]['content']['application/json']
+        assert content['schema']
+        if method == 'post':
+            ReplyRead.model_validate(content['example'])
+        else:
+            for example in content['examples'].values():
+                for row in example['value']:
+                    ReplyRead.model_validate(row)
+    request_schema = schema['components']['schemas']['ReplyCreate']
+    assert set(request_schema['required']) == {'author_id', 'content'}
+    assert request_schema['examples']
+    # El 422 describe ambas formas existentes: negocio y validación.
+    assert len(schema['paths'][path]['post']['responses']['422']['content']['application/json']['schema']['anyOf']) == 2

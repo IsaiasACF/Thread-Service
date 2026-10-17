@@ -6,6 +6,10 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class ReplyCreate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{'author_id': 'user-1', 'content': 'Estoy de acuerdo.'}],
+    })
+
     author_id: str = Field(min_length=1, max_length=128)
     content: str = Field(min_length=1, max_length=4000)
 
@@ -16,7 +20,12 @@ class ReplyCreate(BaseModel):
 
 
 class ReplyRead(ReplyCreate):
-    model_config = ConfigDict(extra='forbid')
+    model_config = ConfigDict(extra='forbid', json_schema_extra={'examples': [{
+        'id': '86af1f81-a897-42eb-8ca7-425c18354ddd',
+        'channel_id': 'channel-1', 'message_id': 'message-1',
+        'author_id': 'user-1', 'content': 'Estoy de acuerdo.',
+        'created_at': '2026-10-17T16:00:00Z',
+    }]})
 
     id: str
     channel_id: str
