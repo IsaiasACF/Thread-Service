@@ -1,0 +1,7 @@
+-r requirements.txt
+pytest>=8,<10
+# HTTPX sigue disponible para TestClient de versiones anteriores de Starlette.
+httpx>=0.27,<1
+# Starlette actual usa httpx2 para TestClient; solo dependencia de pruebas.
+httpx2>=2.13,<3
+mongomock>=4.2,<5
