@@ -1,91 +1,29 @@
-# Validación independiente del núcleo
+﻿# Cobertura y límites de validación
 
-## API y errores
+## Núcleo
 
-Las rutas `/api/v1` y los esquemas públicos se mantienen. OpenAPI declara
-201/200 y errores 404, 422, 500, 502 y 503, con ejemplos y esquemas. Un 422
-puede contener `detail` como texto (autor inexistente) o como arreglo de errores
-(validación de entrada), conservando el comportamiento previo de FastAPI.
+La suite comprueba esquemas y ejemplos OpenAPI, validación de entrada, referencias inexistentes, orden de validaciones, ausencia de escrituras al rechazar operaciones, coherencia de respuesta/evento y traducción de errores a HTTP 404/422/500/502/503. No se exponen mensajes internos de MongoDB.
 
-| Origen | HTTP | `detail` |
-|---|---|---|
-| Mensaje fuera del canal o inexistente | 404 | `Root message not found in channel` |
-| Autor inexistente | 422 | `Author does not exist` |
-| Respuesta externa incorrecta | 502 | `Dependent service failed` |
-| Red/timeout de gateway | 503 | `Dependent service unavailable` |
-| Conexión MongoDB, reconexión o timeout de red/selección | 503 | `Storage unavailable` |
-| Otros errores PyMongo, incluida operación rechazada | 500 | `Storage operation failed` |
-| Adaptadores no inyectados | 503 | `Thread Service not configured` |
+El repositorio se prueba con mocks/mongomock y, opcionalmente, MongoDB 7 real. Las cinco pruebas de concurrencia reales cubren reclamos paralelos, recuperación de lease, tokens obsoletos, carrera entre confirmar/liberar y rechazo atómico de inserciones duplicadas. Se habilitan con `THREAD_TEST_MONGODB_URL`; sin variable se omiten, con una URL inválida fallan.
 
-`app/errors.py` define los errores de almacenamiento sin depender de PyMongo.
-El repositorio traduce excepciones del driver, incluida la iteración diferida de
-cursores; la causa original se conserva para diagnóstico interno. Los handlers
-HTTP nunca incluyen mensajes del driver, credenciales ni respuestas upstream.
-Estos errores también se propagan desde los métodos de outbox e índices;
-las firmas de los puertos y el contrato del worker permanecen intactos.
-`/health` es una comprobación de vida, no de conectividad o readiness.
+## Integraciones y ensamble
 
-## Persistencia y outbox
+- HTTPX MockTransport verifica rutas, cuerpos incompatibles, JSON inválido, 404, estados inesperados y timeouts/fallas de conexión. No sustituye una comprobación contra las implementaciones particulares de los servicios base conectados.
+- El lifespan operativo se prueba inyectando MongoDB simulado y gateways controlados: crea índices, inyecta el servicio, permite POST/GET y retira el servicio al cerrar.
+- El worker verifica publicación antes de marcar, propagación de fallas, liberación con token y conservación del evento cuando falla la confirmación o se pierde el reclamo.
+- El publicador se comprueba con una conexión controlada: confirms, persistencia, routing key, ID estable, mandatory y cierre de conexión incluso ante fallo.
+- La prueba real de entrega usa MongoDB y RabbitMQ: publica, simula caída después de publicar y antes de marcar, expira el lease y verifica dos entregas con el mismo ID y el posterior marcado en MongoDB. Requiere también `THREAD_TEST_RABBITMQ_URL`. Usa recursos con nombres únicos que elimina al finalizar.
 
-`save_with_outbox` hace un único `insert_one` con la respuesta y su evento
-pendiente. No hay una escritura separada ni una transacción multidocumento.
-Las pruebas verifican la llamada única, los datos coincidentes del evento,
-los índices únicos y la ausencia de un segundo documento al rechazar duplicados.
-El repositorio no añade reintentos propios de inserción: una pérdida de conexión
-puede ocurrir después de persistir y antes de recibir confirmación. Un error HTTP
-no demuestra que la escritura no ocurrió; repetir POST puede crear otra respuesta.
-No se incorpora idempotencia HTTP, fuera del contrato aprobado. Los reintentos
-internos del driver dependen de la configuración del futuro MongoClient.
+## Ejecución reproducible
 
-El reclamo mantiene `find_one_and_update`, lease, incremento de intentos y token
-nuevo por reclamo. Confirmar/liberar requiere el token vigente y evento pendiente.
-Tras otro reclamo, el token anterior no puede modificar el evento. La expiración
-por sí sola habilita un nuevo reclamo; no invalida el token hasta que otro reclamo
-lo reemplaza. El worker debe publicar dentro del lease, como indica el contrato.
-No se garantiza exactamente una publicación ni orden de publicación de eventos.
-Los relojes de las instancias deben estar sincronizados para interpretar leases.
+`docker compose --profile test run --build --rm tests` instala las dependencias y ejecuta la suite con Python 3.12 y servicios reales. GitHub Actions configura MongoDB y RabbitMQ, ejecuta la suite con advertencias como errores, valida Compose y construye la imagen runtime. La prueba de lifespan no realiza llamadas a Users/Messages reales; los contratos esperados están en README y contracts.
 
-La lista pública excluye `_id` y `_outbox`, filtra canal y mensaje y ordena por
-`created_at` decodificado e `id`. Esto corrige el orden ISO textual con fracciones
-opcionales sin migrar documentos existentes. El resultado completo ya se cargaba
-en memoria; su tamaño sigue sin estar limitado por paginación.
+## Límites operativos
 
-## Pruebas
-
-- API y servicio: creación, consultas vacías, referencias inexistentes, validación
-  de tipos, campos requeridos, blancos, límites tras strip, fallas de gateways y
-  almacenamiento, ausencia de escrituras en rechazos, coherencia del evento.
-- OpenAPI: códigos, esquemas, ejemplos y ambas formas de 422.
-- Repositorio con mongomock/mocks: aislamiento, orden cronológico con desempate,
-  privacidad del outbox, escritura única, errores diferidos, duplicados, reclamo,
-  confirmación, liberación, leases inválidos, recuperación y tokens obsoletos.
-- MongoDB 7 real: competencia entre 16 llamadas por uno y por varios eventos,
-  recuperación de lease expirado, tokens anteriores, carrera confirmación/liberación
-  y rechazo atómico de un insert duplicado. Se prueban operaciones del repositorio;
-  no se implementa ni simula un worker de publicación. La expiración se provoca
-  actualizando la fecha de lease en MongoDB, sin esperas dependientes del reloj.
-
-Las pruebas con MongoDB real se ejecutan en CI mediante
-`THREAD_TEST_MONGODB_URL`. Sin esa variable se omiten; con ella, una conexión
-fallida hace fallar las pruebas. Las pruebas de mongomock no demuestran por sí
-solas concurrencia entre procesos. Las pruebas reales verifican los escenarios
-anteriores, no constituyen una prueba exhaustiva de todos los fallos distribuidos.
-
-Validación local de esta implementación: **74 pruebas aprobadas**, incluidas cinco
-con MongoDB 7 real, ejecutando `pytest -q -W error` con Python 3.12. No hubo
-advertencias de Python. Las acciones checkout/setup-python se actualizan a v6,
-que utiliza Node 24, para eliminar también el aviso de Node 20 en CI.
-
-## Comprobaciones posteriores con Persona 2
-
-- Clientes REST reales contra Users y el listado de Messages; traducción de fallas
-  y validación de mensajes según los puertos existentes.
-- Configuración y ciclo de vida del MongoClient, timeouts, credenciales, write
-  concern e invocación de `ensure_indexes` en el ensamble productivo.
-- RabbitMQ: publisher confirms, persistencia, ID estable, reintentos/backoff,
-  duplicados y caída del worker después de publicar pero antes de confirmar outbox.
-- Docker Compose completo y arranque `app.asgi:app`; el contenedor MongoDB de
-  pruebas solo valida el repositorio y no verifica ese despliegue.
-- Kubernetes: configuración, DNS, secretos, sondas y comportamiento entre réplicas.
-
-No se modifican `app/ports.py`, `docs/contracts.md` ni archivos de Persona 2.
+- `/health` es liveness, no readiness.
+- No hay idempotencia HTTP: un error después de una escritura ambigua no prueba que no se guardó el documento. No se reintenta esa inserción desde la aplicación ni desde el driver.
+- El registro respuesta/evento es atómico; la entrega posterior es al menos una vez bajo recuperación del broker y almacenamiento, con posibles duplicados. No se garantiza orden.
+- Los timeouts AMQP y MongoDB limitan bloqueos normales; un retraso extraordinario que exceda el lease permite otro reclamo. Los consumidores deben deduplicar.
+- No hay paginación, limpieza del historial de outbox, failover del almacenamiento ni autenticación en este alcance. La lista se ordena en memoria por fecha decodificada e ID.
+- Los volúmenes Compose aportan persistencia local; no prueban recuperación ante pérdida del disco. Las pruebas no constituyen una verificación exhaustiva de todas las fallas distribuidas.
+- La compatibilidad final con Users/Messages depende de que sus respuestas respeten los contratos documentados. Este repositorio no incluye esos servicios.

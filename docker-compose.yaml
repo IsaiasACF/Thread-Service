@@ -1,0 +1,97 @@
+name: thread-service
+
+x-thread-env: &thread-env
+  THREAD_MONGODB_URL: mongodb://mongodb:27017
+  THREAD_MONGODB_DATABASE: threads
+  THREAD_USERS_URL: http://users:8000
+  THREAD_MESSAGES_URL: http://messages:8000
+  THREAD_HTTP_TIMEOUT_SECONDS: 5
+  THREAD_RABBITMQ_URL: amqp://threads:threads@rabbitmq:5672/%2F
+  THREAD_RABBITMQ_EXCHANGE: chat
+  THREAD_RABBITMQ_QUEUE: thread.reply.created
+
+services:
+  threads:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "8004:8000"
+    environment: *thread-env
+    networks:
+      - default
+      - microsvcs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    build:
+      context: .
+      target: runtime
+    command: ["python", "-m", "app.workers.outbox"]
+    environment: *thread-env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    stop_grace_period: 40s
+
+  mongodb:
+    image: mongo:7
+    volumes:
+      - threads-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand({ping: 1})"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: threads
+      RABBITMQ_DEFAULT_PASS: threads
+    ports:
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - threads-events:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  tests:
+    profiles: [test]
+    build:
+      context: .
+      target: test
+    environment:
+      THREAD_TEST_MONGODB_URL: mongodb://mongodb:27017
+      THREAD_TEST_RABBITMQ_URL: amqp://threads:threads@rabbitmq:5672/%2F
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  threads-data:
+  threads-events:
+
+networks:
+  microsvcs:
+    name: microsvcs
+    external: true
