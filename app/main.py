@@ -1,4 +1,4 @@
-"""Aplicación HTTP. Persona 2 inyectará adaptadores reales desde app/asgi.py."""
+"""HTTP application factory; app.asgi owns the operational adapters."""
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
@@ -8,11 +8,12 @@ from app.ports import GatewayBadResponse, GatewayUnavailable
 from app.services.thread_service import AuthorNotFound, RootMessageNotFound, ThreadService
 
 
-def create_app(thread_service: ThreadService | None = None) -> FastAPI:
+def create_app(thread_service: ThreadService | None = None, *, lifespan=None) -> FastAPI:
     application = FastAPI(
         title='Thread Service',
         description='Respuestas de un solo nivel a mensajes del chat. API v1.',
         version='1.0.0',
+        lifespan=lifespan,
     )
     application.state.thread_service = thread_service
     application.include_router(replies_router)

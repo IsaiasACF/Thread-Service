@@ -1,7 +1,7 @@
 """MongoDB: reply y outbox se guardan en una escritura de un documento.
 
-No necesita un replica set para la atomicidad del insert. El worker de la
-Persona 2 utilizará los métodos de OutboxRepository definidos en app/ports.py.
+No necesita un replica set para la atomicidad del insert. El worker utiliza
+los métodos de OutboxRepository definidos en app/ports.py.
 """
 from datetime import datetime, timedelta, timezone
 from functools import wraps

@@ -1,66 +1,45 @@
-# Contratos internos compartidos — v1
+﻿# Contratos de Thread Service — v1
 
-**Congelados para el desarrollo paralelo** de Persona 1 (núcleo) y Persona 2 (integraciones).
+## API pública
 
-## Entradas REST públicas
+- POST `/api/v1/channels/{channel_id}/messages/{message_id}/replies`: `{ "author_id": "user-id", "content": "texto" }` → 201 con respuesta.
+- GET de la misma ruta → 200 con arreglo ordenado por `created_at`, luego `id`.
+- GET `/health` → `{ "status": "ok" }` (vida de la API, no disponibilidad de dependencias).
 
-- `POST /api/v1/channels/{channel_id}/messages/{message_id}/replies`:
-  `{ "author_id": "uuid-del-usuario", "content": "texto" }` → `201` con respuesta.
-- `GET /api/v1/channels/{channel_id}/messages/{message_id}/replies` → `200` lista ordenada por `created_at`, luego `id`.
-- `GET /health` → `{ "status": "ok" }`.
-
-`ReplyRead`: `{id,channel_id,message_id,author_id,content,created_at}`. Los IDs son cadenas;
-`created_at` usa fecha y hora UTC ISO 8601. Contenido: 1–4000 caracteres tras `strip()`.
-No se aceptan respuestas anidadas: la API siempre refiere a un mensaje del servicio base.
+`ReplyRead`: `{id,channel_id,message_id,author_id,content,created_at}`. IDs string; fecha UTC ISO 8601. El contenido admite 1–4000 caracteres después de `strip()`. No se aceptan respuestas anidadas: el mensaje raíz siempre debe existir en Messages.
 
 ## Interfaces Python — app/ports.py
 
-- `UserGateway.exists(user_id) -> bool`: `False` únicamente en un HTTP 404 de Users.
-- `MessageGateway.exists_in_channel(channel_id, message_id) -> bool`: obtiene
-  `GET /api/v1/channels/{channel_id}/messages` y busca un objeto con `id == message_id`
-  y `channel_id == channel_id`. El servicio base **NO** publica GET por ID de mensaje.
-- En fallas de red o timeout: lanzar `GatewayUnavailable`.
-- En 5xx, respuestas no válidas o estados inesperados: lanzar `GatewayBadResponse`.
-- `EventPublisher.publish(event: ReplyCreatedEvent, event_id: str) -> None`:
-  el worker pasa el ID del outbox como identificador estable del mensaje para deduplicación.
+- `UserGateway.exists(user_id) -> bool`: consulta GET `/api/v1/users/{user_id}`. Solo 404 produce False; 200 exige un objeto JSON con el ID solicitado.
+- `MessageGateway.exists_in_channel(channel_id, message_id) -> bool`: consulta GET `/api/v1/channels/{channel_id}/messages`. Exige un arreglo de objetos con `id` y `channel_id` string y busca coincidencia de ambos. Lista sin coincidencia o 404 produce False. No usa GET por ID de mensaje.
+- Red/timeout → `GatewayUnavailable`; estados inesperados o respuestas incompatibles → `GatewayBadResponse`.
+- `EventPublisher.publish(event, event_id) -> None`: retorna tras confirmación del broker; errores de conexión, publicación o enrutamiento se propagan al worker.
+
+Las implementaciones REST usan HTTPX con timeouts y clientes reutilizados, propiedad del lifespan de la API. Las URLs se configuran por entorno. No hay llamadas directas a bases externas ni validación separada en Channels.
 
 ## MongoDB y outbox
 
-Una respuesta se persiste junto con su `_outbox` en **un documento único** mediante
-`insert_one`, que es atómico en MongoDB sin transacción multidocumento. El outbox
-nunca aparece en las respuestas REST. Campos internos del outbox: `id`, `payload`,
-`published_at`, `lock_until`, `claim_token`, `attempts`.
+Cada respuesta se guarda con `_outbox` en un único documento mediante `insert_one`. El outbox nunca aparece en REST. Contiene `id`, `payload`, `published_at`, `lock_until`, `claim_token`, `attempts`.
 
-El worker de Persona 2 emplea la interfaz `OutboxRepository`:
+El ensamble crea índices y usa MongoClient con timeouts finitos, `w=majority` y `retryWrites=False`. No requiere replica set: la atomicidad es de un único documento.
 
-1. `claim_next_event(lease_seconds=60)` retorna `ClaimedEvent` o `None`.
-2. Publica `payload` al exchange RabbitMQ `chat`, tipo `topic`, routing key
-   `chat.thread.reply.created`; recomienda propiedad `message_id=event_id`,
-   publicación persistente y publisher confirms.
-3. Tras confirmación del broker, `mark_published(event_id, claim_token)`.
-4. Ante error, `release_claim(event_id, claim_token)` y reintento con backoff.
+Worker:
 
-Se garantiza el registro conjunto del reply y evento pendiente, **no exactamente una
-publicación**: existe la posibilidad de duplicados si el broker recibe el mensaje y
-el proceso falla antes del `mark_published`. El consumidor debe ser idempotente.
-El worker debe terminar la publicación antes del vencimiento del lease; si tarda,
-puede recuperarse el mensaje por otra instancia y duplicarse.
+1. `claim_next_event(lease_seconds=60)` devuelve `ClaimedEvent` o None.
+2. Publica el payload con `message_id=event_id` al exchange `chat`, tipo topic, routing key `chat.thread.reply.created`. Omite el argumento `durable`, usando el valor predeterminado `False` de Pika para coincidir con Messages.
+3. Declara la cola durable configurable `thread.reply.created` y su binding. Publica JSON persistente con `mandatory=True` y publisher confirms.
+4. Después de confirmación, llama `mark_published(event_id, claim_token)`.
+5. Ante error libera el reclamo si puede y espera con backoff exponencial, hasta 30 segundos. Si muere, el lease permite otro reclamo.
 
-## Ensamble sin pisarse los archivos
+El evento contiene `type`, `subject_id`, `occurred_at` y `data` (`ReplyRead`). El ID AMQP estable pertenece al outbox y no se agrega al contrato JSON. El GET no emite eventos. No existe un evento por intento rechazado.
 
-- Persona 1: `app/main.py`, `app/api`, `app/schemas`, `app/services`,
-  `app/repositories`, `tests/unit` (en esta primera iteración, tests directamente en `tests/`).
-- Persona 2: `app/integrations`, `app/workers`, `app/asgi.py`, `tests/integration`,
-  `Dockerfile`, `docker-compose.yml`, `.env.example`, `k8s/`.
-- Compartidos congelados: `app/ports.py` y `docs/contracts.md`.
-- `app.asgi:app` será el punto de entrada productivo; el `app.main:app` actual
-  solo permite ver `/docs` y `/health`, pues aún no incluye adaptadores reales.
+Se garantiza registro conjunto de respuesta/evento; la publicación puede repetirse si el broker confirma y falla el reconocimiento en MongoDB. Los consumidores deduplican por `message_id`. No hay garantía de orden ni de exactamente una publicación. Un 201 no espera al worker. Las instancias deben usar relojes sincronizados; una publicación que exceda el lease puede duplicarse.
 
-## Dependencias externas del profesor
+## Ejecución
 
-- Users: `GET /api/v1/users/{user_id}`
-- Messages: `GET /api/v1/channels/{channel_id}/messages`
-- El clúster proporciona los hostnames internos `users.servicios-base.svc.cluster.local:8000`
-  y `messages.servicios-base.svc.cluster.local:8000`.
+- API: `app.asgi:app` con lifespan para MongoDB y clientes REST.
+- Worker independiente: `python -m app.workers.outbox`.
+- `app.main:app` permite inspeccionar documentación/salud; sin inyección devuelve 503 en las operaciones de respuestas.
+- Docker Compose incluye API, worker, MongoDB y RabbitMQ. Los servicios base permanecen externos y se configuran por URL. No se incluye Kubernetes.
 
-No incluir archivos `.kubeconfig`, variables secretas ni URLs con credenciales.
+Variables, arranque y esquema de errores: [README.md](../README.md).

@@ -1,13 +1,25 @@
-name: Thread core tests
+name: Thread service tests
 on:
   pull_request:
   push:
-    branches: [feature/thread-core]
+    branches: [main, feature/thread-core]
 
 jobs:
   tests:
     runs-on: ubuntu-latest
     services:
+      rabbitmq:
+        image: rabbitmq:4-management
+        env:
+          RABBITMQ_DEFAULT_USER: threads
+          RABBITMQ_DEFAULT_PASS: threads
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 30
       mongodb:
         image: mongo:7
         ports:
@@ -19,6 +31,7 @@ jobs:
           --health-retries 12
     env:
       THREAD_TEST_MONGODB_URL: mongodb://127.0.0.1:27017
+      THREAD_TEST_RABBITMQ_URL: amqp://threads:threads@127.0.0.1:5672/%2F
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -28,3 +41,7 @@ jobs:
         run: pip install -r requirements-dev.txt
       - name: Run tests
         run: pytest -q -W error
+      - name: Validate Compose
+        run: docker compose config --quiet
+      - name: Build runtime image
+        run: docker build --target runtime -t thread-service:ci .
