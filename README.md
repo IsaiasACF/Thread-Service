@@ -1,4 +1,9 @@
-﻿# Thread Service
+
+# Thread Service
+
+### Integrantes
+* Andrés Jablonca 202173578-K
+* Isaías Carte
 
 Microservicio FastAPI para crear y consultar respuestas de un solo nivel a un mensaje del chat. API v1, persistencia MongoDB propia y eventos RabbitMQ. No accede a las bases de datos de Users, Channels ni Messages.
 
