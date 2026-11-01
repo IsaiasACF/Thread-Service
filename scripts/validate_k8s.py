@@ -58,7 +58,7 @@ for name in ('thread-worker', 'thread-rabbitmq'):
     assert by_key['Deployment', name]['spec']['strategy']['type'] == 'Recreate'
 assert len([d for d in docs if d['kind'] == 'PersistentVolumeClaim']) == 1
 assert by_key['PersistentVolumeClaim','thread-mongodb-data']['spec']['resources']['requests']['storage'] == '1Gi'
-for extra in (0, 1):
+for extra in (0, 1, 3):
     t = totals(extra)
     assert all(a <= b for a,b in zip(t, [10,1000,1024,2000,2048])), t
     print(f'Maximum + {extra} terminating API: pods={t[0]}, requests={t[1]}m/{t[2]}Mi, limits={t[3]}m/{t[4]}Mi')

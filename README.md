@@ -162,13 +162,14 @@ Para durabilidad real se necesita broker persistente autorizado o más PVC.
 
 | Componente | Réplicas | CPU request | Memoria request | CPU limit | Memoria limit |
 |---|---:|---:|---:|---:|---:|
-| API, por Pod | 2–3 | 100m | 96Mi | 250m | 192Mi |
+| API, por Pod | 2–3 | 100m | 80Mi | 200m | 128Mi |
 | Worker | 1 | 50m | 96Mi | 200m | 192Mi |
 | MongoDB | 1 | 100m | 256Mi | 300m | 512Mi |
 | RabbitMQ | 1 | 100m | 192Mi | 300m | 512Mi |
-| Total inicial | 5 | 450m | 736Mi | 1300m | 1600Mi |
-| Total HPA máximo | 6 | 550m | 832Mi | 1550m | 1792Mi |
-| Máximo + 1 API terminando | 7 | 650m | 928Mi | 1800m | 1984Mi |
+| Total inicial | 5 | 450m | 704Mi | 1200m | 1472Mi |
+| Total HPA máximo | 6 | 550m | 784Mi | 1400m | 1600Mi |
+| Máximo + 1 API terminando | 7 | 650m | 864Mi | 1600m | 1728Mi |
+| Máximo + 3 API terminando | 9 | 850m | 1024Mi | 2000m | 1984Mi |
 | Cuota | 10 | 1000m | 1024Mi | 2000m | 2048Mi |
 
 Se crean 3 Deployments/10, 1 StatefulSet/3, 1 HPA/5, 3 Services/10,
@@ -179,9 +180,14 @@ Todos los contenedores declaran requests y limits inferiores al LimitRange.
 API usa `maxSurge: 0`, `maxUnavailable: 1`. Worker y RabbitMQ usan `Recreate`;
 MongoDB reemplaza su único Pod en el StatefulSet. Esto evita réplicas de surge
 intencionales; worker, broker y base tienen interrupción al actualizarse.
-Los Pods terminando pueden seguir contando contra la cuota. Un API adicional
-cabe; dos API adicionales sumarían límites de 2176Mi y **no caben**. Kubernetes
-puede retrasar admisiones por cuota durante terminaciones lentas. No se promete
+Los Pods terminando pueden seguir contando contra la cuota. Los valores iniciales
+propuestos de API (96Mi request, 250m/192Mi limits) daban 832Mi solicitados y
+1792Mi de límites al máximo del HPA: dos API antiguos adicionales excedían los
+límites de memoria. Se ajustó únicamente API a 80Mi request y 200m/128Mi limits
+para cubrir conservadoramente tres antiguos más tres nuevos; requests de memoria
+y limits de CPU quedan justo en la cuota. Comprobar OOMKilled y memoria bajo
+carga antes de dar por aceptado ese límite. Si no alcanza, solicitar más cuota
+o acordar una actualización con interrupción antes de aumentarlo. No se promete
 cero downtime ni avance inmediato del rollout: actualizar componentes de a uno,
 esperar que desaparezcan los Pods anteriores y revisar eventos antes de seguir.
 No elevar `maxSurge` ni lanzar rollouts concurrentes. El HPA no reserva recursos
