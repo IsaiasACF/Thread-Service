@@ -48,6 +48,8 @@ jobs:
         with:
           version: v1.34.1
       - run: python scripts/validate_k8s.py
+      - name: Test staged manifests offline
+        run: python -m pytest scripts/test_k8s_rendering.py -q -W error
   image:
     needs: validate
     runs-on: ubuntu-latest

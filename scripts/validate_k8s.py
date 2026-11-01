@@ -18,10 +18,10 @@ def cpu(value):
     return int(value[:-1]) if value.endswith('m') else int(value) * 1000
 def memory(value):
     return int(value[:-2]) * (1024 if value.endswith('Gi') else 1)
-def totals(extra_api=0):
+def totals(api_replicas):
     result = [0, 0, 0, 0, 0]
     for d in workloads:
-        count = 3 + extra_api if d['metadata']['name'] == 'thread-api' else d['spec']['replicas']
+        count = api_replicas if d['metadata']['name'] == 'thread-api' else d['spec']['replicas']
         result[0] += count
         for c in d['spec']['template']['spec']['containers']:
             r = c['resources']
@@ -53,13 +53,28 @@ hpa = by_key['HorizontalPodAutoscaler', 'thread-api']['spec']
 assert hpa['minReplicas'] == 2 and hpa['maxReplicas'] == 3
 assert hpa['metrics'][0]['resource']['target']['averageUtilization'] == 70
 assert ('Deployment', hpa['scaleTargetRef']['name']) in by_key
-assert by_key['Deployment','thread-api']['spec']['strategy']['rollingUpdate'] == {'maxSurge': 0, 'maxUnavailable': 1}
-for name in ('thread-worker', 'thread-rabbitmq'):
-    assert by_key['Deployment', name]['spec']['strategy']['type'] == 'Recreate'
+assert by_key['Deployment', 'thread-api']['spec']['replicas'] == hpa['minReplicas']
+for name in ('thread-api', 'thread-worker', 'thread-rabbitmq'):
+    assert by_key['Deployment', name]['spec']['strategy'] == {'type': 'Recreate'}
 assert len([d for d in docs if d['kind'] == 'PersistentVolumeClaim']) == 1
 assert by_key['PersistentVolumeClaim','thread-mongodb-data']['spec']['resources']['requests']['storage'] == '1Gi'
-for extra in (0, 1, 3):
-    t = totals(extra)
-    assert all(a <= b for a,b in zip(t, [10,1000,1024,2000,2048])), t
-    print(f'Maximum + {extra} terminating API: pods={t[0]}, requests={t[1]}m/{t[2]}Mi, limits={t[3]}m/{t[4]}Mi')
+# Recreate waits for the old revision to terminate before creating its replacement.
+# Sequential controlled upgrades only: not a bound for manual deletion or concurrent rollouts.
+quota = [10, 1000, 1024, 2000, 2048]
+initial = by_key['Deployment', 'thread-api']['spec']['replicas']
+for label, api_replicas in (
+    ('Initial', initial),
+    ('HPA maximum', hpa['maxReplicas']),
+    ('Recreate: old API revision terminating, no new API', hpa['maxReplicas']),
+    ('Recreate: API stopped before new revision', 0),
+    ('Recreate: new API revision, no old API', hpa['maxReplicas']),
+):
+    t = totals(api_replicas)
+    assert all(a <= b for a, b in zip(t, quota)), (label, t)
+    # Preserve at least 20% headroom in compute and pod quotas for controlled upgrades.
+    assert all(a * 5 <= b * 4 for a, b in zip(t, quota)), (label, 'Insufficient headroom', t)
+    remaining = [b - a for a, b in zip(t, quota)]
+    used = [round(a / b * 100, 2) for a, b in zip(t, quota)]
+    print(f'{label}: pods={t[0]}, requests={t[1]}m/{t[2]}Mi, limits={t[3]}m/{t[4]}Mi')
+    print(f'  Used % (pods, request CPU/Mi, limit CPU/Mi): {used}; remaining: {remaining}')
 print(f'Validated {len(docs)} resources and references. Secret and public host are external prerequisites.')
