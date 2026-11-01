@@ -127,7 +127,8 @@ Acceso: <https://gist.github.com/sebastianguerra/fe3cbc472cae1064548b456bb857bcf
 - `k8s/kustomization.yaml`: ensambla los recursos. El Ingress pendiente y los
   Secrets se generan aparte; **no usar `kubectl apply -f k8s/`**.
 - `scripts/prepare_k8s.py`: genera manifiestos locales ignorados por Git,
-  exige digest GHCR y host confirmado y solicita credenciales sin eco.
+  exige digest GHCR y host confirmado, separa siete etapas en
+  `k8s/rendered/stages/` y solicita credenciales sin eco cuando se pide un Secret.
 - `scripts/validate_k8s.py`: comprueba referencias y presupuesto sin conectarse
   al clúster. Requiere Python, PyYAML y `kubectl kustomize`.
 
@@ -139,8 +140,9 @@ incluido. No borrar su PVC durante actualizaciones o rollback.
 El 1 de noviembre de 2026 se consultaron permisos, cuotas, Services e Ingresses:
 se permite administrar los recursos requeridos en el namespace; estaba vacío
 salvo un ConfigMap. Traefik tiene IP pública **134.199.176.3**. No existe un host
-asignado a Threads. Otros grupos usan nip.io, pero eso no asigna un dominio a
-este servicio: `PENDING_PUBLIC_HOST` es una plantilla excluida del conjunto base.
+asignado a Threads. El candidato `threads.134.199.176.3.nip.io` sigue
+**pendiente de autorización**, aunque resuelva a esa IP. Otros grupos usan nip.io,
+pero eso no asigna un dominio a este servicio: `PENDING_PUBLIC_HOST` es una plantilla excluida del conjunto base.
 Antes de desplegar, confirmar el dominio con el administrador y comprobar que
 resuelva a la IP vigente. No se configura TLS hasta confirmar dominio y política
 de certificados; el Ingress preparado utiliza HTTP.
@@ -168,8 +170,9 @@ Para durabilidad real se necesita broker persistente autorizado o más PVC.
 | RabbitMQ | 1 | 100m | 192Mi | 300m | 512Mi |
 | Total inicial | 5 | 450m | 704Mi | 1200m | 1472Mi |
 | Total HPA máximo | 6 | 550m | 784Mi | 1400m | 1600Mi |
-| Máximo + 1 API terminando | 7 | 650m | 864Mi | 1600m | 1728Mi |
-| Máximo + 3 API terminando | 9 | 850m | 1024Mi | 2000m | 1984Mi |
+| Recreate: 3 API antiguas terminando, 0 nuevas | 6 | 550m | 784Mi | 1400m | 1600Mi |
+| Recreate: 0 API antes de crear las nuevas | 3 | 250m | 544Mi | 800m | 1216Mi |
+| Recreate: 3 API nuevas, 0 antiguas | 6 | 550m | 784Mi | 1400m | 1600Mi |
 | Cuota | 10 | 1000m | 1024Mi | 2000m | 2048Mi |
 
 Se crean 3 Deployments/10, 1 StatefulSet/3, 1 HPA/5, 3 Services/10,
@@ -177,21 +180,36 @@ Se crean 3 Deployments/10, 1 StatefulSet/3, 1 HPA/5, 3 Services/10,
 más 1 existente /20. Secret: 1/20; un registry privado requeriría otro.
 Todos los contenedores declaran requests y limits inferiores al LimitRange.
 
-API usa `maxSurge: 0`, `maxUnavailable: 1`. Worker y RabbitMQ usan `Recreate`;
-MongoDB reemplaza su único Pod en el StatefulSet. Esto evita réplicas de surge
-intencionales; worker, broker y base tienen interrupción al actualizarse.
-Los Pods terminando pueden seguir contando contra la cuota. Los valores iniciales
-propuestos de API (96Mi request, 250m/192Mi limits) daban 832Mi solicitados y
-1792Mi de límites al máximo del HPA: dos API antiguos adicionales excedían los
-límites de memoria. Se ajustó únicamente API a 80Mi request y 200m/128Mi limits
-para cubrir conservadoramente tres antiguos más tres nuevos; requests de memoria
-y limits de CPU quedan justo en la cuota. Comprobar OOMKilled y memoria bajo
-carga antes de dar por aceptado ese límite. Si no alcanza, solicitar más cuota
-o acordar una actualización con interrupción antes de aumentarlo. No se promete
-cero downtime ni avance inmediato del rollout: actualizar componentes de a uno,
-esperar que desaparezcan los Pods anteriores y revisar eventos antes de seguir.
-No elevar `maxSurge` ni lanzar rollouts concurrentes. El HPA no reserva recursos
-para otros workloads: volver a consultar cuota antes de cada despliegue.
+La opción C utiliza **Recreate en API**, worker y RabbitMQ; MongoDB reemplaza
+su único Pod en el StatefulSet. En una actualización de versión, la API espera
+la terminación de la revisión anterior antes de crear la nueva. Se conservan
+dos réplicas mínimas en operación normal y HPA 2–3 al 70 %, pero durante cada
+actualización hay una **interrupción completa de HTTP**, que dura hasta que las
+nuevas API estén listas. Acordar una ventana; esto no es alta disponibilidad.
+
+Los requests y limits por contenedor se conservan. Al máximo normal y durante
+una actualización Recreate controlada, el margen es:
+
+| Cuota | Uso máximo | Margen restante |
+|---|---:|---:|
+| Pods | 6/10 (60 %) | 4 (40 %) |
+| Requests CPU | 550m/1000m (55 %) | 450m (45 %) |
+| Requests memoria | 784Mi/1024Mi (76,56 %) | 240Mi (23,44 %) |
+| Limits CPU | 1400m/2000m (70 %) | 600m (30 %) |
+| Limits memoria | 1600Mi/2048Mi (78,12 %) | 448Mi (21,88 %) |
+
+El validador exige al menos 20 % de margen de cómputo y Pods en esas fases.
+No hay margen de PVC ni almacenamiento: 1 PVC y 1Gi consumen toda esa cuota.
+Los cálculos suponen actualizaciones secuenciales, sin otros workloads del grupo,
+sin borrados manuales ni actualizaciones concurrentes. Recreate no garantiza el
+mismo límite ante reemplazos por borrado manual de Pods; no forzar eliminaciones.
+La cuota del namespace tampoco reserva capacidad física de los nodos.
+
+Los 128Mi de límite de API y el consumo de probes aún necesitan medición bajo
+carga en Kubernetes. No se bajó memoria para obtener este margen. Si aparece
+OOMKilled, detener la carga, medir y revisar límites/cuota antes de aumentar
+memoria. No recortar MongoDB o RabbitMQ como compensación. Antes de cada etapa,
+volver a consultar cuota, capacidad de nodos y eventos.
 
 API tiene startup/readiness/liveness HTTP `/health`. El lifespan inicializa los
 índices de MongoDB antes de servir. Después del arranque `/health` solo confirma
@@ -206,8 +224,8 @@ timeouts. No hay initContainers ni Pods auxiliares que consuman cuota.
 ### CI y publicación en GHCR
 
 Se conserva `.github/workflows/tests.yml`. El workflow adicional `container.yml`
-ejecuta las pruebas con MongoDB y RabbitMQ aislados, valida referencias/cuotas y
-construye el target `runtime` del **Dockerfile existente**. En pushes a `main` o
+ejecuta las pruebas con MongoDB y RabbitMQ aislados, valida referencias/cuotas,
+ejecuta siete pruebas offline del generador por etapas y construye el target `runtime` del **Dockerfile existente**. En pushes a `main` o
 `feature/tarea5-kubernetes` publica
 `ghcr.io/isaiasacf/thread-service:sha-<SHA completo>` con `GITHUB_TOKEN` y
 `packages: write`. Los PR solo prueban y construyen, sin publicar. No hay
@@ -230,6 +248,7 @@ python3 -m venv .venv
 pip install -r requirements-dev.txt PyYAML==6.0.3
 pytest -q -W error
 python scripts/validate_k8s.py
+python -m pytest scripts/test_k8s_rendering.py -q -W error
 kubectl kustomize k8s > /tmp/thread-k8s.yaml
 # Si se dispone de kubeconform:
 kubeconform -strict -summary /tmp/thread-k8s.yaml
@@ -253,56 +272,139 @@ Una vez confirmados host y digest, preparar archivos (aún sin tocar el clúster
 export THREAD_PUBLIC_HOST='<host confirmado>'
 export THREAD_IMAGE='ghcr.io/isaiasacf/thread-service@sha256:<digest publicado>'
 umask 077
-mkdir -p /tmp/thread-private
-export THREAD_SECRET_FILE=/tmp/thread-private/thread-secret.yaml
+install -d -m 700 "$HOME/.local/share/thread-service"
+export THREAD_SECRET_FILE="$HOME/.local/share/thread-service/secret.yaml"
 python scripts/prepare_k8s.py --image "$THREAD_IMAGE" --host "$THREAD_PUBLIC_HOST" --secret-file "$THREAD_SECRET_FILE"
 ```
 
 Ingresar usuario y contraseña MongoDB y usuario y contraseña RabbitMQ cuando se
 soliciten. Se genera `$THREAD_SECRET_FILE`, modo 0600, fuera del repositorio y OneDrive, y
-`k8s/rendered/workloads.yaml`, ignorado por Git y Docker. El script rechaza rutas
+siete archivos en `k8s/rendered/stages/`, ignorados por Git y Docker.
+También se genera `k8s/rendered/workloads.yaml`, un consolidado equivalente. El script rechaza rutas
 de Secrets dentro del repositorio o OneDrive. Guardar el Secret en un directorio
 privado del filesystem Linux de WSL; Git ignore no impide sincronización. No imprimir el archivo ni usar `set -x`. No versionar secretos,
 kubeconfig, logs sensibles ni la salida de `kubectl get secrets -o yaml`.
 El Secret contiene URLs con credenciales codificadas; MongoDB requiere
 `authSource=admin`. Su usuario root es exclusivo de esta base del servicio;
 para producción crear un usuario de aplicación con privilegios mínimos.
+Usar un usuario RabbitMQ distinto de `guest`; el generador lo exige. El
+directorio padre debe ser privado y estar fuera de cualquier otro repositorio Git
+y carpeta sincronizada: el script solo detecta este repositorio y rutas OneDrive.
 Cambiar credenciales en el Secret no rota usuarios ya inicializados en el PVC.
 
 Validar también el archivo renderizado con kubeconform. Revisar que host, imagen
 y credenciales coincidan, sin pegar el Secret en logs o revisiones.
 
-### Despliegue futuro — requiere autorización de la siguiente etapa
+### Despliegue progresivo futuro — requiere autorización
 
-**Estos comandos se documentan; no se ejecutaron en esta implementación.**
-Usar un archivo Secret privado fuera de OneDrive y ajustar `THREAD_SECRET_FILE`.
+**Estos comandos solo se documentan; no se ejecutaron en esta etapa.** Primero
+confirmar hostname, digest, recursos libres y funcionamiento del CSI. Validar
+los siete archivos con kubeconform. No aplicar la carpeta entera ni el consolidado
+si se utiliza el procedimiento progresivo: se perderían las esperas entre etapas.
+El consolidado es una alternativa, no un octavo paso. Cada uno de los 11 recursos
+pertenece a una sola etapa; el Secret queda fuera de todos los manifiestos públicos.
+
+| Etapa | Archivo en `k8s/rendered/stages/` | Recursos / condición para continuar |
+|---|---|---|
+| 1 | `01-config.yaml` | ConfigMap; Secret privado creado por separado |
+| 2 | `02-mongodb.yaml` | Service, PVC y StatefulSet; PVC Bound y MongoDB Ready |
+| 3 | `03-rabbitmq.yaml` | Service y Deployment; broker Ready |
+| 4 | `04-api.yaml` | Service y Deployment; dos réplicas Ready, probar REST |
+| 5 | `05-worker.yaml` | Deployment; Ready y evidencia de publicación outbox |
+| 6 | `06-ingress.yaml` | Ingress; host autorizado y prueba HTTP externa |
+| 7 | `07-hpa.yaml` | HPA; métricas disponibles y escalamiento verificable |
+
+No avanzar si una espera falla. `Available` no sustituye las pruebas REST o de
+eventos; las probes del worker solo comprueban que el proceso existe.
 
 ```bash
-export THREAD_SECRET_FILE='<ruta privada al Secret generado>'
-kubectl --context cluster-inf326-2026-2 -n grupo-threads apply -f "$THREAD_SECRET_FILE"
-kubectl --context cluster-inf326-2026-2 -n grupo-threads apply -f k8s/rendered/workloads.yaml
-kubectl --context cluster-inf326-2026-2 -n grupo-threads rollout status statefulset/thread-mongodb --timeout=300s
-kubectl --context cluster-inf326-2026-2 -n grupo-threads rollout status deployment/thread-rabbitmq --timeout=300s
-kubectl --context cluster-inf326-2026-2 -n grupo-threads rollout status deployment/thread-api --timeout=300s
-kubectl --context cluster-inf326-2026-2 -n grupo-threads rollout status deployment/thread-worker --timeout=300s
-kubectl --context cluster-inf326-2026-2 -n grupo-threads get pods,services,ingresses,hpa,pvc
-kubectl --context cluster-inf326-2026-2 -n grupo-threads top pods
-kubectl --context cluster-inf326-2026-2 -n grupo-threads get events --sort-by=.metadata.creationTimestamp
-curl --fail "http://$THREAD_PUBLIC_HOST/health"
+k() { kubectl --context cluster-inf326-2026-2 -n grupo-threads "$@"; }
+# THREAD_SECRET_FILE: ruta privada al Secret generado anteriormente.
+k apply -f "$THREAD_SECRET_FILE"
+k apply -f k8s/rendered/stages/01-config.yaml
+
+k apply -f k8s/rendered/stages/02-mongodb.yaml
+k wait --for=jsonpath='{.status.phase}'=Bound pvc/thread-mongodb-data --timeout=180s
+k wait --for=condition=Ready pod/thread-mongodb-0 --timeout=300s
+
+k apply -f k8s/rendered/stages/03-rabbitmq.yaml
+k wait --for=condition=Available deployment/thread-rabbitmq --timeout=300s
+
+k apply -f k8s/rendered/stages/04-api.yaml
+k wait --for=jsonpath='{.status.readyReplicas}'=2 deployment/thread-api --timeout=300s
+# Comprobar endpoints, HTTP y REST antes de continuar.
+# En otra terminal: k port-forward service/thread-api 8004:8000
+# curl --fail http://127.0.0.1:8004/health
+
+k apply -f k8s/rendered/stages/05-worker.yaml
+k wait --for=condition=Available deployment/thread-worker --timeout=300s
+# Verificar publicación de un evento de prueba antes de continuar.
+
+k apply -f k8s/rendered/stages/06-ingress.yaml
+k get ingress thread-api
+curl --fail --max-time 10 "http://$THREAD_PUBLIC_HOST/health"
+# Probar también POST/GET público con IDs de prueba válidos.
+
+k apply -f k8s/rendered/stages/07-hpa.yaml
+k get hpa thread-api
+k describe hpa thread-api
 ```
 
-En Freelens seleccionar contexto y namespace; revisar Pods, recursos, PVC,
-HPA y eventos. Validar creación/lectura de una respuesta con IDs de prueba
-válidos de Users/Messages sin modificar sus bases. Confirmar que el worker
-publique y que el consumidor esperado pueda conectarse al broker: un RabbitMQ
-local no establece por sí solo integración con brokers de otros servicios.
-Para validar HPA, acordar carga acotada y observar `kubectl get hpa -w`; 70 %
-significa 70m CPU media por réplica, no 70 % del límite de CPU.
+Revisar entre etapas, siempre dentro de `grupo-threads`:
+
+```bash
+k get pods -o wide
+k get deployments,statefulsets,services,ingresses,hpa,pvc
+k get endpointslices
+k get resourcequota
+k top pods --containers
+k get events --sort-by=.metadata.creationTimestamp
+k describe pod <pod>
+k logs deployment/thread-api --tail=100
+k logs deployment/thread-worker --tail=100
+# Si hubo un reinicio: k logs <pod> --previous --tail=100
+```
+
+Revisar los logs localmente antes de compartirlos; no imprimir Secrets, kubeconfig
+ni variables con credenciales. Las pruebas REST crean/leen una respuesta del propio
+servicio usando IDs existentes de Users/Messages, sin modificar sus bases. Para
+outbox, correlacionar respuesta, evento y publicación confirmada en la misma MongoDB;
+una probe Ready no demuestra entrega. Un broker local tampoco establece por sí
+solo comunicación con consumidores de otros servicios. La prueba de persistencia
+tras reemplazo de MongoDB requiere autorización específica y conservar el PVC.
+
+### Validación en Freelens y diagnóstico
+
+Seleccionar `cluster-inf326-2026-2` y filtrar `grupo-threads`. Revisar:
+
+- MongoDB: PVC Bound, volumen montado, Pod Ready y eventos del CSI.
+- RabbitMQ: readiness, reinicios, uso de memoria y alarmas de disco/memoria.
+- API: dos réplicas listas antes del HPA, imagen por digest y endpoints del Service.
+- Worker: proceso Ready, errores de reintento y publicación comprobada aparte.
+- Ingress: clase traefik, host autorizado, Service y puerto 8000; probar desde WSL.
+- HPA: métricas CPU, condiciones AbleToScale/ScalingActive y réplicas deseadas.
+- General: consumo por contenedor, cuota restante y eventos de cada workload.
+
+| Falla | Revisar y proceder |
+|---|---|
+| Pending | Eventos del Pod y ReplicaSet: Insufficient CPU/memory, taints, PVC sin Bound o FailedAttachVolume. Comprobar nodos y CSI; detener la progresión y coordinar capacidad. No reducir memoria para forzar scheduling. |
+| FailedCreate | Eventos de Deployment/ReplicaSet y ResourceQuota/LimitRange: puede no existir aún un Pod que inspeccionar. No continuar mientras falte cuota. |
+| OOMKilled | Last State, exit code, reinicios, memoria y logs previos. Detener carga; medir picos y revisar límites/cuota. No reiniciar repetidamente ni reducir otros componentes. |
+| ImagePullBackOff | Digest exacto, Events y acceso a GHCR desde el nodo. Distinguir imagen inexistente, fallo DNS/red y autorización. Usar un imagePullSecret privado solo si el paquete lo requiere. |
+
+Para la demostración de HPA, generar carga externa desde WSL sobre `/health`,
+sin Pods auxiliares ni llamadas repetitivas a servicios base. Empezar con 5,
+luego 10 y 20 solicitudes/s, concurrencia máxima 2 y ventanas cortas acordadas.
+Observar `k get hpa -w`, latencia, errores y memoria; detener ante fallas o falta
+de capacidad. El objetivo 70 % corresponde a 70m CPU medios por API, no al 70 %
+del límite. Si la carga acotada no lo alcanza, registrar el resultado sin saturar
+el clúster. Observar la bajada tras la estabilización de 300 segundos.
 
 ### Actualizaciones y rollback
 
 Guardar el digest anterior. Preparar una nueva versión sin `--secret-file` para
-preservar credenciales. En actualizaciones no reaplicar `replicas: 2` sobre el
+preservar credenciales. API y worker interrumpen servicio durante su Recreate;
+acordar una ventana también para rollback. En actualizaciones no reaplicar `replicas: 2` sobre el
 Deployment ya controlado por HPA: usar `set image` por componente, en secuencia.
 
 ```bash
@@ -332,12 +434,20 @@ al reemplazarse. Restaurar ConfigMap/Secrets de forma controlada si cambiaron.
 
 ### Validación de esta etapa
 
-El 1 de noviembre de 2026: `pytest -q -W error` local dio **101 passed,
-6 skipped** (integraciones optativas sin procesos MongoDB/RabbitMQ locales).
-El validador de referencias/cuotas pasó. Kubeconform 0.7.0 en modo estricto validó
-los 10 recursos base y 11 al incluir un Ingress renderizado con datos sintéticos;
-esto valida el esquema, no las políticas de admisión del clúster. Actionlint
-1.7.7 pasó para ambos workflows. El generador de Secret se comprobó con valores
-sintéticos fuera del repositorio y permisos 0600. Docker no pudo conectarse al
-daemon local; la construcción e integraciones reales se verifican en Actions.
-No se ejecutaron `kubectl apply`, `delete`, ni cambios de recursos del clúster.
+Tras aprobar la opción C: la suite local y las pruebas offline del generador dieron
+**108 passed, 6 skipped** (101 pruebas existentes y 7 nuevas de empaquetado;
+las seis omitidas requieren MongoDB/RabbitMQ de prueba). Las pruebas de etapas
+se ejecutan por separado en CI para conservar el target de pruebas del Dockerfile
+existente, que solo empaqueta la aplicación y sus pruebas funcionales.
+
+El validador confirma Recreate, HPA 2–3 al 70 %, referencias, cuotas y un margen
+mínimo de 20 % en Pods/cómputo durante operación y actualización controlada.
+Los recursos por contenedor se compararon con la revisión anterior: sin cambios.
+Kubeconform 0.7.0 estricto validó los **11 recursos en 7 archivos de etapas** y
+los mismos **11 recursos en el consolidado**, usando host reservado de prueba y
+sin Secrets. El conjunto base sigue conteniendo 10 recursos sin Ingress.
+Esto valida esquemas, no admisión, scheduling ni funcionamiento en Kubernetes.
+Actionlint 1.7.7 pasó para ambos workflows. No se generaron credenciales reales.
+
+El hostname candidato sigue pendiente de autorización. No se ejecutaron
+`kubectl apply`, `delete`, `rollout`, `set image` ni cambios de recursos del clúster.
