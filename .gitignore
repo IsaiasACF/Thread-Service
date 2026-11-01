@@ -9,3 +9,10 @@ venv/
 .coverage
 htmlcov/
 .DS_Store
+
+# Generated Kubernetes configuration and local credentials
+k8s/rendered/
+k8s/*.local.yaml
+.secrets/
+kubeconfig
+kubeconfig.*
