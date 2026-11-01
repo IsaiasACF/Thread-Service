@@ -1,6 +1,7 @@
 """Offline deployment packaging checks; no cluster or credentials required."""
 from copy import deepcopy
 from pathlib import Path
+import runpy
 
 import pytest
 import yaml
@@ -99,3 +100,40 @@ def test_cli_creates_stages_without_prompting_for_credentials(tmp_path, monkeypa
     assert len(list((output / 'stages').glob('*.yaml'))) == 7
     docs = list(yaml.safe_load_all((output / 'workloads.yaml').read_text()))
     assert len(docs) == 11 and all(d['kind'] != 'Secret' for d in docs)
+
+
+def test_rabbitmq_tcp_checks_survive_stage_rendering(tmp_path):
+    prepare_k8s.write_manifests(rendered_documents(), tmp_path)
+    docs = list(yaml.safe_load_all((tmp_path / 'stages/03-rabbitmq.yaml').read_text()))
+    broker = next(d for d in docs if d['kind'] == 'Deployment')
+    container = broker['spec']['template']['spec']['containers'][0]
+    assert 'livenessProbe' not in container
+    for name in ('startupProbe', 'readinessProbe'):
+        probe = container[name]
+        assert probe['tcpSocket']['port'] == 5672
+        assert 'exec' not in probe
+    startup = container['startupProbe']
+    assert startup['failureThreshold'] * startup['periodSeconds'] >= 600
+
+
+@pytest.mark.parametrize('problem', [None, 'exec_startup', 'wrong_port', 'rabbit_liveness', 'api_liveness'])
+def test_validator_scopes_probe_policy_to_rabbitmq(monkeypatch, problem):
+    base, _ = source_documents()
+    rabbit = next(d for d in base if d['kind'] == 'Deployment' and d['metadata']['name'] == 'thread-rabbitmq')
+    container = rabbit['spec']['template']['spec']['containers'][0]
+    if problem == 'exec_startup':
+        container['startupProbe'].pop('tcpSocket')
+        container['startupProbe']['exec'] = {'command': ['rabbitmq-diagnostics', '-q', 'ping']}
+    elif problem == 'wrong_port':
+        container['readinessProbe']['tcpSocket']['port'] = 15672
+    elif problem == 'rabbit_liveness':
+        container['livenessProbe'] = deepcopy(container['readinessProbe'])
+    elif problem == 'api_liveness':
+        api = next(d for d in base if d['kind'] == 'Deployment' and d['metadata']['name'] == 'thread-api')
+        api['spec']['template']['spec']['containers'][0].pop('livenessProbe')
+    monkeypatch.setattr('subprocess.check_output', lambda *args, **kwargs: yaml.safe_dump_all(base))
+    if problem is None:
+        runpy.run_path(str(ROOT / 'scripts/validate_k8s.py'), run_name='__main__')
+    else:
+        with pytest.raises(AssertionError):
+            runpy.run_path(str(ROOT / 'scripts/validate_k8s.py'), run_name='__main__')

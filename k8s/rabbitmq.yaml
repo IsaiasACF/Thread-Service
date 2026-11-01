@@ -46,33 +46,22 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/lib/rabbitmq
+        # TCP avoids launching an Erlang CLI VM for every probe.
         startupProbe:
-          exec:
-            command:
-            - rabbitmq-diagnostics
-            - -q
-            - ping
-          periodSeconds: 20
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 10
+          periodSeconds: 10
           timeoutSeconds: 5
-          failureThreshold: 30
+          failureThreshold: 60
         readinessProbe:
-          exec:
-            command:
-            - rabbitmq-diagnostics
-            - -q
-            - check_running
-          periodSeconds: 20
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 10
+          periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
-        livenessProbe:
-          exec:
-            command:
-            - rabbitmq-diagnostics
-            - -q
-            - ping
-          periodSeconds: 20
-          timeoutSeconds: 5
-          failureThreshold: 3
+        # No liveness probe: RabbitMQ recommends TCP readiness without liveness.
       hostname: thread-rabbitmq
       volumes:
       - name: data

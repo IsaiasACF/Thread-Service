@@ -214,18 +214,54 @@ volver a consultar cuota, capacidad de nodos y eventos.
 API tiene startup/readiness/liveness HTTP `/health`. El lifespan inicializa los
 índices de MongoDB antes de servir. Después del arranque `/health` solo confirma
 el proceso HTTP, no la salud de dependencias: validar también operaciones reales.
-MongoDB usa ping; RabbitMQ usa diagnóstico del nodo y estado running. Worker
+MongoDB usa ping. RabbitMQ comprueba TCP 5672 en startup y readiness, sin ejecutar
+`rabbitmq-diagnostics` periódicamente ni configurar liveness. La
+[guía oficial de RabbitMQ](https://www.rabbitmq.com/docs/monitoring#health-checks-as-readiness-probes)
+recomienda readiness TCP y ausencia de liveness para evitar sobrecarga de las CLI
+y reinicios por falsos positivos. Startup espera aproximadamente 10 minutos
+(60 fallos, intervalo 10 s, timeout TCP 5 s y demora inicial 10 s); si nunca abre
+el puerto, puede reiniciar el contenedor. Tras startup, readiness cada 10 s marca
+Unready después de tres fallos, sin reiniciarlo. TCP solo demuestra que el puerto
+acepta conexiones: comprobar autenticación, alarmas y publicación outbox aparte.
+Un proceso bloqueado después de startup requiere diagnóstico e intervención;
+la salida del proceso sí activa la política normal de reinicio del Deployment.
+Cambiar estas probes reemplaza el Pod por Recreate y pierde el contenido de su
+`emptyDir`; coordinar la actualización si ya contiene eventos.
+Worker
 comprueba su proceso PID 1; esto no prueba publicación ni avance de la outbox.
 Se evita reiniciarlo por indisponibilidad del broker porque ya reintenta con
 backoff. Validar publicación y backlog tras desplegar. Worker dispone de 70 s
 para SIGTERM, frente a 60 s de lease; las conexiones AMQP tienen sus propios
 timeouts. No hay initContainers ni Pods auxiliares que consuman cuota.
 
+Para regenerar **solo la etapa local de RabbitMQ**, sin host, digest de API ni
+Secret nuevos, ejecutar desde la raíz del repositorio:
+
+```bash
+mkdir -p k8s/rendered/stages
+cp k8s/rabbitmq.yaml k8s/rendered/stages/03-rabbitmq.yaml
+```
+
+Después, únicamente con autorización para modificar el clúster, aplicar esa
+etapa; no reaplicar el consolidado ni MongoDB. Comandos documentados, no ejecutados:
+
+```bash
+k() { kubectl --context cluster-inf326-2026-2 -n grupo-threads "$@"; }
+k apply -f k8s/rendered/stages/03-rabbitmq.yaml
+k rollout status deployment/thread-rabbitmq --timeout=900s
+k get pods -l app=thread-rabbitmq
+k get endpointslices -l kubernetes.io/service-name=thread-rabbitmq
+```
+
+Este atajo actualiza únicamente el archivo de RabbitMQ; no sincroniza el
+consolidado local, que debe regenerarse si se decide usarlo en otra ocasión.
+El PVC y los Secrets existentes no forman parte de esta etapa.
+
 ### CI y publicación en GHCR
 
 Se conserva `.github/workflows/tests.yml`. El workflow adicional `container.yml`
 ejecuta las pruebas con MongoDB y RabbitMQ aislados, valida referencias/cuotas,
-ejecuta siete pruebas offline del generador por etapas y construye el target `runtime` del **Dockerfile existente**. En pushes a `main` o
+ejecuta pruebas offline del generador por etapas y de las probes de RabbitMQ y construye el target `runtime` del **Dockerfile existente**. En pushes a `main` o
 `feature/tarea5-kubernetes` publica
 `ghcr.io/isaiasacf/thread-service:sha-<SHA completo>` con `GITHUB_TOKEN` y
 `packages: write`. Los PR solo prueban y construyen, sin publicar. No hay
@@ -435,7 +471,7 @@ al reemplazarse. Restaurar ConfigMap/Secrets de forma controlada si cambiaron.
 ### Validación de esta etapa
 
 Tras aprobar la opción C: la suite local y las pruebas offline del generador dieron
-**108 passed, 6 skipped** (101 pruebas existentes y 7 nuevas de empaquetado;
+**114 passed, 6 skipped** (101 pruebas existentes y 13 de empaquetado/probes;
 las seis omitidas requieren MongoDB/RabbitMQ de prueba). Las pruebas de etapas
 se ejecutan por separado en CI para conservar el target de pruebas del Dockerfile
 existente, que solo empaqueta la aplicación y sus pruebas funcionales.

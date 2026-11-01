@@ -35,7 +35,20 @@ for d in workloads:
     labels = s['template']['metadata']['labels']
     assert s['selector']['matchLabels'].items() <= labels.items()
     for c in s['template']['spec']['containers']:
-        assert all(p in c for p in ('startupProbe', 'readinessProbe', 'livenessProbe', 'resources'))
+        assert all(p in c for p in ('startupProbe', 'readinessProbe', 'resources'))
+        if d['metadata']['name'] == 'thread-rabbitmq' and c['name'] == 'rabbitmq':
+            # RabbitMQ's Kubernetes guidance uses TCP readiness and no liveness CLI.
+            assert 'livenessProbe' not in c, 'RabbitMQ must not use liveness restarts'
+            for name in ('startupProbe', 'readinessProbe'):
+                probe = c[name]
+                assert probe.get('tcpSocket') == {'port': 5672}, (name, 'Expected AMQP TCP check')
+                assert not any(action in probe for action in ('exec', 'httpGet', 'grpc'))
+                assert probe['timeoutSeconds'] >= 5
+                assert probe['periodSeconds'] >= 10
+            assert c['startupProbe']['failureThreshold'] * c['startupProbe']['periodSeconds'] >= 600
+            assert c['readinessProbe']['failureThreshold'] >= 3
+        else:
+            assert 'livenessProbe' in c, 'Other workloads still require liveness'
         assert cpu(c['resources']['limits']['cpu']) <= 1000
         assert memory(c['resources']['limits']['memory']) <= 1024
         for source in c.get('envFrom', []):
