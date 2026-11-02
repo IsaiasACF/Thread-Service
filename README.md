@@ -105,10 +105,62 @@ GitHub Actions ejecuta las pruebas con Python 3.12, MongoDB 7 y RabbitMQ y valid
 ## Tarea 5: despliegue Kubernetes
 
 Implementación individual para `cluster-inf326-2026-2`, exclusivamente en
-`grupo-threads`. Esta etapa prepara los archivos: **no despliega al clúster**.
+`grupo-threads`. Codex implementó y validó los archivos del repositorio; el autor
+realizó manualmente el despliegue y las pruebas en Kubernetes. Los resultados y
+sus evidencias se registran a continuación; los comandos posteriores se conservan
+como referencia técnica para repetir operaciones de forma controlada.
 Enunciado: <https://github.com/rmasad/microservicios/tree/main/05_Despliegue>.
 Ejemplo: <https://github.com/rmasad/microservicios/tree/main/05_Despliegue/demo_05/api-gateway>.
 Acceso: <https://gist.github.com/sebastianguerra/fe3cbc472cae1064548b456bb857bcf8>.
+
+### Despliegue realizado y evidencias
+
+El autor ejecutó manualmente el despliegue desde WSL y verificó estos resultados
+en Kubernetes. Codex incorporó las capturas originales y documentó las
+observaciones proporcionadas por el autor; esta actualización documental no
+repitió operaciones sobre el clúster ni generó Secrets.
+
+| Comprobación | Resultado observado |
+|---|---|
+| Namespace | `grupo-threads` |
+| Thread API | Dos réplicas disponibles (`2/2`) |
+| MongoDB | StatefulSet de una instancia; PVC de 1 GiB (`1Gi`), `Bound` |
+| RabbitMQ y worker | Funcionando, Pods `1/1 Running` |
+| Ingress | Traefik, IP `134.199.176.3` |
+| URL pública | [Swagger de Thread Service](http://threads.134.199.176.3.nip.io/docs) |
+| Salud y documentación | `GET /health`: HTTP 200; Swagger público: HTTP 200 |
+| API REST | POST y GET probados satisfactoriamente |
+| Persistencia | Tras reemplazar el Pod de MongoDB, el GET público recuperó una respuesta almacenada previamente, conservando el PVC |
+| Probes MongoDB | Corrección aplicada; último Pod observado con cero reinicios |
+| Autoscaling | CPU objetivo 70 %; escalamiento observado de 2 → 3 → 2 réplicas |
+| GitHub Actions | Cinco checks aprobados en el commit anterior `0d582cc`; la captura no corresponde al commit documental final |
+
+Durante la prueba manual de HPA se observó CPU inicial de **3 %** y, bajo carga,
+lecturas de **66 %, 115 % y 112 %**. Se observó el aumento automático de **2 a 3
+réplicas** y, después de finalizar la carga y transcurrir la ventana de
+estabilización de **300 segundos**, el retorno a **2 réplicas**. Son observaciones
+de la prueba realizada, no una secuencia temporal contenida en una sola captura.
+En particular, **la cuarta imagen muestra la configuración y el estado del HPA,
+no el momento del escalamiento**.
+
+Las cinco capturas originales se conservan en
+[docs/Evidencia_despliegue/](docs/Evidencia_despliegue/):
+
+| Evidencia | Alcance de la captura |
+|---|---|
+| [01 — GitHub Actions](docs/Evidencia_despliegue/01-github-actions.png) | Cinco checks aprobados del commit anterior y PR en draft |
+| [02 — Swagger público](docs/Evidencia_despliegue/02-swagger-publico.png) | Interfaz Swagger accesible mediante el Ingress Traefik |
+| [03 — Despliegue Kubernetes](docs/Evidencia_despliegue/03-despliegue-kubernetes.png) | Pods, Deployments, HPA, Ingress y PVC; API con dos réplicas y volumen Bound |
+| [04 — HPA Kubernetes](docs/Evidencia_despliegue/04-hpa-kubernetes.png) | Configuración y estado: objetivo 70 %, mínimo 2, máximo 3, estabilización de bajada 300 s y CPU 3 % en esa captura; no demuestra por sí sola el escalamiento |
+| [05 — Persistencia MongoDB](docs/Evidencia_despliegue/05-persistencia-mongodb.png) | MongoDB Running con cero reinicios y GET público HTTP 200 recuperando una respuesta existente después de la prueba de reemplazo |
+
+El hostname está operativo en la prueba, pero su **autorización formal sigue
+pendiente**. El acceso es **HTTP, sin TLS y sin autenticación propia de Thread
+Service**. Se mantienen los trade-offs: Recreate interrumpe el servicio durante
+actualizaciones, RabbitMQ usa almacenamiento efímero y puede perder eventos ya
+publicados al perder su Pod, y MongoDB no tiene alta disponibilidad ni un backup
+incluido. La prueba de persistencia confirma reutilización del PVC, no tolerancia
+a pérdida del volumen.
 
 ### Arquitectura y archivos
 
@@ -124,8 +176,8 @@ Acceso: <https://gist.github.com/sebastianguerra/fe3cbc472cae1064548b456bb857bcf
   RabbitMQ 4 sin interfaz de administración y `emptyDir` de 256Mi.
 - `k8s/configmap.yaml`: URLs de Users y Messages en `servicios-base`, parámetros
   compartidos. No se despliegan copias ni se accede a sus bases.
-- `k8s/kustomization.yaml`: ensambla los recursos. El Ingress pendiente y los
-  Secrets se generan aparte; **no usar `kubectl apply -f k8s/`**.
+- `k8s/kustomization.yaml`: ensambla los recursos. El Ingress parametrizable y
+  los Secrets se generan aparte; **no usar `kubectl apply -f k8s/`**.
 - `scripts/prepare_k8s.py`: genera manifiestos locales ignorados por Git,
   exige digest GHCR y host confirmado, separa siete etapas en
   `k8s/rendered/stages/` y solicita credenciales sin eco cuando se pide un Secret.
@@ -137,19 +189,20 @@ API → Users/Messages de servicios-base. Worker → misma MongoDB → RabbitMQ.
 MongoDB es una sola instancia persistente, sin alta disponibilidad ni backup
 incluido. No borrar su PVC durante actualizaciones o rollback.
 
-El 1 de noviembre de 2026 se consultaron permisos, cuotas, Services e Ingresses:
-se permite administrar los recursos requeridos en el namespace; estaba vacío
-salvo un ConfigMap. Traefik tiene IP pública **134.199.176.3**. No existe un host
-asignado a Threads. El candidato `threads.134.199.176.3.nip.io` sigue
-**pendiente de autorización**, aunque resuelva a esa IP. Otros grupos usan nip.io,
-pero eso no asigna un dominio a este servicio: `PENDING_PUBLIC_HOST` es una plantilla excluida del conjunto base.
-Antes de desplegar, confirmar el dominio con el administrador y comprobar que
-resuelva a la IP vigente. No se configura TLS hasta confirmar dominio y política
-de certificados; el Ingress preparado utiliza HTTP.
+En el preflight del 1 de noviembre de 2026 se consultaron permisos, cuotas,
+Services e Ingresses: el namespace estaba vacío salvo un ConfigMap. Esa era la
+situación previa al despliegue manual documentado arriba. Traefik expone la IP
+pública **134.199.176.3**, utilizada en las pruebas. El hostname
+`threads.134.199.176.3.nip.io` funciona, pero sigue **pendiente de autorización
+formal**; resolver DNS y recibir HTTP no sustituyen la confirmación del
+administrador. `PENDING_PUBLIC_HOST` permanece como plantilla excluida del conjunto
+base; confirmar la política de hostname antes de nuevas exposiciones. No se
+configuró TLS: su configuración depende de confirmar dominio y política de
+certificados.
 
 La consulta de Services de todos los namespaces no identificó un RabbitMQ
 compartido autorizado. Los brokers visibles pertenecen a otros grupos; no se
-usaron ni se inspeccionaron sus credenciales. Por eso se prepara el broker local.
+usaron ni se inspeccionaron sus credenciales. Por eso se utiliza el broker local.
 Si el administrador entrega un broker compartido, quitar `rabbitmq.yaml` de
 Kustomize y configurar su URL AMQP mediante el Secret antes de desplegar.
 
@@ -255,7 +308,7 @@ cp k8s/rabbitmq.yaml k8s/rendered/stages/03-rabbitmq.yaml
 ```
 
 Después, únicamente con autorización para modificar el clúster, aplicar esa
-etapa; no reaplicar el consolidado ni MongoDB. Comandos documentados, no ejecutados:
+etapa; no reaplicar el consolidado ni MongoDB. Comandos de referencia, no ejecutados por Codex:
 
 ```bash
 k() { kubectl --context cluster-inf326-2026-2 -n grupo-threads "$@"; }
@@ -279,7 +332,7 @@ cp k8s/mongodb.yaml k8s/rendered/stages/02-mongodb.yaml
 Antes de aplicar, comprobar con `k diff -f k8s/rendered/stages/02-mongodb.yaml`
 que el único cambio real sean las probes del StatefulSet (diff usa 1 si hay
 cambios). Si aparecen diferencias de PVC, imagen, args o recursos, detenerse.
-Los siguientes comandos son para una etapa autorizada; no se ejecutaron aquí:
+Los siguientes comandos son para una etapa autorizada; Codex no los ejecutó:
 
 ```bash
 k apply -f k8s/rendered/stages/02-mongodb.yaml
@@ -366,9 +419,11 @@ Cambiar credenciales en el Secret no rota usuarios ya inicializados en el PVC.
 Validar también el archivo renderizado con kubeconform. Revisar que host, imagen
 y credenciales coincidan, sin pegar el Secret en logs o revisiones.
 
-### Despliegue progresivo futuro — requiere autorización
+### Procedimiento de despliegue progresivo
 
-**Estos comandos solo se documentan; no se ejecutaron en esta etapa.** Primero
+**Referencia técnica: el despliegue inicial ya fue ejecutado manualmente por el
+autor. Codex no ejecutó estos comandos sobre Kubernetes.** No repetir sobre el
+entorno existente sin revisar su estado y autorizar los cambios. Primero
 confirmar hostname, digest, recursos libres y funcionamiento del CSI. Validar
 los siete archivos con kubeconform. No aplicar la carpeta entera ni el consolidado
 si se utiliza el procedimiento progresivo: se perderían las esperas entre etapas.
@@ -442,7 +497,8 @@ servicio usando IDs existentes de Users/Messages, sin modificar sus bases. Para
 outbox, correlacionar respuesta, evento y publicación confirmada en la misma MongoDB;
 una probe Ready no demuestra entrega. Un broker local tampoco establece por sí
 solo comunicación con consumidores de otros servicios. La prueba de persistencia
-tras reemplazo de MongoDB requiere autorización específica y conservar el PVC.
+tras reemplazo de MongoDB ya se verificó manualmente, según el apartado de
+evidencias; repetirla requiere autorización específica y conservar el PVC.
 
 ### Validación en Freelens y diagnóstico
 
@@ -503,9 +559,9 @@ de Deployments no restaura datos, configuración ni Secrets. No borrar PVC ni
 recrear MongoDB/RabbitMQ para revertir la API; RabbitMQ efímero pierde sus mensajes
 al reemplazarse. Restaurar ConfigMap/Secrets de forma controlada si cambiaron.
 
-### Validación de esta etapa
+### Validación previa del repositorio
 
-Tras aprobar la opción C: la suite local y las pruebas offline del generador dieron
+Durante la preparación y corrección de probes con la opción C: la suite local y las pruebas offline del generador dieron
 **121 passed, 6 skipped** (101 pruebas existentes y 20 de empaquetado/probes;
 las seis omitidas requieren MongoDB/RabbitMQ de prueba). Las pruebas de etapas
 se ejecutan por separado en CI para conservar el target de pruebas del Dockerfile
@@ -518,7 +574,9 @@ Kubeconform 0.7.0 estricto validó los **11 recursos en 7 archivos de etapas** y
 los mismos **11 recursos en el consolidado**, usando host reservado de prueba y
 sin Secrets. El conjunto base sigue conteniendo 10 recursos sin Ingress.
 Esto valida esquemas, no admisión, scheduling ni funcionamiento en Kubernetes.
-Actionlint 1.7.7 pasó para ambos workflows. No se generaron credenciales reales.
+Actionlint 1.7.7 pasó para ambos workflows. Codex no generó credenciales reales.
 
-El hostname candidato sigue pendiente de autorización. No se ejecutaron
+El hostname utilizado sigue pendiente de autorización formal. Codex no ejecutó
 `kubectl apply`, `delete`, `rollout`, `set image` ni cambios de recursos del clúster.
+El despliegue y las pruebas reales fueron ejecutados manualmente por el autor y
+quedan documentados en «Despliegue realizado y evidencias».
