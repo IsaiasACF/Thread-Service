@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thread-config
+  namespace: grupo-threads
+data:
+  THREAD_MONGODB_DATABASE: threads
+  THREAD_MONGODB_COLLECTION: replies
+  THREAD_USERS_URL: http://users.servicios-base.svc.cluster.local:8000
+  THREAD_MESSAGES_URL: http://messages.servicios-base.svc.cluster.local:8000
+  THREAD_RABBITMQ_EXCHANGE: chat
+  THREAD_RABBITMQ_QUEUE: thread.reply.created
+  THREAD_HTTP_TIMEOUT_SECONDS: '5'
+  THREAD_OUTBOX_LEASE_SECONDS: '60'

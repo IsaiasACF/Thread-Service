@@ -7,3 +7,9 @@ __pycache__
 .env
 *.pem
 *.kubeconfig
+k8s/rendered
+k8s/*.local.yaml
+.secrets
+kubeconfig
+kubeconfig.*
+Thread-Service

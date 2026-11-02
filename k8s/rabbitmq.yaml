@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thread-rabbitmq
+  namespace: grupo-threads
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: thread-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: thread-rabbitmq
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:4
+        ports:
+        - containerPort: 5672
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: thread-secrets
+              key: RABBITMQ_DEFAULT_USER
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: thread-secrets
+              key: RABBITMQ_DEFAULT_PASS
+        - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
+          value: +S 1:1 +A 4
+        resources:
+          requests:
+            cpu: 100m
+            memory: 192Mi
+          limits:
+            cpu: 300m
+            memory: 512Mi
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/rabbitmq
+        # TCP avoids launching an Erlang CLI VM for every probe.
+        startupProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 60
+        readinessProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        # No liveness probe: RabbitMQ recommends TCP readiness without liveness.
+      hostname: thread-rabbitmq
+      volumes:
+      - name: data
+        emptyDir:
+          sizeLimit: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thread-rabbitmq
+  namespace: grupo-threads
+spec:
+  selector:
+    app: thread-rabbitmq
+  ports:
+  - name: tcp
+    port: 5672
+    targetPort: 5672

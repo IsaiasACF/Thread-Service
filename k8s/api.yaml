@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thread-api
+  namespace: grupo-threads
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: thread-api
+  template:
+    metadata:
+      labels:
+        app: thread-api
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 40
+      containers:
+      - name: api
+        image: ghcr.io/isaiasacf/thread-service:pending
+        ports:
+        - containerPort: 8000
+          name: http
+        envFrom:
+        - configMapRef:
+            name: thread-config
+        env:
+        - name: THREAD_MONGODB_URL
+          valueFrom:
+            secretKeyRef:
+              name: thread-secrets
+              key: THREAD_MONGODB_URL
+        - name: THREAD_RABBITMQ_URL
+          valueFrom:
+            secretKeyRef:
+              name: thread-secrets
+              key: THREAD_RABBITMQ_URL
+        resources:
+          requests:
+            cpu: 100m
+            memory: 80Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 10001
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thread-api
+  namespace: grupo-threads
+spec:
+  selector:
+    app: thread-api
+  ports:
+  - name: tcp
+    port: 8000
+    targetPort: 8000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: thread-api
+  namespace: grupo-threads
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: thread-api
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300

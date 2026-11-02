@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thread-worker
+  namespace: grupo-threads
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: thread-worker
+  template:
+    metadata:
+      labels:
+        app: thread-worker
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 70
+      containers:
+      - name: worker
+        image: ghcr.io/isaiasacf/thread-service:pending
+        command:
+        - python
+        - -m
+        - app.workers.outbox
+        envFrom:
+        - configMapRef:
+            name: thread-config
+        env:
+        - name: THREAD_MONGODB_URL
+          valueFrom:
+            secretKeyRef:
+              name: thread-secrets
+              key: THREAD_MONGODB_URL
+        - name: THREAD_RABBITMQ_URL
+          valueFrom:
+            secretKeyRef:
+              name: thread-secrets
+              key: THREAD_RABBITMQ_URL
+        resources:
+          requests:
+            cpu: 50m
+            memory: 96Mi
+          limits:
+            cpu: 200m
+            memory: 192Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 10001
+        startupProbe:
+          exec:
+            command:
+            - python
+            - -c
+            - from pathlib import Path; assert b'app.workers.outbox' in Path('/proc/1/cmdline').read_bytes()
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 12
+        readinessProbe:
+          exec:
+            command:
+            - python
+            - -c
+            - from pathlib import Path; assert b'app.workers.outbox' in Path('/proc/1/cmdline').read_bytes()
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          exec:
+            command:
+            - python
+            - -c
+            - from pathlib import Path; assert b'app.workers.outbox' in Path('/proc/1/cmdline').read_bytes()
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
