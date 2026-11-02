@@ -49,6 +49,21 @@ for d in workloads:
             assert c['readinessProbe']['failureThreshold'] >= 3
         else:
             assert 'livenessProbe' in c, 'Other workloads still require liveness'
+        if d['metadata']['name'] == 'thread-mongodb' and c['name'] == 'mongodb':
+            for name in ('startupProbe', 'livenessProbe'):
+                probe = c[name]
+                assert probe.get('tcpSocket') == {'port': 27017}, (name, 'Expected MongoDB TCP check')
+                assert not any(action in probe for action in ('exec', 'httpGet', 'grpc'))
+                assert probe['timeoutSeconds'] >= 5
+            startup = c['startupProbe']
+            assert startup['failureThreshold'] * startup['periodSeconds'] >= 600
+            live = c['livenessProbe']
+            assert live['periodSeconds'] >= 30 and live['failureThreshold'] >= 6
+            ready = c['readinessProbe']
+            assert ready.get('exec', {}).get('command') == [
+                'mongosh', '--quiet', '--eval', 'quit(db.adminCommand({ping:1}).ok ? 0 : 1)']
+            assert not any(action in ready for action in ('tcpSocket', 'httpGet', 'grpc'))
+            assert (ready['timeoutSeconds'], ready['periodSeconds'], ready['failureThreshold']) == (15, 20, 3)
         assert cpu(c['resources']['limits']['cpu']) <= 1000
         assert memory(c['resources']['limits']['memory']) <= 1024
         for source in c.get('envFrom', []):

@@ -72,16 +72,14 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data/db
+        # Avoid starting mongosh for startup/liveness under CPU contention.
         startupProbe:
-          exec:
-            command:
-            - mongosh
-            - --quiet
-            - --eval
-            - 'quit(db.adminCommand({ping:1}).ok ? 0 : 1)'
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 5
-          failureThreshold: 30
+          failureThreshold: 60
         readinessProbe:
           exec:
             command:
@@ -89,19 +87,15 @@ spec:
             - --quiet
             - --eval
             - 'quit(db.adminCommand({ping:1}).ok ? 0 : 1)'
-          periodSeconds: 10
-          timeoutSeconds: 5
+          periodSeconds: 20
+          timeoutSeconds: 15
           failureThreshold: 3
         livenessProbe:
-          exec:
-            command:
-            - mongosh
-            - --quiet
-            - --eval
-            - 'quit(db.adminCommand({ping:1}).ok ? 0 : 1)'
-          periodSeconds: 20
+          tcpSocket:
+            port: 27017
+          periodSeconds: 30
           timeoutSeconds: 5
-          failureThreshold: 3
+          failureThreshold: 6
       volumes:
       - name: data
         persistentVolumeClaim:

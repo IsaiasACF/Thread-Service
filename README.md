@@ -214,7 +214,19 @@ volver a consultar cuota, capacidad de nodos y eventos.
 API tiene startup/readiness/liveness HTTP `/health`. El lifespan inicializa los
 índices de MongoDB antes de servir. Después del arranque `/health` solo confirma
 el proceso HTTP, no la salud de dependencias: validar también operaciones reales.
-MongoDB usa ping. RabbitMQ comprueba TCP 5672 en startup y readiness, sin ejecutar
+MongoDB usa TCP 27017 para startup (60 fallos cada 10 s, timeout 5 s y demora
+inicial 10 s, aproximadamente 10 minutos) y liveness (6 fallos cada 30 s,
+timeout 5 s, aproximadamente 3 minutos de fallos continuos). Esto evita lanzar
+`mongosh` para decidir reinicios en un contenedor con CPU limitada. TCP solo
+confirma que el puerto acepta conexiones: puede no detectar un servidor que
+acepta sockets pero no procesa operaciones. Readiness conserva el ping funcional
+con `mongosh`, timeout 15 s, intervalo 20 s y 3 fallos; si falla, retira el Pod
+de endpoints sin reiniciarlo. Startup y liveness todavía pueden reiniciar ante
+un listener inaccesible persistente. No sustituye las pruebas de persistencia/REST.
+Actualizar el StatefulSet reemplaza su único Pod, con interrupción temporal,
+pero conserva la identidad y el PVC existente. No borrar el Pod ni el volumen.
+
+RabbitMQ comprueba TCP 5672 en startup y readiness, sin ejecutar
 `rabbitmq-diagnostics` periódicamente ni configurar liveness. La
 [guía oficial de RabbitMQ](https://www.rabbitmq.com/docs/monitoring#health-checks-as-readiness-probes)
 recomienda readiness TCP y ausencia de liveness para evitar sobrecarga de las CLI
@@ -257,11 +269,34 @@ Este atajo actualiza únicamente el archivo de RabbitMQ; no sincroniza el
 consolidado local, que debe regenerarse si se decide usarlo en otra ocasión.
 El PVC y los Secrets existentes no forman parte de esta etapa.
 
+Para regenerar solo la etapa MongoDB sin tocar Secrets ni otras etapas:
+
+```bash
+mkdir -p k8s/rendered/stages
+cp k8s/mongodb.yaml k8s/rendered/stages/02-mongodb.yaml
+```
+
+Antes de aplicar, comprobar con `k diff -f k8s/rendered/stages/02-mongodb.yaml`
+que el único cambio real sean las probes del StatefulSet (diff usa 1 si hay
+cambios). Si aparecen diferencias de PVC, imagen, args o recursos, detenerse.
+Los siguientes comandos son para una etapa autorizada; no se ejecutaron aquí:
+
+```bash
+k apply -f k8s/rendered/stages/02-mongodb.yaml
+k rollout status statefulset/thread-mongodb --timeout=900s
+k get pod thread-mongodb-0
+k get pvc thread-mongodb-data
+```
+
+La etapa conserva Service y PVC sin cambios; no usar `--force`, borrar volúmenes
+ni reaplicar el consolidado. Verificar Ready, PVC Bound, eventos y lectura de un
+dato previamente guardado tras la sustitución. Este atajo no actualiza el consolidado.
+
 ### CI y publicación en GHCR
 
 Se conserva `.github/workflows/tests.yml`. El workflow adicional `container.yml`
 ejecuta las pruebas con MongoDB y RabbitMQ aislados, valida referencias/cuotas,
-ejecuta pruebas offline del generador por etapas y de las probes de RabbitMQ y construye el target `runtime` del **Dockerfile existente**. En pushes a `main` o
+ejecuta pruebas offline del generador por etapas y de las probes de MongoDB/RabbitMQ y construye el target `runtime` del **Dockerfile existente**. En pushes a `main` o
 `feature/tarea5-kubernetes` publica
 `ghcr.io/isaiasacf/thread-service:sha-<SHA completo>` con `GITHUB_TOKEN` y
 `packages: write`. Los PR solo prueban y construyen, sin publicar. No hay
@@ -471,7 +506,7 @@ al reemplazarse. Restaurar ConfigMap/Secrets de forma controlada si cambiaron.
 ### Validación de esta etapa
 
 Tras aprobar la opción C: la suite local y las pruebas offline del generador dieron
-**114 passed, 6 skipped** (101 pruebas existentes y 13 de empaquetado/probes;
+**121 passed, 6 skipped** (101 pruebas existentes y 20 de empaquetado/probes;
 las seis omitidas requieren MongoDB/RabbitMQ de prueba). Las pruebas de etapas
 se ejecutan por separado en CI para conservar el target de pruebas del Dockerfile
 existente, que solo empaqueta la aplicación y sus pruebas funcionales.

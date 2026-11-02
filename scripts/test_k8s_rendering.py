@@ -137,3 +137,41 @@ def test_validator_scopes_probe_policy_to_rabbitmq(monkeypatch, problem):
     else:
         with pytest.raises(AssertionError):
             runpy.run_path(str(ROOT / 'scripts/validate_k8s.py'), run_name='__main__')
+
+
+def test_mongodb_probe_policy_survives_stage_rendering(tmp_path):
+    prepare_k8s.write_manifests(rendered_documents(), tmp_path)
+    docs = list(yaml.safe_load_all((tmp_path / 'stages/02-mongodb.yaml').read_text()))
+    statefulset = next(d for d in docs if d['kind'] == 'StatefulSet')
+    container = statefulset['spec']['template']['spec']['containers'][0]
+    for name in ('startupProbe', 'livenessProbe'):
+        assert container[name]['tcpSocket'] == {'port': 27017}
+        assert 'exec' not in container[name]
+    assert 'mongosh' in container['readinessProbe']['exec']['command']
+    assert container['readinessProbe']['timeoutSeconds'] == 15
+
+
+@pytest.mark.parametrize('problem', [None, 'exec_liveness', 'tcp_readiness',
+                                      'short_readiness', 'aggressive_liveness', 'wrong_startup_port'])
+def test_validator_enforces_mongodb_probe_policy(monkeypatch, problem):
+    base, _ = source_documents()
+    mongo = next(d for d in base if d['kind'] == 'StatefulSet')
+    container = mongo['spec']['template']['spec']['containers'][0]
+    if problem == 'exec_liveness':
+        container['livenessProbe'].pop('tcpSocket')
+        container['livenessProbe']['exec'] = deepcopy(container['readinessProbe']['exec'])
+    elif problem == 'tcp_readiness':
+        container['readinessProbe'].pop('exec')
+        container['readinessProbe']['tcpSocket'] = {'port': 27017}
+    elif problem == 'short_readiness':
+        container['readinessProbe']['timeoutSeconds'] = 5
+    elif problem == 'aggressive_liveness':
+        container['livenessProbe']['failureThreshold'] = 1
+    elif problem == 'wrong_startup_port':
+        container['startupProbe']['tcpSocket']['port'] = 5672
+    monkeypatch.setattr('subprocess.check_output', lambda *args, **kwargs: yaml.safe_dump_all(base))
+    if problem is None:
+        runpy.run_path(str(ROOT / 'scripts/validate_k8s.py'), run_name='__main__')
+    else:
+        with pytest.raises(AssertionError):
+            runpy.run_path(str(ROOT / 'scripts/validate_k8s.py'), run_name='__main__')
