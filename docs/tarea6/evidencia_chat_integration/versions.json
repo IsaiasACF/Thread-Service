@@ -1,0 +1,94 @@
+{
+  "source_commit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a",
+  "mongodb": "7.0.14",
+  "rabbitmq": "3.12.1",
+  "erlang_otp": "25.3.2.8",
+  "node": "v22.23.4",
+  "docker_runtime_executed": false,
+  "runtime": "Unmodified applications as dedicated local processes; no mocks or route interception",
+  "base": {
+    "fastapi": "0.115.12",
+    "pydantic": "2.14.3",
+    "pymongo": "4.12.1",
+    "pika": "1.3.2",
+    "uvicorn": "0.34.2"
+  },
+  "gateway": {
+    "fastapi": "0.115.12",
+    "ariadne": "0.26.2",
+    "pydantic": "2.11.4",
+    "httpx": "0.28.1"
+  },
+  "threads": {
+    "fastapi": "0.162.2",
+    "pydantic": "2.14.3",
+    "pymongo": "4.19.0",
+    "pika": "1.4.4"
+  },
+  "runtime_packages": [
+    {
+      "file": "erlang-asn1_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "b3d550c61bfdf5d0b70d32972af43d36fba50980520afddae7ae141c5a701027"
+    },
+    {
+      "file": "erlang-base_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "968433b67fd2b75bbce8c2571bcb7de7e43f63763c4cab4528b38f7e231d6ac2"
+    },
+    {
+      "file": "erlang-crypto_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "abaa8dadc277bc88cd3998f692c489da1d6ec00a8da0b51f9c7ca8513cb35afe"
+    },
+    {
+      "file": "erlang-eldap_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "82a87f828260c1308c64bc26d9351dbc0fd949ecbc3e25cf363ed571eda24930"
+    },
+    {
+      "file": "erlang-inets_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "bb8883b297be6f6dfea18f43809b5ce423478c7131fa27623feccf330a74fce9"
+    },
+    {
+      "file": "erlang-mnesia_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "4edbf2890d3c404bf4a509a0ae5093aead5250802066bf25fda00dd855b68060"
+    },
+    {
+      "file": "erlang-os-mon_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "39d7903c52c47ab323270580e7d543c2696b1b343c72806feab9ae2a7729fcc8"
+    },
+    {
+      "file": "erlang-parsetools_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "1a7359f577ab58da75c07b8da520abb3a18fa25d7903729e3920d4bf2df503ad"
+    },
+    {
+      "file": "erlang-public-key_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "13ebc9a1477c2774c5979c0613b19ec3eebce5b38c482820c88582eac6ae7401"
+    },
+    {
+      "file": "erlang-runtime-tools_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "77622f694eca336cbb8e0bc16439f7b49ca23c708812db95321211dee08f2193"
+    },
+    {
+      "file": "erlang-snmp_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "41b26dbdbd2bf1866526ef0a435353e9ee345378b458b7750e7fc100d525a329"
+    },
+    {
+      "file": "erlang-ssl_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "d26b419f68fbb315fc8345342907f077851f9dec6045e5c0921a215c3ee5c483"
+    },
+    {
+      "file": "erlang-syntax-tools_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "bb4becdd3c71ae48ee83e47585f3373dcc83821e618279b6fb7a0fccb128386e"
+    },
+    {
+      "file": "erlang-tools_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "9f1c0711f55a6cabdcf4a98725c80b886df5247951fd922b3472259fda45df81"
+    },
+    {
+      "file": "erlang-xmerl_1%3a25.3.2.8+dfsg-1ubuntu4.8_amd64.deb",
+      "sha256": "7597cebe7653dda6dd1363c8debc0de3959b40fed11aebf50c538fd10223432e"
+    },
+    {
+      "file": "rabbitmq-server_3.12.1-1ubuntu1.7_all.deb",
+      "sha256": "c1a882b73015a60996414ea326232a581714b7b3e868dd68f73b876834b1b35c"
+    }
+  ]
+}

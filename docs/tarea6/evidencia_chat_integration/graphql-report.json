@@ -1,0 +1,282 @@
+{
+  "kind": "real-services-no-mocks",
+  "source_commit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a",
+  "strict_e2e_passed": false,
+  "tag": "be660900232c",
+  "operations": {
+    "createUser": {
+      "success": false,
+      "response": {
+        "data": null,
+        "errors": [
+          {
+            "message": "El servicio no pudo completar la solicitud.",
+            "extensions": {
+              "code": "BAD_UPSTREAM_RESPONSE",
+              "service": "users",
+              "httpStatus": 500
+            },
+            "locations": [
+              {
+                "line": 1,
+                "column": 25
+              }
+            ],
+            "path": [
+              "createUser"
+            ]
+          }
+        ]
+      }
+    },
+    "user": {
+      "success": true,
+      "response": {
+        "data": {
+          "user": {
+            "id": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+            "displayName": "IT-usuario-be660900232c"
+          }
+        }
+      }
+    },
+    "createChannel": {
+      "success": false,
+      "response": {
+        "data": null,
+        "errors": [
+          {
+            "message": "El servicio no pudo completar la solicitud.",
+            "extensions": {
+              "code": "BAD_UPSTREAM_RESPONSE",
+              "service": "channels",
+              "httpStatus": 500
+            },
+            "locations": [
+              {
+                "line": 1,
+                "column": 25
+              }
+            ],
+            "path": [
+              "createChannel"
+            ]
+          }
+        ]
+      }
+    },
+    "channels": {
+      "success": true,
+      "response": {
+        "data": {
+          "channels": [
+            {
+              "id": "71c9bc3b-f984-4bc9-b419-252371fddc03",
+              "name": "it-canal-be660900232c"
+            }
+          ]
+        }
+      }
+    },
+    "channel": {
+      "success": true,
+      "response": {
+        "data": {
+          "channel": {
+            "id": "71c9bc3b-f984-4bc9-b419-252371fddc03",
+            "name": "it-canal-be660900232c"
+          }
+        }
+      }
+    },
+    "sendMessage": {
+      "success": false,
+      "response": {
+        "data": null,
+        "errors": [
+          {
+            "message": "El servicio no pudo completar la solicitud.",
+            "extensions": {
+              "code": "BAD_UPSTREAM_RESPONSE",
+              "service": "messages",
+              "httpStatus": 500
+            },
+            "locations": [
+              {
+                "line": 1,
+                "column": 39
+              }
+            ],
+            "path": [
+              "sendMessage"
+            ]
+          }
+        ]
+      }
+    },
+    "messages": {
+      "success": true,
+      "response": {
+        "data": {
+          "messages": [
+            {
+              "id": "d4b54227-1076-4d8f-924b-6197333131a3",
+              "channelId": "71c9bc3b-f984-4bc9-b419-252371fddc03",
+              "authorId": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+              "content": "Mensaje real de integración be660900232c",
+              "createdAt": "2026-11-08T18:15:42.260229Z"
+            }
+          ]
+        }
+      }
+    },
+    "replies": {
+      "success": true,
+      "response": {
+        "data": {
+          "replies": []
+        }
+      }
+    },
+    "createReply": {
+      "success": true,
+      "response": {
+        "data": {
+          "createReply": {
+            "id": "8be94a2e-7499-4334-b2da-e907630978af",
+            "channelId": "71c9bc3b-f984-4bc9-b419-252371fddc03",
+            "messageId": "d4b54227-1076-4d8f-924b-6197333131a3",
+            "authorId": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+            "content": "Respuesta real de integración be660900232c",
+            "createdAt": "2026-11-08T18:15:42.375451Z"
+          }
+        }
+      }
+    }
+  },
+  "checks": {
+    "real_service_health": {
+      "passed": true,
+      "services": [
+        "users",
+        "channels",
+        "messages",
+        "threads",
+        "gateway"
+      ]
+    },
+    "user_write_after_error": {
+      "passed": true,
+      "recovery": "Read-only inspection of this run's own MongoDB",
+      "id": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1"
+    },
+    "references_and_utc": {
+      "passed": true
+    },
+    "reply_round_trip": {
+      "passed": true,
+      "reply_id": "8be94a2e-7499-4334-b2da-e907630978af"
+    },
+    "missing_user": {
+      "passed": true,
+      "extensions": {
+        "code": "NOT_FOUND",
+        "service": "users",
+        "httpStatus": 404
+      }
+    },
+    "missing_channel": {
+      "passed": true,
+      "extensions": {
+        "code": "NOT_FOUND",
+        "service": "channels",
+        "httpStatus": 404
+      }
+    },
+    "missing_root": {
+      "passed": true,
+      "extensions": {
+        "code": "NOT_FOUND",
+        "service": "threads",
+        "httpStatus": 404
+      }
+    },
+    "invalid_author_message": {
+      "passed": true,
+      "extensions": {
+        "code": "VALIDATION_ERROR",
+        "service": "messages",
+        "httpStatus": 422
+      }
+    },
+    "invalid_author_reply": {
+      "passed": true,
+      "extensions": {
+        "code": "VALIDATION_ERROR",
+        "service": "threads",
+        "httpStatus": 422
+      }
+    },
+    "empty_content": {
+      "passed": true,
+      "extensions": {
+        "code": "VALIDATION_ERROR",
+        "service": "messages"
+      }
+    },
+    "real_amqp_delivery": {
+      "passed": true,
+      "reply_id": "8be94a2e-7499-4334-b2da-e907630978af",
+      "published_at": "2026-11-08T18:15:43.060000Z"
+    },
+    "real_connection_error": {
+      "passed": true,
+      "extensions": {
+        "code": "UPSTREAM_UNAVAILABLE",
+        "service": "users"
+      }
+    },
+    "real_timeout": {
+      "passed": true,
+      "extensions": {
+        "code": "UPSTREAM_TIMEOUT",
+        "service": "users"
+      }
+    },
+    "real_dependency_503": {
+      "passed": true,
+      "extensions": {
+        "code": "UPSTREAM_UNAVAILABLE",
+        "service": "threads",
+        "httpStatus": 503
+      }
+    },
+    "disk_persistence_after_restart": {
+      "passed": true,
+      "restarted": [
+        "mongodb",
+        "users",
+        "channels",
+        "messages",
+        "threads",
+        "gateway"
+      ]
+    }
+  },
+  "fixtures": {
+    "user_id": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+    "channel_id": "71c9bc3b-f984-4bc9-b419-252371fddc03",
+    "message_id": "d4b54227-1076-4d8f-924b-6197333131a3",
+    "reply_id": "8be94a2e-7499-4334-b2da-e907630978af",
+    "username": "IT-usuario-be660900232c",
+    "channel_name": "it-canal-be660900232c",
+    "message": "Mensaje real de integración be660900232c",
+    "reply": "Respuesta real de integración be660900232c"
+  },
+  "external_blockers": [
+    "Users POST persisted data but did not return a valid creation response",
+    "Channels POST persisted data but did not return a valid creation response",
+    "Messages POST persisted data but failed while publishing/serializing an ObjectId"
+  ],
+  "mongo_version": "7.0.14"
+}

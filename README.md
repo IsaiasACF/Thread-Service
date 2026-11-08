@@ -603,3 +603,9 @@ docker compose -f integration/compose.yaml up --build -d
 Para desarrollo sin Docker, instalación y pruebas consultar el contrato.
 La configuración nueva no ocupa el puerto 8004 ni modifica el Compose original.
 Resultados de validación: [docs/tarea6/VALIDACION.md](docs/tarea6/VALIDACION.md).
+
+Validación con servicios reales y entorno aislado:
+[CHAT_INTEGRATION.md](docs/tarea6/CHAT_INTEGRATION.md). Se comprobó persistencia
+real de Threads y entrega RabbitMQ; el recorrido completo sigue bloqueado por
+respuestas HTTP 500 de creación en el chat base docente. Ver evidencias y
+pasos reproducibles en la guía antes de considerar aprobado el E2E.
