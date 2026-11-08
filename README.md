@@ -581,13 +581,16 @@ El hostname utilizado sigue pendiente de autorización formal. Codex no ejecutó
 El despliegue y las pruebas reales fueron ejecutados manualmente por el autor y
 quedan documentados en «Despliegue realizado y evidencias».
 
-## Tarea 6: base compartida de interfaz
+## Tarea 6: Gateway e interfaz
 
 Gateway FastAPI + Ariadne y frontend React + TypeScript + Vite independientes
 de Thread Service. Contrato, responsabilidades de A/B, entorno, ejemplos de
 extensión y pruebas: [CONTRATO_COMPARTIDO.md](docs/tarea6/CONTRATO_COMPARTIDO.md).
-Las pantallas son placeholders; las operaciones GraphQL de dominio devuelven
-`NOT_IMPLEMENTED`. Salud e introspección funcionan sin servicios externos.
+Chat y Threads incluyen identidad local, canales, mensajes y panel de respuestas.
+Guía de uso, pruebas, capturas y límites de integración real:
+[CHAT_FRONTEND.md](docs/tarea6/CHAT_FRONTEND.md).
+Integrales y Polls conservan sus placeholders hasta la implementación de Andrés.
+Salud e introspección del Gateway funcionan sin servicios externos.
 
 ```sh
 # Crear solo si la red no existe:
