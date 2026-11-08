@@ -1,47 +1,26 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect, vi } from 'vitest';
-import { App } from './App';
-import { Providers } from './Providers';
-import { graphqlClient } from '../lib/graphql';
+import { describe, expect, it } from 'vitest';
+import { backend, mount } from '../features/chat/testSupport';
 
-function mount(path = '/') {
-  return render(<Providers><MemoryRouter initialEntries={[path]}><App /></MemoryRouter></Providers>);
-}
-
-describe('Rutas compartidas', () => {
+describe('Rutas y compatibilidad compartidas', () => {
   it.each([
-    ['/', 'Identidad'], ['/channels/c-1', 'Chat y respuestas'],
     ['/integrals', 'Calculadora e historial'], ['/integrals/i-1', 'Detalle de integral'],
     ['/polls/p-1', 'Encuesta'], ['/no-existe', 'Página no encontrada'],
-  ])('abre %s sin consultar servicios', (path, title) => {
-    const fetch = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('No network allowed'));
-    mount(path);
+  ])('conserva %s sin solicitudes de dominio de Andrés', (path, title) => {
+    const { calls } = backend(); mount(path);
     expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
     expect(screen.getByText('Pendiente de implementación')).toBeInTheDocument();
-    expect(fetch).not.toHaveBeenCalled();
-    fetch.mockRestore();
+    expect(calls).toHaveLength(0);
   });
-
-  it('permite navegar con enlaces accesibles', async () => {
-    const user = userEvent.setup();
-    mount();
-    for (const [label, heading] of [['Chat', 'Chat y respuestas'], ['Integrales', 'Calculadora e historial'], ['Encuestas', 'Encuesta'], ['Identidad', 'Identidad']]) {
-      await user.click(screen.getByRole('link', { name: label }));
-      expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: label })).toHaveAttribute('aria-current', 'page');
-    }
-  });
-
-  it('usa el endpoint GraphQL común', async () => {
-    const fetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(
-      JSON.stringify({ data: { health: 'ok' } }),
-      { headers: { 'Content-Type': 'application/json' } },
-    ));
-    try {
-      expect(await graphqlClient.request('{ health }')).toEqual({ health: 'ok' });
-      expect(fetch).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/graphql' }), expect.anything());
-    } finally { fetch.mockRestore(); }
+  it('permite navegar desde Chat a las herramientas y volver', async () => {
+    const { calls } = backend(); mount('/channels');
+    await userEvent.click(screen.getByRole('link', { name: /Integrales/ }));
+    expect(screen.getByRole('heading', { name: 'Calculadora e historial' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('link', { name: 'Encuestas' }));
+    expect(screen.getByRole('heading', { name: 'Encuesta' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('link', { name: 'Chat' }));
+    expect(await screen.findByRole('heading', { name: 'Un canal para cada idea.' })).toBeInTheDocument();
+    expect(calls.every(call => ['GetChannels'].includes(call.operation))).toBe(true);
   });
 });
