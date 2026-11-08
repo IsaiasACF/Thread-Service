@@ -1,0 +1,23 @@
+name: Chat integration setup
+on:
+  pull_request:
+    paths: ['integration/chat/**', '.github/workflows/chat-integration-config.yml']
+  push:
+    branches: [main, feature/tarea6-chat-integration]
+    paths: ['integration/chat/**', '.github/workflows/chat-integration-config.yml']
+permissions:
+  contents: read
+jobs:
+  configuration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest integration/chat/test_launcher.py -q -W error
+      - name: Verify immutable external sources and Compose syntax only
+        run: |
+          python integration/chat/prepare.py --directory /tmp/chat-integration-setup
+          python integration/chat/verify_compose.py --env-file /tmp/chat-integration-setup/compose.env

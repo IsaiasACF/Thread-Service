@@ -1,0 +1,165 @@
+name: ${CHAT_PROJECT_NAME:-tarea6-chat-integration}
+
+x-api-health: &api-health
+  test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"]
+  interval: 5s
+  timeout: 3s
+  retries: 20
+
+x-mongo: &mongo
+  image: mongo:7.0.14
+  networks: [chat-data]
+  healthcheck:
+    test: [CMD, mongosh, --quiet, --eval, "db.adminCommand({ping:1})"]
+    interval: 5s
+    timeout: 3s
+    retries: 30
+
+x-thread-env: &thread-env
+  THREAD_MONGODB_URL: mongodb://chat-threads-db:27017
+  THREAD_MONGODB_DATABASE: chat_integration_threads
+  THREAD_USERS_URL: http://chat-it-users:8000
+  THREAD_MESSAGES_URL: http://chat-it-messages:8000
+  THREAD_RABBITMQ_URL: amqp://${CHAT_RABBIT_USER:-chat_it}:${CHAT_RABBIT_PASSWORD:?Generate a private compose.env with prepare.py}@chat-rabbitmq:5672/%2F
+  THREAD_RABBITMQ_EXCHANGE: chat
+  THREAD_RABBITMQ_QUEUE: chat.integration.replies
+
+services:
+  chat-users:
+    build:
+      context: ${CHAT_BASE_SOURCE:?Set the verified external source directory}/users
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']
+    environment:
+      MONGODB_URL: mongodb://chat-users-db:27017
+      PYTHONDONTWRITEBYTECODE: '1'
+    ports: ['127.0.0.1:${CHAT_USERS_PORT:-18001}:8000']
+    depends_on:
+      chat-users-db: {condition: service_healthy}
+    healthcheck: *api-health
+    networks:
+      microsvcs: {}
+      chat-data: {aliases: [chat-it-users]}
+
+  chat-channels:
+    build:
+      context: ${CHAT_BASE_SOURCE:?Set the verified external source directory}/channels
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']
+    environment:
+      MONGODB_URL: mongodb://chat-channels-db:27017
+      PYTHONDONTWRITEBYTECODE: '1'
+    ports: ['127.0.0.1:${CHAT_CHANNELS_PORT:-18002}:8000']
+    depends_on:
+      chat-channels-db: {condition: service_healthy}
+    healthcheck: *api-health
+    networks:
+      microsvcs: {}
+      chat-data: {aliases: [chat-it-channels]}
+
+  chat-messages:
+    build:
+      context: ${CHAT_BASE_SOURCE:?Set the verified external source directory}/messages
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']
+    environment:
+      MONGODB_URL: mongodb://chat-messages-db:27017
+      USERS_URL: http://chat-it-users:8000
+      CHANNELS_URL: http://chat-it-channels:8000
+      RABBITMQ_URL: amqp://${CHAT_RABBIT_USER:-chat_it}:${CHAT_RABBIT_PASSWORD:?Generate a private compose.env}@chat-rabbitmq:5672/%2F
+      PYTHONDONTWRITEBYTECODE: '1'
+    ports: ['127.0.0.1:${CHAT_MESSAGES_PORT:-18003}:8000']
+    depends_on:
+      chat-messages-db: {condition: service_healthy}
+      chat-users: {condition: service_healthy}
+      chat-channels: {condition: service_healthy}
+      chat-rabbitmq: {condition: service_healthy}
+    healthcheck: *api-health
+    networks:
+      microsvcs: {}
+      chat-data: {aliases: [chat-it-messages]}
+
+  chat-threads:
+    build: {context: ../.., target: runtime}
+    environment: *thread-env
+    ports: ['127.0.0.1:${CHAT_THREADS_PORT:-18004}:8000']
+    depends_on:
+      chat-threads-db: {condition: service_healthy}
+    healthcheck: *api-health
+    networks:
+      microsvcs: {}
+      chat-data: {aliases: [chat-it-threads]}
+
+  chat-worker:
+    build: {context: ../.., target: runtime}
+    command: [python, -m, app.workers.outbox]
+    environment: *thread-env
+    networks: [chat-data]
+    depends_on:
+      chat-threads-db: {condition: service_healthy}
+      chat-rabbitmq: {condition: service_healthy}
+    stop_grace_period: 40s
+
+  chat-gateway:
+    build: ../../gateway
+    environment:
+      USERS_BASE_URL: http://chat-it-users:8000
+      CHANNELS_BASE_URL: http://chat-it-channels:8000
+      MESSAGES_BASE_URL: http://chat-it-messages:8000
+      THREADS_BASE_URL: http://chat-it-threads:8000
+      HTTP_TIMEOUT_SECONDS: '2'
+      CORS_ORIGINS: '["http://127.0.0.1:15173","http://localhost:15173"]'
+    ports: ['127.0.0.1:${CHAT_GATEWAY_PORT:-15000}:5000']
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      microsvcs: {}
+      chat-data: {aliases: [chat-it-gateway]}
+
+  chat-frontend:
+    build: ../../frontend
+    environment:
+      GATEWAY_PROXY_TARGET: http://chat-it-gateway:5000
+    ports: ['127.0.0.1:${CHAT_FRONTEND_PORT:-15173}:5173']
+    depends_on:
+      chat-gateway: {condition: service_healthy}
+    networks: [microsvcs, chat-data]
+
+  chat-users-db:
+    <<: *mongo
+    volumes: [chat-users-data:/data/db]
+  chat-channels-db:
+    <<: *mongo
+    volumes: [chat-channels-data:/data/db]
+  chat-messages-db:
+    <<: *mongo
+    volumes: [chat-messages-data:/data/db]
+  chat-threads-db:
+    <<: *mongo
+    volumes: [chat-threads-data:/data/db]
+
+  chat-rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${CHAT_RABBIT_USER:-chat_it}
+      RABBITMQ_DEFAULT_PASS: ${CHAT_RABBIT_PASSWORD:?Generate a private compose.env}
+    volumes: [chat-rabbit-data:/var/lib/rabbitmq]
+    networks: [chat-data]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  chat-users-data: {}
+  chat-channels-data: {}
+  chat-messages-data: {}
+  chat-threads-data: {}
+  chat-rabbit-data: {}
+networks:
+  microsvcs:
+    name: microsvcs
+    external: true
+  chat-data:
+    internal: true

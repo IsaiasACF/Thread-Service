@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/rmasad/microservicios",
+  "commit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a",
+  "subdirectory": "03_Comunicación/demo",
+  "sha256": {
+    "users/app/main.py": "5ddad52ee790029984f7d8d43377e78a54c5c38ad1c0d3ebd4769324b642fe4c",
+    "users/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "users/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+    "channels/app/main.py": "d953fdeeada1115a773bc835ad7779653f752dec2b6405f51166809019764dae",
+    "channels/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "channels/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+    "messages/app/main.py": "6c1850f04bada390ec2a5a780a73552f3bfa8320dc68a26b86b35c122b7c8802",
+    "messages/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "messages/requirements.txt": "24fcc7125486cee49895f71f6feac61c697c9f26598ae5dc3b921685582cd130"
+  }
+}
