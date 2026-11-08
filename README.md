@@ -580,3 +580,23 @@ El hostname utilizado sigue pendiente de autorización formal. Codex no ejecutó
 `kubectl apply`, `delete`, `rollout`, `set image` ni cambios de recursos del clúster.
 El despliegue y las pruebas reales fueron ejecutados manualmente por el autor y
 quedan documentados en «Despliegue realizado y evidencias».
+
+## Tarea 6: base compartida de interfaz
+
+Gateway FastAPI + Ariadne y frontend React + TypeScript + Vite independientes
+de Thread Service. Contrato, responsabilidades de A/B, entorno, ejemplos de
+extensión y pruebas: [CONTRATO_COMPARTIDO.md](docs/tarea6/CONTRATO_COMPARTIDO.md).
+Las pantallas son placeholders; las operaciones GraphQL de dominio devuelven
+`NOT_IMPLEMENTED`. Salud e introspección funcionan sin servicios externos.
+
+```sh
+# Crear solo si la red no existe:
+docker network create microsvcs
+docker compose -f integration/compose.yaml up --build -d
+# Frontend http://localhost:5173; Gateway http://localhost:5000/health
+# GraphQL POST http://localhost:5000/graphql, consulta { health }
+```
+
+Para desarrollo sin Docker, instalación y pruebas consultar el contrato.
+La configuración nueva no ocupa el puerto 8004 ni modifica el Compose original.
+Resultados de validación: [docs/tarea6/VALIDACION.md](docs/tarea6/VALIDACION.md).

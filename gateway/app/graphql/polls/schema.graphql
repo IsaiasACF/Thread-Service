@@ -1,0 +1,29 @@
+extend type Query { poll(id: ID!): Poll }
+extend type Mutation {
+  createPoll(input: CreatePollInput!, idempotencyKey: String!): Poll!
+  votePoll(pollId: ID!, voterId: ID!, optionId: ID!): Vote!
+  closePoll(pollId: ID!, authorId: ID!): Poll!
+}
+type Poll {
+  pollId: ID!
+  channelId: ID!
+  authorId: ID!
+  question: String!
+  options: [PollOption!]!
+  status: String!
+  durationMinutes: Int!
+  closesAt: String!
+  createdAt: String!
+  closedAt: String
+  totalVotes: Int!
+  creationError: String
+}
+type PollOption { optionId: ID!, position: Int!, text: String!, voteCount: Int! }
+type Vote { pollId: ID!, voterId: ID!, optionId: ID!, castAt: String! }
+input CreatePollInput {
+  channelId: ID!
+  authorId: ID!
+  question: String!
+  options: [String!]!
+  durationMinutes: Int = 5
+}

@@ -1,0 +1,35 @@
+name: tarea6
+services:
+  gateway:
+    build: ../gateway
+    ports:
+      - "5000:5000"
+    environment:
+      USERS_BASE_URL: ${USERS_BASE_URL:-http://users:8000}
+      CHANNELS_BASE_URL: ${CHANNELS_BASE_URL:-http://channels:8000}
+      MESSAGES_BASE_URL: ${MESSAGES_BASE_URL:-http://messages:8000}
+      THREADS_BASE_URL: ${THREADS_BASE_URL:-http://threads:8000}
+      INTEGRALS_BASE_URL: ${INTEGRALS_BASE_URL:-http://integrals:8000}
+      POLLS_BASE_URL: ${POLLS_BASE_URL:-http://polls:8000}
+      HTTP_TIMEOUT_SECONDS: ${HTTP_TIMEOUT_SECONDS:-5}
+      CORS_ORIGINS: '["http://localhost:5173"]'
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks: [microsvcs]
+  frontend:
+    build: ../frontend
+    ports:
+      - "5173:5173"
+    environment:
+      GATEWAY_PROXY_TARGET: http://gateway:5000
+    depends_on:
+      gateway:
+        condition: service_healthy
+    networks: [microsvcs]
+networks:
+  microsvcs:
+    external: true
+    name: microsvcs
