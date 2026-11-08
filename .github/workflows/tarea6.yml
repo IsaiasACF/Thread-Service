@@ -1,0 +1,33 @@
+name: Tarea 6 scaffold
+on:
+  pull_request:
+  push:
+    branches: [main, feature/tarea6-base-compartida]
+jobs:
+  gateway:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install -r gateway/requirements-dev.txt
+      - run: python -m pytest -c gateway/pytest.ini gateway/tests -q -W error
+      - run: docker compose -f integration/compose.yaml config --quiet
+      - run: docker build -t tarea6-gateway gateway
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: docker build -t tarea6-frontend .
