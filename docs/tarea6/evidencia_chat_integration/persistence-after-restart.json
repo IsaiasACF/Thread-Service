@@ -1,0 +1,86 @@
+{
+  "kind": "real-disk-persistence-after-complete-stack-shutdown-and-resume",
+  "checked_at": "2026-11-08T18:27:48.972670+00:00",
+  "datasets": {
+    "graphql": {
+      "passed": true,
+      "actual_graphql_response": {
+        "user": {
+          "id": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+          "displayName": "IT-usuario-be660900232c"
+        },
+        "channel": {
+          "id": "71c9bc3b-f984-4bc9-b419-252371fddc03",
+          "name": "it-canal-be660900232c"
+        },
+        "messages": [
+          {
+            "id": "d4b54227-1076-4d8f-924b-6197333131a3",
+            "channelId": "71c9bc3b-f984-4bc9-b419-252371fddc03",
+            "authorId": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+            "content": "Mensaje real de integración be660900232c",
+            "createdAt": "2026-11-08T18:15:42.260229Z"
+          }
+        ],
+        "replies": [
+          {
+            "id": "8be94a2e-7499-4334-b2da-e907630978af",
+            "channelId": "71c9bc3b-f984-4bc9-b419-252371fddc03",
+            "messageId": "d4b54227-1076-4d8f-924b-6197333131a3",
+            "authorId": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+            "content": "Respuesta real de integración be660900232c",
+            "createdAt": "2026-11-08T18:15:42.375451Z"
+          }
+        ]
+      }
+    },
+    "browser": {
+      "passed": true,
+      "actual_graphql_response": {
+        "user": {
+          "id": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+          "displayName": "IT-usuario-be660900232c"
+        },
+        "channel": {
+          "id": "35477914-7bdd-4b0b-b01b-84c80cead72c",
+          "name": "navegador-ui-1794161907869"
+        },
+        "messages": [
+          {
+            "id": "ccfbe215-9298-4fee-956d-e77fba7a9b47",
+            "channelId": "35477914-7bdd-4b0b-b01b-84c80cead72c",
+            "authorId": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+            "content": "Mensaje real desde React ui-1794161907869",
+            "createdAt": "2026-11-08T18:18:30.763178Z"
+          }
+        ],
+        "replies": [
+          {
+            "id": "c3fe874a-fe44-4855-82f5-d5a404ae8e4c",
+            "channelId": "35477914-7bdd-4b0b-b01b-84c80cead72c",
+            "messageId": "ccfbe215-9298-4fee-956d-e77fba7a9b47",
+            "authorId": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+            "content": "Respuesta real desde React ui-1794161907869",
+            "createdAt": "2026-11-08T18:18:36.197190Z"
+          }
+        ]
+      }
+    }
+  },
+  "browser_reply_amqp_after_broker_restart": {
+    "passed": true,
+    "event": {
+      "type": "chat.thread.reply.created",
+      "subject_id": "c3fe874a-fe44-4855-82f5-d5a404ae8e4c",
+      "occurred_at": "2026-11-08T18:18:36.197190Z",
+      "data": {
+        "author_id": "478e72bc-40c8-4144-a3ce-7a6b0690f5a1",
+        "content": "Respuesta real desde React ui-1794161907869",
+        "id": "c3fe874a-fe44-4855-82f5-d5a404ae8e4c",
+        "channel_id": "35477914-7bdd-4b0b-b01b-84c80cead72c",
+        "message_id": "ccfbe215-9298-4fee-956d-e77fba7a9b47",
+        "created_at": "2026-11-08T18:18:36.197190Z"
+      }
+    }
+  }
+}
