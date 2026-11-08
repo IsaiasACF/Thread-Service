@@ -1,0 +1,20 @@
+extend type Query {
+  user(id: ID!): User
+  channels: [Channel!]!
+  channel(id: ID!): Channel
+  messages(channelId: ID!): [Message!]!
+}
+extend type Mutation {
+  createUser(displayName: String!): User!
+  createChannel(name: String!): Channel!
+  sendMessage(channelId: ID!, authorId: ID!, content: String!): Message!
+}
+type User { id: ID!, displayName: String! }
+type Channel { id: ID!, name: String! }
+type Message {
+  id: ID!
+  channelId: ID!
+  authorId: ID!
+  content: String!
+  createdAt: String!
+}

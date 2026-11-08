@@ -1,0 +1,19 @@
+extend type Query {
+  integrals(limit: Int = 20, offset: Int = 0, status: String): IntegralPage!
+  integral(id: ID!): Integral
+}
+extend type Mutation { calculateIntegral(latex: String!): Integral! }
+type Integral {
+  id: ID!
+  latex: String!
+  status: String!
+  result: IntegralResult
+  error: IntegralError
+  source: IntegralSource!
+  durationMs: Int!
+  createdAt: String!
+}
+type IntegralResult { latex: String!, numeric: Float, indefinite: Boolean! }
+type IntegralError { code: String!, message: String! }
+type IntegralSource { kind: String!, channelId: ID, authorId: ID, messageId: ID }
+type IntegralPage { items: [Integral!]!, total: Int!, limit: Int!, offset: Int! }

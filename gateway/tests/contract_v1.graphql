@@ -1,0 +1,122 @@
+type Query {
+  health: String!
+  user(id: ID!): User
+  channels: [Channel!]!
+  channel(id: ID!): Channel
+  messages(channelId: ID!): [Message!]!
+  replies(channelId: ID!, messageId: ID!): [Reply!]!
+  integrals(limit: Int = 20, offset: Int = 0, status: String): IntegralPage!
+  integral(id: ID!): Integral
+  poll(id: ID!): Poll
+}
+
+type Mutation {
+  createUser(displayName: String!): User!
+  createChannel(name: String!): Channel!
+  sendMessage(channelId: ID!, authorId: ID!, content: String!): Message!
+  createReply(channelId: ID!, messageId: ID!, authorId: ID!, content: String!): Reply!
+  calculateIntegral(latex: String!): Integral!
+  createPoll(input: CreatePollInput!, idempotencyKey: String!): Poll!
+  votePoll(pollId: ID!, voterId: ID!, optionId: ID!): Vote!
+  closePoll(pollId: ID!, authorId: ID!): Poll!
+}
+
+type User {
+  id: ID!
+  displayName: String!
+}
+
+type Channel {
+  id: ID!
+  name: String!
+}
+
+type Message {
+  id: ID!
+  channelId: ID!
+  authorId: ID!
+  content: String!
+  createdAt: String!
+}
+
+type Reply {
+  id: ID!
+  channelId: ID!
+  messageId: ID!
+  authorId: ID!
+  content: String!
+  createdAt: String!
+}
+
+type Integral {
+  id: ID!
+  latex: String!
+  status: String!
+  result: IntegralResult
+  error: IntegralError
+  source: IntegralSource!
+  durationMs: Int!
+  createdAt: String!
+}
+
+type IntegralResult {
+  latex: String!
+  numeric: Float
+  indefinite: Boolean!
+}
+
+type IntegralError {
+  code: String!
+  message: String!
+}
+
+type IntegralSource {
+  kind: String!
+  channelId: ID
+  authorId: ID
+  messageId: ID
+}
+
+type IntegralPage {
+  items: [Integral!]!
+  total: Int!
+  limit: Int!
+  offset: Int!
+}
+
+type Poll {
+  pollId: ID!
+  channelId: ID!
+  authorId: ID!
+  question: String!
+  options: [PollOption!]!
+  status: String!
+  durationMinutes: Int!
+  closesAt: String!
+  createdAt: String!
+  closedAt: String
+  totalVotes: Int!
+  creationError: String
+}
+
+type PollOption {
+  optionId: ID!
+  position: Int!
+  text: String!
+  voteCount: Int!
+}
+
+type Vote {
+  pollId: ID!
+  voterId: ID!
+  optionId: ID!
+  castAt: String!
+}
+
+input CreatePollInput {
+  channelId: ID!
+  authorId: ID!
+  question: String!
+  options: [String!]!
+  durationMinutes: Int = 5
+}

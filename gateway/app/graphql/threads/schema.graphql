@@ -1,0 +1,12 @@
+extend type Query { replies(channelId: ID!, messageId: ID!): [Reply!]! }
+extend type Mutation {
+  createReply(channelId: ID!, messageId: ID!, authorId: ID!, content: String!): Reply!
+}
+type Reply {
+  id: ID!
+  channelId: ID!
+  messageId: ID!
+  authorId: ID!
+  content: String!
+  createdAt: String!
+}
