@@ -1,0 +1,11 @@
+.header { max-width: 76rem; margin: auto; padding: var(--space-5) var(--space-4); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+.brand { color: var(--text); font-size: 1.5rem; font-weight: 750; text-decoration: none; }
+.brand span { display: block; font-size: .8rem; font-weight: 400; color: var(--muted); }
+.nav { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.nav a { padding: var(--space-3); border-radius: .5rem; color: var(--muted); text-decoration: none; }
+.nav a[aria-current='page'] { color: var(--accent); background: #e9edfc; font-weight: 600; }
+.main { max-width: 70rem; margin: var(--space-5) auto; padding: 0 var(--space-4); min-height: 60vh; }
+.footer { padding: var(--space-5); text-align: center; color: var(--muted); font-size: .85rem; }
+.skip { position: absolute; top: -10rem; left: 1rem; background: white; padding: 1rem; z-index: 10; }
+.skip:focus { top: 1rem; }
+@media (max-width: 40rem) { .header { align-items: flex-start; flex-direction: column; } .nav { gap: 0; } .nav a { padding: .65rem; } }

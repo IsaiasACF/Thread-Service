@@ -1,0 +1,7 @@
+.panel { padding: clamp(1.5rem, 5vw, 3rem); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.badge { display: inline-block; padding: var(--space-1) var(--space-3); background: #edf1ff; color: #304aa4; border-radius: 2rem; font-size: .85rem; font-weight: 600; }
+.empty { border: 1px dashed var(--border); border-radius: .6rem; padding: var(--space-5); margin-top: var(--space-5); color: var(--muted); }
+.button { background: var(--accent); color: white; padding: var(--space-3) var(--space-4); border: 0; border-radius: .5rem; cursor: pointer; font: inherit; }
+.button:disabled { opacity: .55; cursor: not-allowed; }
+.error { color: #a22132; background: #fff0f1; padding: var(--space-3); }
+.detail { overflow-wrap: anywhere; color: var(--muted); }
