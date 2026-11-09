@@ -1,4 +1,4 @@
-"""Run unmodified services on loopback when a local Docker daemon is unavailable.
+"""Run original or explicitly patched TEST-ONLY services on loopback when a local Docker daemon is unavailable.
 
 State must be outside this repository. No deletion, global installs or mock transports.
 """
@@ -18,7 +18,7 @@ from urllib.request import urlopen
 import pika
 from pymongo import MongoClient
 
-from prepare import verify_source
+from apply_test_patch import verify_mode
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE_COMMIT = 'd15f2e20ced1007099b90bf59b720e97be3d2d4a'
@@ -48,18 +48,21 @@ def main():
     for option in ('source', 'mongod', 'rabbit-runtime', 'base-python', 'thread-python', 'gateway-python', 'node', 'state'):
         parser.add_argument('--' + option, required=True, type=Path)
     parser.add_argument('--resume', action='store_true', help='Reuse only a state directory created by this launcher')
+    parser.add_argument('--mode', choices=('original', 'corrected'), default='original')
     args = parser.parse_args()
-    verify_source(args.source.resolve())
+    source_metadata = verify_mode(args.source.resolve(), args.mode)
     state = args.state.resolve()
     if state.is_relative_to(REPO):
         parser.error('State, credentials and database files must be outside the repository')
     if args.resume:
         marker = json.loads((state / 'owner.json').read_text())
-        if marker != {'owner': 'thread-service-chat-integration-v1', 'source_commit': SOURCE_COMMIT}:
+        expected = {'owner': 'thread-service-chat-integration-v1', 'source_commit': SOURCE_COMMIT, 'source_mode': args.mode}
+        legacy = {'owner': 'thread-service-chat-integration-v1', 'source_commit': SOURCE_COMMIT}
+        if marker != expected and not (args.mode == 'original' and marker == legacy):
             parser.error('Unrecognized state directory; refusing to reuse it')
     else:
         state.mkdir(parents=True, exist_ok=False, mode=0o700)
-        (state / 'owner.json').write_text(json.dumps({'owner': 'thread-service-chat-integration-v1', 'source_commit': SOURCE_COMMIT}))
+        (state / 'owner.json').write_text(json.dumps({'owner': 'thread-service-chat-integration-v1', 'source_commit': SOURCE_COMMIT, 'source_mode': args.mode}))
     try:
         check_ports(PORTS)
     except RuntimeError as error:
@@ -131,7 +134,8 @@ def main():
     stopped = False
 
     def save_manifest():
-        manifest = {'kind': 'real-processes-no-mocks', 'source_commit': SOURCE_COMMIT, 'ports': PORTS,
+        manifest = {'kind': 'real-processes-no-mocks', 'source_commit': SOURCE_COMMIT, 'source_mode': args.mode,
+                    'test_source': source_metadata, 'ports': PORTS,
                     'mongo_url': mongo_url, 'state': str(state),
                     'pids': {name: process.pid for name, process in processes.items() if process.poll() is None}}
         (state / 'manifest.json').write_text(json.dumps(manifest, indent=2))
@@ -173,6 +177,19 @@ def main():
             with urlopen(f'http://127.0.0.1:{PORTS[name]}{path}', timeout=1) as response:
                 assert response.status == 200
 
+    def wait_ready(name):
+        deadline = time.monotonic() + 60
+        while not stopped:
+            if processes[name].poll() is not None:
+                raise RuntimeError(f'{name} exited; inspect its private runtime log')
+            try:
+                ready(name)
+                return
+            except Exception:
+                if time.monotonic() > deadline:
+                    raise RuntimeError(f'{name} startup timeout; inspect its private runtime log') from None
+                time.sleep(0.3)
+
     def request_stop(*_):
         nonlocal stopped
         stopped = True
@@ -181,17 +198,7 @@ def main():
     try:
         for name in definitions:
             start(name)
-            deadline = time.monotonic() + 60
-            while not stopped:
-                if processes[name].poll() is not None:
-                    raise RuntimeError(f'{name} exited; inspect its private runtime log')
-                try:
-                    ready(name)
-                    break
-                except Exception:
-                    if time.monotonic() > deadline:
-                        raise RuntimeError(f'{name} startup timeout; inspect its private runtime log') from None
-                    time.sleep(0.3)
+            wait_ready(name)
             if stopped:
                 return
             print(f'READY {name}', flush=True)
@@ -208,6 +215,7 @@ def main():
                     stop(name)
                 if action in ('start', 'restart'):
                     start(name)
+                    wait_ready(name)
                 (state / 'control-result.json').write_text(json.dumps({'id': request['id'], 'service': name, 'action': action}))
             time.sleep(0.2)
     finally:

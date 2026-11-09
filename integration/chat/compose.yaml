@@ -24,8 +24,12 @@ x-thread-env: &thread-env
   THREAD_RABBITMQ_EXCHANGE: chat
   THREAD_RABBITMQ_QUEUE: chat.integration.replies
 
+x-test-source-labels: &test-source-labels
+  org.thread-service.test-source-mode: ${CHAT_SOURCE_MODE:-original}
+
 services:
   chat-users:
+    labels: *test-source-labels
     build:
       context: ${CHAT_BASE_SOURCE:?Set the verified external source directory}/users
     command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']
@@ -41,6 +45,7 @@ services:
       chat-data: {aliases: [chat-it-users]}
 
   chat-channels:
+    labels: *test-source-labels
     build:
       context: ${CHAT_BASE_SOURCE:?Set the verified external source directory}/channels
     command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']
@@ -56,6 +61,7 @@ services:
       chat-data: {aliases: [chat-it-channels]}
 
   chat-messages:
+    labels: *test-source-labels
     build:
       context: ${CHAT_BASE_SOURCE:?Set the verified external source directory}/messages
     command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']

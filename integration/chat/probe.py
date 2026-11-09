@@ -1,6 +1,7 @@
 """Exercise the nine resolvers against the dedicated process stack, never mocks.
 
-Returns 1 when the strict creation journey is blocked, even when diagnostics complete.
+Original mode reproduces the defect and returns 1 even when diagnostics complete.
+Corrected mode forbids administrative ID recovery and requires real successful writes.
 """
 import argparse
 from datetime import datetime
@@ -16,6 +17,8 @@ import httpx
 import pika
 from pymongo import MongoClient
 
+from events import EventObserver
+
 
 QUERIES = {
     'createUser': 'mutation($name:String!){createUser(displayName:$name){id displayName}}',
@@ -30,6 +33,18 @@ QUERIES = {
 }
 
 
+def validate_creation(mode, operation_name, value, record):
+    response = record['response']
+    if mode == 'corrected':
+        assert record['success'] is True and not response.get('errors'), 'Corrected creation must be confirmed'
+        assert isinstance(value, dict) and isinstance(value.get('id'), str) and value['id'], 'Missing real API ID'
+        assert (response.get('data') or {}).get(operation_name) == value, 'Creation must use the real response'
+    else:
+        service = {'createUser': 'users', 'createChannel': 'channels', 'sendMessage': 'messages'}[operation_name]
+        assert value is None and record['success'] is False, 'Original mode must still reproduce the defect'
+        assert response['errors'][0]['extensions'] == {'code': 'BAD_UPSTREAM_RESPONSE', 'service': service, 'httpStatus': 500}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--manifest', type=Path, required=True)
@@ -37,8 +52,13 @@ def main():
     parser.add_argument('--allow-local-writes', action='store_true', required=True)
     parser.add_argument('--diagnose-upstream', action='store_true', help='Read own MongoDB to diagnose a failed Users creation; never forge a success')
     parser.add_argument('--faults-and-restart', action='store_true', help='Stop/restart only processes owned by this local launcher')
+    parser.add_argument('--mode', choices=('original', 'corrected'), default='original')
     args = parser.parse_args()
+    if args.mode == 'corrected' and args.diagnose_upstream:
+        parser.error('Administrative ID recovery is forbidden in corrected mode')
     manifest = json.loads(args.manifest.read_text())
+    if manifest.get('source_mode', 'original') != args.mode:
+        parser.error('Source mode does not match the running stack')
     state = Path(manifest['state'])
     if json.loads((state / 'owner.json').read_text())['owner'] != 'thread-service-chat-integration-v1':
         parser.error('The manifest must belong to process_stack.py')
@@ -48,7 +68,8 @@ def main():
     base = f'http://127.0.0.1:{ports["gateway"]}'
     tag = uuid.uuid4().hex[:12]
     report = dict(kind='real-services-no-mocks', source_commit=manifest['source_commit'],
-                  strict_e2e_passed=False, tag=tag, operations={}, checks={}, fixtures={}, external_blockers=[])
+                  strict_e2e_passed=False, source_mode=args.mode, test_source=manifest.get('test_source'),
+                  administrative_id_recovery_used=False, tag=tag, operations={}, checks={}, fixtures={}, external_blockers=[])
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     def save():
@@ -76,7 +97,7 @@ def main():
         temporary = state / 'control.tmp'
         temporary.write_text(json.dumps({'id': request_id, 'service': service, 'action': action}))
         temporary.replace(state / 'control.json')
-        deadline = time.monotonic() + 45
+        deadline = time.monotonic() + 90
         while time.monotonic() < deadline:
             result = state / 'control-result.json'
             if result.exists() and json.loads(result.read_text()).get('id') == request_id:
@@ -88,6 +109,8 @@ def main():
         deadline = time.monotonic() + 30
         while time.monotonic() < deadline:
             try:
+                if service == 'mongodb' and args.mode == 'corrected':
+                    return  # The controller acknowledges only after its real infrastructure health check.
                 if service == 'mongodb':
                     with MongoClient(manifest['mongo_url'], serverSelectionTimeoutMS=500) as test_mongo:
                         test_mongo.admin.command('ping')
@@ -98,18 +121,42 @@ def main():
                 time.sleep(0.2)
         raise TimeoutError('Service did not become healthy: ' + service)
 
-    mongo = MongoClient(manifest['mongo_url'], serverSelectionTimeoutMS=3000)
+    mongo = MongoClient(manifest['mongo_url'], serverSelectionTimeoutMS=3000) if args.mode == 'original' else None
+    observer = None
     try:
         for service in ('users', 'channels', 'messages', 'threads', 'gateway'):
             health(service)
         report['checks']['real_service_health'] = {'passed': True, 'services': ['users', 'channels', 'messages', 'threads', 'gateway']}
-        report['mongo_version'] = mongo.server_info()['version']
+        if mongo is not None:
+            report['mongo_version'] = mongo.server_info()['version']
+        else:
+            observer = EventObserver(manifest)
+            rest_user = httpx.post(f'http://127.0.0.1:{ports["users"]}/api/v1/users', json={'display_name': 'REST-' + tag})
+            assert rest_user.status_code == 201, rest_user.status_code
+            rest_user = rest_user.json()
+            rest_channel = httpx.post(f'http://127.0.0.1:{ports["channels"]}/api/v1/channels', json={'name': 'rest-' + tag})
+            assert rest_channel.status_code == 201, rest_channel.status_code
+            rest_channel = rest_channel.json()
+            rest_message = httpx.post(f'http://127.0.0.1:{ports["messages"]}/api/v1/channels/{rest_channel["id"]}/messages',
+                                     json={'author_id': rest_user['id'], 'content': 'REST real ' + tag})
+            assert rest_message.status_code == 201, rest_message.status_code
+            rest_message = rest_message.json()
+            assert all(isinstance(item['id'], str) and item['id'] and '_id' not in item for item in (rest_user, rest_channel, rest_message))
+            assert httpx.get(f'http://127.0.0.1:{ports["users"]}/api/v1/users/{rest_user["id"]}').json() == rest_user
+            assert httpx.get(f'http://127.0.0.1:{ports["channels"]}/api/v1/channels/{rest_channel["id"]}').json() == rest_channel
+            assert rest_message in httpx.get(f'http://127.0.0.1:{ports["messages"]}/api/v1/channels/{rest_channel["id"]}/messages').json()
+            assert rest_message['channel_id'] == rest_channel['id'] and rest_message['author_id'] == rest_user['id']
+            assert datetime.fromisoformat(rest_message['created_at']).utcoffset().total_seconds() == 0
+            report['checks']['real_rest_201'] = {'passed': True, 'users_status': 201, 'channels_status': 201, 'messages_status': 201,
+                'user': rest_user, 'channel': rest_channel, 'message': rest_message}
         username = 'IT-usuario-' + tag
         user = operation('createUser', name=username)
+        validate_creation(args.mode, 'createUser', user, report['operations']['createUser'])
         if not user:
             report['external_blockers'].append('Users POST persisted data but did not return a valid creation response')
             if not args.diagnose_upstream:
                 return 1
+            report['administrative_id_recovery_used'] = True
             user = mongo.chat_users.users.find_one({'display_name': username}, {'_id': 0})
             assert user, 'No user was persisted; diagnostic cannot continue'
             report['checks']['user_write_after_error'] = {'passed': True, 'recovery': 'Read-only inspection of this run\'s own MongoDB', 'id': user['id']}
@@ -118,17 +165,21 @@ def main():
         channel_name = 'it-canal-' + tag
         channel = operation('createChannel', name=channel_name)
         channels = operation('channels')
+        validate_creation(args.mode, 'createChannel', channel, report['operations']['createChannel'])
         if not channel:
             report['external_blockers'].append('Channels POST persisted data but did not return a valid creation response')
             channel = next(item for item in channels if item['name'] == channel_name)
         cid = channel['id']
+        assert channel in channels
         assert operation('channel', id=cid) == channel
         text = 'Mensaje real de integración ' + tag
         message = operation('sendMessage', c=cid, a=uid, text=text)
         messages = operation('messages', c=cid)
+        validate_creation(args.mode, 'sendMessage', message, report['operations']['sendMessage'])
         if not message:
             report['external_blockers'].append('Messages POST persisted data but failed while publishing/serializing an ObjectId')
             message = next(item for item in messages if item['content'] == text)
+        assert message in messages
         mid = message['id']
         assert message['channelId'] == cid and message['authorId'] == uid
         assert datetime.fromisoformat(message['createdAt'].replace('Z', '+00:00')).utcoffset().total_seconds() == 0
@@ -148,33 +199,44 @@ def main():
         expect_code('invalid_author_message', 'sendMessage', 'VALIDATION_ERROR', c=cid, a='missing-' + tag, text='invalid author')
         expect_code('invalid_author_reply', 'createReply', 'VALIDATION_ERROR', c=cid, m=mid, a='missing-' + tag, text='invalid author')
         expect_code('empty_content', 'sendMessage', 'VALIDATION_ERROR', c=cid, a=uid, text='')
-        deadline = time.monotonic() + 20
-        while time.monotonic() < deadline:
-            document = mongo.chat_integration_threads.replies.find_one({'id': reply['id']})
-            published = document.get('_outbox', {}).get('published_at')
-            if published:
-                break
-            time.sleep(0.2)
-        assert published, 'The real worker did not confirm publication'
-        credentials = json.loads((state / 'runtime-credentials.json').read_text())
-        params = pika.ConnectionParameters('127.0.0.1', ports['rabbitmq'], credentials=pika.PlainCredentials(credentials['username'], credentials['password']))
-        connection = pika.BlockingConnection(params)
-        try:
-            channel_amqp = connection.channel()
-            found = False
-            while True:
-                method, properties, payload = channel_amqp.basic_get('chat.integration.replies', auto_ack=False)
-                if method is None:
+        if observer is not None:
+            events = observer.wait_for({'chat.message.created': mid, 'chat.thread.reply.created': reply['id']})
+            assert any(item['event']['type'] == 'chat.message.created' and item['event']['data']['id'] == rest_message['id'] for item in events)
+            for kind, identity in [('chat.message.created', mid), ('chat.thread.reply.created', reply['id'])]:
+                event = next(item['event'] for item in events if item['event']['type'] == kind and item['event']['data']['id'] == identity)
+                assert event['data']['channel_id'] == cid and event['data']['author_id'] == uid
+                assert '_id' not in event['data']
+                if kind == 'chat.thread.reply.created':
+                    assert event['data']['message_id'] == mid
+            report['checks']['real_amqp_delivery'] = {'passed': True, 'events': events}
+        else:
+            deadline = time.monotonic() + 20
+            while time.monotonic() < deadline:
+                document = mongo.chat_integration_threads.replies.find_one({'id': reply['id']})
+                published = document.get('_outbox', {}).get('published_at')
+                if published:
                     break
-                event = json.loads(payload)
-                channel_amqp.basic_ack(method.delivery_tag)
-                if event['data']['id'] == reply['id']:
-                    assert event['type'] == 'chat.thread.reply.created'
-                    found = True
-            assert found, 'Expected reply event not found in own RabbitMQ queue'
-        finally:
-            connection.close()
-        report['checks']['real_amqp_delivery'] = {'passed': True, 'reply_id': reply['id'], 'published_at': published.isoformat() + 'Z'}
+                time.sleep(0.2)
+            assert published, 'The real worker did not confirm publication'
+            credentials = json.loads((state / 'runtime-credentials.json').read_text())
+            params = pika.ConnectionParameters('127.0.0.1', ports['rabbitmq'], credentials=pika.PlainCredentials(credentials['username'], credentials['password']))
+            connection = pika.BlockingConnection(params)
+            try:
+                channel_amqp = connection.channel()
+                found = False
+                while True:
+                    method, properties, payload = channel_amqp.basic_get('chat.integration.replies', auto_ack=False)
+                    if method is None:
+                        break
+                    event = json.loads(payload)
+                    channel_amqp.basic_ack(method.delivery_tag)
+                    if event['data']['id'] == reply['id']:
+                        assert event['type'] == 'chat.thread.reply.created'
+                        found = True
+                assert found, 'Expected reply event not found in own RabbitMQ queue'
+            finally:
+                connection.close()
+            report['checks']['real_amqp_delivery'] = {'passed': True, 'reply_id': reply['id'], 'published_at': published.isoformat() + 'Z'}
         if args.faults_and_restart:
             control('users', 'stop')
             try:
@@ -205,10 +267,14 @@ def main():
             assert message in call('messages', c=cid)['data']['messages']
             assert reply in call('replies', c=cid, m=mid)['data']['replies']
             report['checks']['disk_persistence_after_restart'] = {'passed': True, 'restarted': ['mongodb', 'users', 'channels', 'messages', 'threads', 'gateway']}
-        report['strict_e2e_passed'] = all(item['success'] for item in report['operations'].values())
+        report['strict_e2e_passed'] = len(report['operations']) == 9 and all(item['success'] for item in report['operations'].values())
+        report['original_defect_verified'] = args.mode == 'original' and len(report['external_blockers']) == 3
         return 0 if report['strict_e2e_passed'] else 1
     finally:
-        mongo.close()
+        if observer is not None:
+            observer.close()
+        if mongo is not None:
+            mongo.close()
         save()
         print(json.dumps({'strict_e2e_passed': report['strict_e2e_passed'],
                           'successful_operations': [name for name, result in report['operations'].items() if result['success']],
