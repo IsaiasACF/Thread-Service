@@ -606,6 +606,11 @@ Resultados de validación: [docs/tarea6/VALIDACION.md](docs/tarea6/VALIDACION.md
 
 Validación con servicios reales y entorno aislado:
 [CHAT_INTEGRATION.md](docs/tarea6/CHAT_INTEGRATION.md). Se comprobó persistencia
-real de Threads y entrega RabbitMQ; el recorrido completo sigue bloqueado por
+real de Threads y entrega RabbitMQ; con la fuente original el recorrido queda bloqueado por
 respuestas HTTP 500 de creación en el chat base docente. Ver evidencias y
 pasos reproducibles en la guía antes de considerar aprobado el E2E.
+
+E2E completo con copias docentes corregidas **solo para pruebas locales**:
+[CHAT_E2E_FINAL.md](docs/tarea6/CHAT_E2E_FINAL.md). Se verificaron las nueve
+operaciones, el recorrido React y la persistencia tras reiniciar todos los
+servicios. Las fuentes originales y sus despliegues no se modificaron.

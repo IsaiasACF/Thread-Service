@@ -1,0 +1,33 @@
+{
+  "purpose": "LOCAL TESTS ONLY; not an upstream or deployed fix",
+  "mode": "corrected",
+  "source_commit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a",
+  "patch_id": "test-only-insert-one-copy-v1",
+  "original_sha256": {
+    "users/app/main.py": "5ddad52ee790029984f7d8d43377e78a54c5c38ad1c0d3ebd4769324b642fe4c",
+    "users/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "users/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+    "channels/app/main.py": "d953fdeeada1115a773bc835ad7779653f752dec2b6405f51166809019764dae",
+    "channels/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "channels/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+    "messages/app/main.py": "6c1850f04bada390ec2a5a780a73552f3bfa8320dc68a26b86b35c122b7c8802",
+    "messages/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "messages/requirements.txt": "24fcc7125486cee49895f71f6feac61c697c9f26598ae5dc3b921685582cd130"
+  },
+  "copy_sha256": {
+    "users/app/main.py": "3a6336ff5ab75e5d45b8e805a174fcbdf9bfe77f3402510a7b72216d0a4937c3",
+    "users/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "users/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+    "channels/app/main.py": "52f5c5d8cf98cbbc126d1d2973558d135f98460f781751760a11c8aa8ec24034",
+    "channels/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "channels/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+    "messages/app/main.py": "beb454c8520cd3bd358b3db3d622811296967064fa0e6470ec15ff2cb87ccfd7",
+    "messages/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+    "messages/requirements.txt": "24fcc7125486cee49895f71f6feac61c697c9f26598ae5dc3b921685582cd130"
+  },
+  "changed_files": [
+    "channels/app/main.py",
+    "messages/app/main.py",
+    "users/app/main.py"
+  ]
+}

@@ -32,6 +32,7 @@ def main():
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument('--directory', type=Path)
     mode.add_argument('--verify-source', type=Path)
+    parser.add_argument('--mode', choices=('original', 'corrected'), default='original')
     args = parser.parse_args()
     if args.verify_source:
         verify_source(args.verify_source.resolve())
@@ -51,14 +52,22 @@ def main():
     root = next((directory / 'source').iterdir())
     source = root / LOCK['subdirectory']
     verify_source(source)
+    selected_source = source
+    if args.mode == 'corrected':
+        from apply_test_patch import apply_patch
+        selected_source = directory / 'corrected-source'
+        apply_patch(source, selected_source)
     environment = {
-        'CHAT_BASE_SOURCE': str(source), 'CHAT_PROJECT_NAME': 'tarea6-chat-' + secrets.token_hex(4),
+        'CHAT_SOURCE_MODE': args.mode,
+        'CHAT_BASE_SOURCE': str(selected_source), 'CHAT_PROJECT_NAME': 'tarea6-chat-' + secrets.token_hex(4),
         'CHAT_RABBIT_USER': 'chat_it', 'CHAT_RABBIT_PASSWORD': secrets.token_urlsafe(32),
     }
     write_environment(directory / 'compose.env', environment)
     print(f'Source verified at commit {LOCK["commit"]}')
     print('Compose env (private, do not commit): ' + str(directory / 'compose.env'))
-    print('Source: ' + str(source))
+    print('Original source (unchanged): ' + str(source))
+    print('Selected test source: ' + str(selected_source))
+    print('Mode: ' + args.mode)
 
 
 if __name__ == '__main__':

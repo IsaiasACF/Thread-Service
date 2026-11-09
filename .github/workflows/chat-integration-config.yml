@@ -3,7 +3,7 @@ on:
   pull_request:
     paths: ['integration/chat/**', '.github/workflows/chat-integration-config.yml']
   push:
-    branches: [main, feature/tarea6-chat-integration]
+    branches: [main, feature/tarea6-chat-integration, feature/tarea6-chat-e2e-final]
     paths: ['integration/chat/**', '.github/workflows/chat-integration-config.yml']
 permissions:
   contents: read
@@ -16,8 +16,15 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r requirements-dev.txt
-      - run: python -m pytest integration/chat/test_launcher.py -q -W error
       - name: Verify immutable external sources and Compose syntax only
         run: |
           python integration/chat/prepare.py --directory /tmp/chat-integration-setup
           python integration/chat/verify_compose.py --env-file /tmp/chat-integration-setup/compose.env
+      - name: Launcher and private test patch regressions
+        env:
+          CHAT_TEST_ORIGINAL_SOURCE: /tmp/chat-integration-setup/source/microservicios-d15f2e20ced1007099b90bf59b720e97be3d2d4a/03_Comunicación/demo
+        run: python -m pytest integration/chat/test_launcher.py integration/chat/test_patch.py -q -W error
+      - name: Verify separate corrected test copy and Compose mode
+        run: |
+          python integration/chat/prepare.py --directory /tmp/chat-integration-corrected --mode corrected
+          python integration/chat/verify_compose.py --env-file /tmp/chat-integration-corrected/compose.env
