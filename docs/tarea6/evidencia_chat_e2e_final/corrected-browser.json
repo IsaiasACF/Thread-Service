@@ -1,0 +1,467 @@
+{
+  "kind": "real-browser-real-services-no-interception",
+  "strict_e2e_passed": true,
+  "source_mode": "corrected",
+  "admin_id_recovery_used": false,
+  "test_source": {
+    "purpose": "LOCAL TESTS ONLY; not an upstream or deployed fix",
+    "mode": "corrected",
+    "source_commit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a",
+    "patch_id": "test-only-insert-one-copy-v1",
+    "original_sha256": {
+      "users/app/main.py": "5ddad52ee790029984f7d8d43377e78a54c5c38ad1c0d3ebd4769324b642fe4c",
+      "users/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "users/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+      "channels/app/main.py": "d953fdeeada1115a773bc835ad7779653f752dec2b6405f51166809019764dae",
+      "channels/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "channels/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+      "messages/app/main.py": "6c1850f04bada390ec2a5a780a73552f3bfa8320dc68a26b86b35c122b7c8802",
+      "messages/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "messages/requirements.txt": "24fcc7125486cee49895f71f6feac61c697c9f26598ae5dc3b921685582cd130"
+    },
+    "copy_sha256": {
+      "users/app/main.py": "3a6336ff5ab75e5d45b8e805a174fcbdf9bfe77f3402510a7b72216d0a4937c3",
+      "users/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "users/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+      "channels/app/main.py": "52f5c5d8cf98cbbc126d1d2973558d135f98460f781751760a11c8aa8ec24034",
+      "channels/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "channels/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+      "messages/app/main.py": "beb454c8520cd3bd358b3db3d622811296967064fa0e6470ec15ff2cb87ccfd7",
+      "messages/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "messages/requirements.txt": "24fcc7125486cee49895f71f6feac61c697c9f26598ae5dc3b921685582cd130"
+    },
+    "changed_files": [
+      "channels/app/main.py",
+      "messages/app/main.py",
+      "users/app/main.py"
+    ]
+  },
+  "steps": {
+    "createUser": {
+      "success": true,
+      "user_id": "56a2f549-e119-4ac5-939e-8d40436fffbd",
+      "confirmedByRealAPI": true
+    },
+    "existingIdentity": {
+      "success": true,
+      "user_id": "56a2f549-e119-4ac5-939e-8d40436fffbd",
+      "closeSelectReloadVerified": true,
+      "idSource": "Real createUser response"
+    },
+    "createChannel": {
+      "success": true,
+      "channel_id": "38569aeb-8ca2-46c3-973f-3d65940502b8"
+    },
+    "sendMessage": {
+      "success": true,
+      "message_id": "bad4baa9-6079-4c2b-8566-f1f47b3c9900",
+      "draftPreservedOnError": false
+    },
+    "createReply": {
+      "success": true,
+      "reply_id": "6e3c95f8-cfdf-4948-b454-86fa4502a4ee"
+    },
+    "reload": {
+      "success": true,
+      "identityRevalidated": true,
+      "realMessageAndReplyReadAgain": true
+    },
+    "realOutage": {
+      "success": true,
+      "storedIdentityKept": true,
+      "writingDisabled": true,
+      "conversationReadable": true
+    },
+    "outageRecovery": {
+      "success": true
+    },
+    "fullStackRestart": {
+      "success": true,
+      "allTenProcessesRestarted": true,
+      "beforePids": {
+        "mongodb": 570615,
+        "epmd": 570706,
+        "rabbitmq": 570724,
+        "users": 574507,
+        "channels": 570947,
+        "messages": 570958,
+        "threads": 570969,
+        "worker": 570999,
+        "gateway": 571024,
+        "frontend": 571054
+      },
+      "afterPids": {
+        "mongodb": 574654,
+        "epmd": 574721,
+        "rabbitmq": 574722,
+        "users": 574928,
+        "channels": 574957,
+        "messages": 574968,
+        "threads": 575024,
+        "worker": 575055,
+        "gateway": 575056,
+        "frontend": 575086
+      },
+      "dataReadFromAPIs": {
+        "user": {
+          "id": "56a2f549-e119-4ac5-939e-8d40436fffbd"
+        },
+        "channel": {
+          "id": "38569aeb-8ca2-46c3-973f-3d65940502b8"
+        },
+        "messages": [
+          {
+            "id": "bad4baa9-6079-4c2b-8566-f1f47b3c9900"
+          }
+        ],
+        "replies": [
+          {
+            "id": "6e3c95f8-cfdf-4948-b454-86fa4502a4ee"
+          }
+        ]
+      }
+    }
+  },
+  "fixtures": {
+    "user_id": "56a2f549-e119-4ac5-939e-8d40436fffbd",
+    "channel_id": "38569aeb-8ca2-46c3-973f-3d65940502b8",
+    "message_id": "bad4baa9-6079-4c2b-8566-f1f47b3c9900",
+    "reply_id": "6e3c95f8-cfdf-4948-b454-86fa4502a4ee",
+    "content": "Mensaje real desde React ui-1794182368553",
+    "reply": "Respuesta real desde React ui-1794182368553"
+  },
+  "apiRequests": [
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "readBack": {
+    "messages": [
+      {
+        "id": "bad4baa9-6079-4c2b-8566-f1f47b3c9900",
+        "channelId": "38569aeb-8ca2-46c3-973f-3d65940502b8",
+        "authorId": "56a2f549-e119-4ac5-939e-8d40436fffbd",
+        "content": "Mensaje real desde React ui-1794182368553",
+        "createdAt": "2026-11-08T23:59:32.335866Z"
+      }
+    ],
+    "replies": [
+      {
+        "id": "6e3c95f8-cfdf-4948-b454-86fa4502a4ee",
+        "channelId": "38569aeb-8ca2-46c3-973f-3d65940502b8",
+        "messageId": "bad4baa9-6079-4c2b-8566-f1f47b3c9900",
+        "authorId": "56a2f549-e119-4ac5-939e-8d40436fffbd",
+        "content": "Respuesta real desde React ui-1794182368553",
+        "createdAt": "2026-11-08T23:59:32.564658Z"
+      }
+    ]
+  },
+  "rabbitmq": {
+    "realEventsReceived": true,
+    "receipts": [
+      {
+        "received_at": "2026-11-08T23:59:32.347267+00:00",
+        "routing_key": "chat.message.created",
+        "event": {
+          "type": "chat.message.created",
+          "subject_id": "bad4baa9-6079-4c2b-8566-f1f47b3c9900",
+          "occurred_at": "2026-11-08T23:59:32.337534+00:00",
+          "data": {
+            "id": "bad4baa9-6079-4c2b-8566-f1f47b3c9900",
+            "channel_id": "38569aeb-8ca2-46c3-973f-3d65940502b8",
+            "created_at": "2026-11-08T23:59:32.335866+00:00",
+            "author_id": "56a2f549-e119-4ac5-939e-8d40436fffbd",
+            "content": "Mensaje real desde React ui-1794182368553"
+          }
+        },
+        "message_id": null
+      },
+      {
+        "received_at": "2026-11-08T23:59:32.755434+00:00",
+        "routing_key": "chat.thread.reply.created",
+        "event": {
+          "type": "chat.thread.reply.created",
+          "subject_id": "6e3c95f8-cfdf-4948-b454-86fa4502a4ee",
+          "occurred_at": "2026-11-08T23:59:32.564658Z",
+          "data": {
+            "author_id": "56a2f549-e119-4ac5-939e-8d40436fffbd",
+            "content": "Respuesta real desde React ui-1794182368553",
+            "id": "6e3c95f8-cfdf-4948-b454-86fa4502a4ee",
+            "channel_id": "38569aeb-8ca2-46c3-973f-3d65940502b8",
+            "message_id": "bad4baa9-6079-4c2b-8566-f1f47b3c9900",
+            "created_at": "2026-11-08T23:59:32.564658Z"
+          }
+        },
+        "message_id": "05a6e61f-8f28-4c3d-a541-09a1173d78f3"
+      }
+    ]
+  },
+  "operations": [
+    "GetChannels",
+    "CreateUser",
+    "GetUser",
+    "CreateChannel",
+    "GetChannel",
+    "GetMessages",
+    "SendMessage",
+    "GetReplies",
+    "CreateReply"
+  ],
+  "postCounts": {
+    "CreateUser": 1,
+    "CreateChannel": 1,
+    "SendMessage": 1,
+    "CreateReply": 1
+  },
+  "networkVerified": true,
+  "diagnosticJourneyCompleted": true
+}

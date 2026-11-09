@@ -1,0 +1,46 @@
+{
+  "kind": "regression-results-not-an-e2e-substitute",
+  "suites": {
+    "frontend": {
+      "passed": 48,
+      "failed": 0,
+      "skipped": 0
+    },
+    "gateway": {
+      "passed": 263,
+      "failed": 0,
+      "skipped": 0
+    },
+    "thread_service_with_real_infrastructure": {
+      "passed": 107,
+      "failed": 0,
+      "skipped": 0
+    },
+    "kubernetes_offline": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0
+    },
+    "launcher_and_private_patch": {
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "total": {
+    "passed": 461,
+    "failed": 0,
+    "skipped": 0
+  },
+  "npm_ci": true,
+  "typescript_vite_build": true,
+  "compose_original_static": true,
+  "compose_corrected_static": true,
+  "compose_shared_static": true,
+  "kubernetes_static_validation": true,
+  "docker_runtime_executed": false,
+  "docker_blocker": "Cannot connect to the Docker daemon at unix:///var/run/docker.sock",
+  "pr7_merge_sha": "002f4f9b594e897d5343bae17162df51217707a4",
+  "original_hashes_verified_after_execution": true,
+  "test_only_patch": true
+}

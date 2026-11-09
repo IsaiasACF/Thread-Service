@@ -1,0 +1,358 @@
+{
+  "kind": "real-services-no-mocks",
+  "source_commit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a",
+  "strict_e2e_passed": true,
+  "source_mode": "corrected",
+  "test_source": {
+    "purpose": "LOCAL TESTS ONLY; not an upstream or deployed fix",
+    "mode": "corrected",
+    "source_commit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a",
+    "patch_id": "test-only-insert-one-copy-v1",
+    "original_sha256": {
+      "users/app/main.py": "5ddad52ee790029984f7d8d43377e78a54c5c38ad1c0d3ebd4769324b642fe4c",
+      "users/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "users/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+      "channels/app/main.py": "d953fdeeada1115a773bc835ad7779653f752dec2b6405f51166809019764dae",
+      "channels/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "channels/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+      "messages/app/main.py": "6c1850f04bada390ec2a5a780a73552f3bfa8320dc68a26b86b35c122b7c8802",
+      "messages/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "messages/requirements.txt": "24fcc7125486cee49895f71f6feac61c697c9f26598ae5dc3b921685582cd130"
+    },
+    "copy_sha256": {
+      "users/app/main.py": "3a6336ff5ab75e5d45b8e805a174fcbdf9bfe77f3402510a7b72216d0a4937c3",
+      "users/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "users/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+      "channels/app/main.py": "52f5c5d8cf98cbbc126d1d2973558d135f98460f781751760a11c8aa8ec24034",
+      "channels/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "channels/requirements.txt": "8eea8a4c8ea02519f3ed350ceabaf3f103daac75922f8c1baac40eea39e500f9",
+      "messages/app/main.py": "beb454c8520cd3bd358b3db3d622811296967064fa0e6470ec15ff2cb87ccfd7",
+      "messages/Dockerfile": "62e4540ac98579899c01d4e76303e724da8220aadb065d51bb5a9e0bca0c7941",
+      "messages/requirements.txt": "24fcc7125486cee49895f71f6feac61c697c9f26598ae5dc3b921685582cd130"
+    },
+    "changed_files": [
+      "channels/app/main.py",
+      "messages/app/main.py",
+      "users/app/main.py"
+    ]
+  },
+  "administrative_id_recovery_used": false,
+  "tag": "863e03944ca0",
+  "operations": {
+    "createUser": {
+      "success": true,
+      "response": {
+        "data": {
+          "createUser": {
+            "id": "f9246787-3079-4d90-af25-c51d83ddaa69",
+            "displayName": "IT-usuario-863e03944ca0"
+          }
+        }
+      }
+    },
+    "user": {
+      "success": true,
+      "response": {
+        "data": {
+          "user": {
+            "id": "f9246787-3079-4d90-af25-c51d83ddaa69",
+            "displayName": "IT-usuario-863e03944ca0"
+          }
+        }
+      }
+    },
+    "createChannel": {
+      "success": true,
+      "response": {
+        "data": {
+          "createChannel": {
+            "id": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+            "name": "it-canal-863e03944ca0"
+          }
+        }
+      }
+    },
+    "channels": {
+      "success": true,
+      "response": {
+        "data": {
+          "channels": [
+            {
+              "id": "cfb89485-b705-446d-83b9-e1c9f575cbde",
+              "name": "rest-6a946bdbe0df"
+            },
+            {
+              "id": "f37b9b47-2d7a-45da-8683-ceb04f95fc00",
+              "name": "it-canal-6a946bdbe0df"
+            },
+            {
+              "id": "3228556a-8166-45a5-a096-3506cf181b8b",
+              "name": "navegador-ui-1794181980206"
+            },
+            {
+              "id": "9e5290ce-294d-49fd-99d6-b39c0996c096",
+              "name": "rest-863e03944ca0"
+            },
+            {
+              "id": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+              "name": "it-canal-863e03944ca0"
+            }
+          ]
+        }
+      }
+    },
+    "channel": {
+      "success": true,
+      "response": {
+        "data": {
+          "channel": {
+            "id": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+            "name": "it-canal-863e03944ca0"
+          }
+        }
+      }
+    },
+    "sendMessage": {
+      "success": true,
+      "response": {
+        "data": {
+          "sendMessage": {
+            "id": "aba458e3-4f76-477d-a716-0756e8d9a86b",
+            "channelId": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+            "authorId": "f9246787-3079-4d90-af25-c51d83ddaa69",
+            "content": "Mensaje real de integración 863e03944ca0",
+            "createdAt": "2026-11-08T23:55:05.793789Z"
+          }
+        }
+      }
+    },
+    "messages": {
+      "success": true,
+      "response": {
+        "data": {
+          "messages": [
+            {
+              "id": "aba458e3-4f76-477d-a716-0756e8d9a86b",
+              "channelId": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+              "authorId": "f9246787-3079-4d90-af25-c51d83ddaa69",
+              "content": "Mensaje real de integración 863e03944ca0",
+              "createdAt": "2026-11-08T23:55:05.793789Z"
+            }
+          ]
+        }
+      }
+    },
+    "replies": {
+      "success": true,
+      "response": {
+        "data": {
+          "replies": []
+        }
+      }
+    },
+    "createReply": {
+      "success": true,
+      "response": {
+        "data": {
+          "createReply": {
+            "id": "6120d291-3bae-44c8-96ae-3fd35b2486a2",
+            "channelId": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+            "messageId": "aba458e3-4f76-477d-a716-0756e8d9a86b",
+            "authorId": "f9246787-3079-4d90-af25-c51d83ddaa69",
+            "content": "Respuesta real de integración 863e03944ca0",
+            "createdAt": "2026-11-08T23:55:05.887451Z"
+          }
+        }
+      }
+    }
+  },
+  "checks": {
+    "real_service_health": {
+      "passed": true,
+      "services": [
+        "users",
+        "channels",
+        "messages",
+        "threads",
+        "gateway"
+      ]
+    },
+    "real_rest_201": {
+      "passed": true,
+      "users_status": 201,
+      "channels_status": 201,
+      "messages_status": 201,
+      "user": {
+        "id": "f094cedd-b7f2-4373-9b5e-051182df9cf7",
+        "display_name": "REST-863e03944ca0"
+      },
+      "channel": {
+        "id": "9e5290ce-294d-49fd-99d6-b39c0996c096",
+        "name": "rest-863e03944ca0"
+      },
+      "message": {
+        "id": "c5e8c1c8-bd97-4178-a82b-75ad152bf656",
+        "channel_id": "9e5290ce-294d-49fd-99d6-b39c0996c096",
+        "created_at": "2026-11-08T23:55:05.575374+00:00",
+        "author_id": "f094cedd-b7f2-4373-9b5e-051182df9cf7",
+        "content": "REST real 863e03944ca0"
+      }
+    },
+    "references_and_utc": {
+      "passed": true
+    },
+    "reply_round_trip": {
+      "passed": true,
+      "reply_id": "6120d291-3bae-44c8-96ae-3fd35b2486a2"
+    },
+    "missing_user": {
+      "passed": true,
+      "extensions": {
+        "code": "NOT_FOUND",
+        "service": "users",
+        "httpStatus": 404
+      }
+    },
+    "missing_channel": {
+      "passed": true,
+      "extensions": {
+        "code": "NOT_FOUND",
+        "service": "channels",
+        "httpStatus": 404
+      }
+    },
+    "missing_root": {
+      "passed": true,
+      "extensions": {
+        "code": "NOT_FOUND",
+        "service": "threads",
+        "httpStatus": 404
+      }
+    },
+    "invalid_author_message": {
+      "passed": true,
+      "extensions": {
+        "code": "VALIDATION_ERROR",
+        "service": "messages",
+        "httpStatus": 422
+      }
+    },
+    "invalid_author_reply": {
+      "passed": true,
+      "extensions": {
+        "code": "VALIDATION_ERROR",
+        "service": "threads",
+        "httpStatus": 422
+      }
+    },
+    "empty_content": {
+      "passed": true,
+      "extensions": {
+        "code": "VALIDATION_ERROR",
+        "service": "messages"
+      }
+    },
+    "real_amqp_delivery": {
+      "passed": true,
+      "events": [
+        {
+          "received_at": "2026-11-08T23:55:06.176526+00:00",
+          "routing_key": "chat.message.created",
+          "event": {
+            "type": "chat.message.created",
+            "subject_id": "c5e8c1c8-bd97-4178-a82b-75ad152bf656",
+            "occurred_at": "2026-11-08T23:55:05.577120+00:00",
+            "data": {
+              "id": "c5e8c1c8-bd97-4178-a82b-75ad152bf656",
+              "channel_id": "9e5290ce-294d-49fd-99d6-b39c0996c096",
+              "created_at": "2026-11-08T23:55:05.575374+00:00",
+              "author_id": "f094cedd-b7f2-4373-9b5e-051182df9cf7",
+              "content": "REST real 863e03944ca0"
+            }
+          },
+          "message_id": null
+        },
+        {
+          "received_at": "2026-11-08T23:55:06.176900+00:00",
+          "routing_key": "chat.message.created",
+          "event": {
+            "type": "chat.message.created",
+            "subject_id": "aba458e3-4f76-477d-a716-0756e8d9a86b",
+            "occurred_at": "2026-11-08T23:55:05.794365+00:00",
+            "data": {
+              "id": "aba458e3-4f76-477d-a716-0756e8d9a86b",
+              "channel_id": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+              "created_at": "2026-11-08T23:55:05.793789+00:00",
+              "author_id": "f9246787-3079-4d90-af25-c51d83ddaa69",
+              "content": "Mensaje real de integración 863e03944ca0"
+            }
+          },
+          "message_id": null
+        },
+        {
+          "received_at": "2026-11-08T23:55:06.782327+00:00",
+          "routing_key": "chat.thread.reply.created",
+          "event": {
+            "type": "chat.thread.reply.created",
+            "subject_id": "6120d291-3bae-44c8-96ae-3fd35b2486a2",
+            "occurred_at": "2026-11-08T23:55:05.887451Z",
+            "data": {
+              "author_id": "f9246787-3079-4d90-af25-c51d83ddaa69",
+              "content": "Respuesta real de integración 863e03944ca0",
+              "id": "6120d291-3bae-44c8-96ae-3fd35b2486a2",
+              "channel_id": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+              "message_id": "aba458e3-4f76-477d-a716-0756e8d9a86b",
+              "created_at": "2026-11-08T23:55:05.887451Z"
+            }
+          },
+          "message_id": "5ef5717b-5f49-41f0-a589-963563b13d4e"
+        }
+      ]
+    },
+    "real_connection_error": {
+      "passed": true,
+      "extensions": {
+        "code": "UPSTREAM_UNAVAILABLE",
+        "service": "users"
+      }
+    },
+    "real_timeout": {
+      "passed": true,
+      "extensions": {
+        "code": "UPSTREAM_TIMEOUT",
+        "service": "users"
+      }
+    },
+    "real_dependency_503": {
+      "passed": true,
+      "extensions": {
+        "code": "UPSTREAM_UNAVAILABLE",
+        "service": "threads",
+        "httpStatus": 503
+      }
+    },
+    "disk_persistence_after_restart": {
+      "passed": true,
+      "restarted": [
+        "mongodb",
+        "users",
+        "channels",
+        "messages",
+        "threads",
+        "gateway"
+      ]
+    }
+  },
+  "fixtures": {
+    "user_id": "f9246787-3079-4d90-af25-c51d83ddaa69",
+    "channel_id": "466ce96e-e1ed-4f38-b929-e081218ddaec",
+    "message_id": "aba458e3-4f76-477d-a716-0756e8d9a86b",
+    "reply_id": "6120d291-3bae-44c8-96ae-3fd35b2486a2",
+    "username": "IT-usuario-863e03944ca0",
+    "channel_name": "it-canal-863e03944ca0",
+    "message": "Mensaje real de integración 863e03944ca0",
+    "reply": "Respuesta real de integración 863e03944ca0"
+  },
+  "external_blockers": [],
+  "original_defect_verified": false
+}

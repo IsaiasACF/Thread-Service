@@ -1,0 +1,307 @@
+{
+  "kind": "real-browser-real-services-no-interception",
+  "strict_e2e_passed": false,
+  "source_mode": "original",
+  "admin_id_recovery_used": true,
+  "test_source": {
+    "mode": "original",
+    "source_commit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a"
+  },
+  "steps": {
+    "createUser": {
+      "success": false,
+      "observed": "Uncertain creation; name retained, no identity selected, one POST only"
+    },
+    "existingIdentity": {
+      "success": true,
+      "user_id": "ea0dfba1-bfac-4454-8590-234499d64974",
+      "closeSelectReloadVerified": true,
+      "idSource": "Original-mode private DB diagnostic"
+    },
+    "createChannel": {
+      "success": false,
+      "recoveredByRealListQuery": true,
+      "channel_id": "3c754053-d933-4b0f-8254-3fe66d7ea85f"
+    },
+    "sendMessage": {
+      "success": false,
+      "message_id": "e9f693dd-5c69-4473-ba7e-5bb28ad08c25",
+      "draftPreservedOnError": true
+    },
+    "createReply": {
+      "success": true,
+      "reply_id": "16aa0814-4c9b-4a34-af88-57141a133f17"
+    },
+    "reload": {
+      "success": true,
+      "identityRevalidated": true,
+      "realMessageAndReplyReadAgain": true
+    },
+    "realOutage": {
+      "success": true,
+      "storedIdentityKept": true,
+      "writingDisabled": true,
+      "conversationReadable": true
+    },
+    "outageRecovery": {
+      "success": true
+    }
+  },
+  "fixtures": {
+    "user_id": "ea0dfba1-bfac-4454-8590-234499d64974",
+    "channel_id": "3c754053-d933-4b0f-8254-3fe66d7ea85f",
+    "message_id": "e9f693dd-5c69-4473-ba7e-5bb28ad08c25",
+    "reply_id": "16aa0814-4c9b-4a34-af88-57141a133f17",
+    "content": "Mensaje real desde React ui-1794181871725",
+    "reply": "Respuesta real desde React ui-1794181871725"
+  },
+  "apiRequests": [
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "method": "POST"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "readBack": {
+    "messages": [
+      {
+        "id": "e9f693dd-5c69-4473-ba7e-5bb28ad08c25",
+        "channelId": "3c754053-d933-4b0f-8254-3fe66d7ea85f",
+        "authorId": "ea0dfba1-bfac-4454-8590-234499d64974",
+        "content": "Mensaje real desde React ui-1794181871725",
+        "createdAt": "2026-11-08T23:51:14.019532Z"
+      }
+    ],
+    "replies": [
+      {
+        "id": "16aa0814-4c9b-4a34-af88-57141a133f17",
+        "channelId": "3c754053-d933-4b0f-8254-3fe66d7ea85f",
+        "messageId": "e9f693dd-5c69-4473-ba7e-5bb28ad08c25",
+        "authorId": "ea0dfba1-bfac-4454-8590-234499d64974",
+        "content": "Respuesta real desde React ui-1794181871725",
+        "createdAt": "2026-11-08T23:51:19.506140Z"
+      }
+    ]
+  },
+  "operations": [
+    "GetChannels",
+    "CreateUser",
+    "GetUser",
+    "CreateChannel",
+    "GetChannel",
+    "GetMessages",
+    "SendMessage",
+    "GetReplies",
+    "CreateReply"
+  ],
+  "postCounts": {
+    "CreateUser": 1,
+    "CreateChannel": 1,
+    "SendMessage": 1,
+    "CreateReply": 1
+  },
+  "networkVerified": true,
+  "diagnosticJourneyCompleted": true
+}
