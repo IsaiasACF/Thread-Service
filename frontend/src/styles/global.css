@@ -1,13 +1,49 @@
 :root {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text); background: #f5f7fc; font-synthesis: none; line-height: 1.6;
-  --text: #17213b; --muted: #56637c; --surface: #fff; --accent: #3155c7; --border: #d7deed;
-  --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem; --space-5: 1.5rem; --space-6: 2rem;
-  --radius: 1rem;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-synthesis: none; line-height: 1.5; color-scheme: light;
+  --background: #F7F7F8; --surface: #FFFFFF; --surface-subtle: #F7F7F8;
+  --text: #202124; --muted: #62646b; --accent: #002FA7; --on-accent: #FFFFFF;
+  --accent-subtle: #edf1fa; --border: #dcdce0; --border-strong: #b6b7bd;
+  --error: #a12530; --error-bg: #fff0f1; --overlay: #00000055;
+  --nav-surface: #002FA7; --nav-text: #FFFFFF; --nav-muted: #d0dbff;
+  --nav-border: #ffffff30; --nav-hover: #ffffff12; --nav-active: #FFFFFF; --nav-active-text: #002FA7;
+  --space-1: .25rem; --space-2: .5rem; --space-3: .75rem; --space-4: 1rem;
+  --space-5: 1.5rem; --space-6: 2rem; --radius: 4px;
+  background: var(--background); color: var(--text);
+}
+:root[data-theme='dark'] {
+  color-scheme: dark; --background: #141416; --surface: #1b1b1e; --surface-subtle: #232327;
+  --text: #eeeef0; --muted: #a8a8b0; --accent: #a5bcff; --on-accent: #10172d;
+  --accent-subtle: #242e48; --border: #35353b; --border-strong: #62626c;
+  --error: #ffacb4; --error-bg: #382329; --overlay: #00000088;
+  --nav-surface: #111d3b; --nav-text: #eeeef0; --nav-muted: #afc0eb;
+  --nav-border: #ffffff22; --nav-hover: #ffffff0a; --nav-active: #243e7b; --nav-active-text: #e2eaff;
 }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; }
-h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.2; margin: var(--space-5) 0 var(--space-4); }
+body { margin: 0; min-width: 320px; background: var(--background); }
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; touch-action: manipulation; }
+button:disabled { cursor: not-allowed; }
+input:not([type='radio']):not([type='checkbox']), textarea, select {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border-strong);
+  border-radius: var(--radius); padding: .7rem .8rem; max-width: 100%;
+}
+input[type='radio'], input[type='checkbox'], meter { accent-color: var(--accent); }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
+input:disabled, textarea:disabled { background: var(--surface-subtle); color: var(--muted); }
+fieldset { min-width: 0; border: 1px solid var(--border); padding: 1rem; }
+legend { color: var(--muted); padding-inline: .35rem; }
+label { font-size: .875rem; }
+h1, h2, h3 { color: var(--text); font-weight: 600; text-align: left; }
+h1 { font-size: clamp(1.8rem, 3.2vw, 2.65rem); line-height: 1.12; letter-spacing: -.045em; margin: 0 0 1rem; }
+h2 { font-size: 1.15rem; line-height: 1.3; margin-block: 1.5rem .75rem; }
 p { max-width: 65ch; }
-a { color: var(--accent); }
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+a { color: var(--accent); text-underline-offset: .15em; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+::selection { background: var(--accent); color: var(--on-accent); }
+* { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+@media (prefers-reduced-motion: no-preference) {
+  button, a, input, textarea { transition: background-color .18s, color .18s, border-color .18s, transform .18s; }
+  button:active:not(:disabled) { transform: translateY(1px); }
+}
+@media (max-width: 720px) { input, textarea, select { font-size: 16px !important; } }

@@ -28,6 +28,6 @@ export function Composer({ label, disabled, onSend, onRefresh, reply = false }: 
     {sending.isError && <div><ErrorMessage message={writeError(sending.error)} /><button className={styles.textButton} type="button" onClick={onRefresh}>Actualizar {reply ? 'respuestas' : 'mensajes'} antes de repetir</button></div>}
     {sending.isSuccess && <p className={styles.success} role="status">{reply ? 'Respuesta publicada.' : 'Mensaje publicado.'}</p>}
     <div className={styles.composerFoot}><span>{characterCount(content)}/4000 · {reply ? 'Una respuesta al mensaje original' : 'Los saltos de línea se conservan'}</span>
-      <Button type="submit" disabled={disabled || sending.isPending}>{sending.isPending ? 'Enviando…' : reply ? 'Publicar respuesta' : 'Enviar mensaje'} <span aria-hidden="true">↑</span></Button></div>
+      <Button type="submit" disabled={disabled || sending.isPending}>{sending.isPending ? 'Enviando…' : reply ? 'Publicar respuesta' : 'Enviar mensaje'}</Button></div>
   </form>;
 }

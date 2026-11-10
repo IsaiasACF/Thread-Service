@@ -1,35 +1,28 @@
-import { Link, NavLink, Outlet, useLocation, useRoutes, type RouteObject } from 'react-router-dom';
-import { Placeholder } from '../components/ui';
+import { Link, Outlet, useLocation, useRoutes, type RouteObject } from 'react-router-dom';
 import styles from './Layout.module.css';
 import { IdentityProvider } from '../features/identity/IdentityProvider';
+import { Workspace } from '../features/chat/Workspace';
+import { ThemeToggle } from './ThemeToggle';
 
 const modules = import.meta.glob<{ routes: RouteObject[] }>('../features/*/routes.tsx', { eager: true });
 const featureRoutes = Object.keys(modules).sort().flatMap((key) => modules[key].routes);
 
 function Layout() {
   const { pathname } = useLocation();
-  const workspace = pathname === '/' || pathname === '/channels' || pathname.startsWith('/channels/');
-  if (workspace) return <><a className={styles.skip} href="#main">Saltar al contenido</a><main id="main" tabIndex={-1}><Outlet /></main></>;
-  return <>
+  const section = pathname.startsWith('/integrals') ? 'Integrales'
+    : pathname.startsWith('/polls') ? 'Encuestas'
+    : pathname.startsWith('/channels') ? 'Chat' : pathname === '/' ? 'Identidad' : 'Página no encontrada';
+  return <Workspace>
     <a className={styles.skip} href="#main">Saltar al contenido</a>
-    <header className={styles.header}>
-      <Link className={styles.brand} to="/">Thread<span>Espacio compartido</span></Link>
-      <nav aria-label="Navegación principal" className={styles.nav}>
-        <NavLink to="/" end>Identidad</NavLink>
-        <NavLink to="/channels">Chat</NavLink>
-        <NavLink to="/integrals">Integrales</NavLink>
-        <NavLink to="/polls/pendiente">Encuestas</NavLink>
-      </nav>
-    </header>
+    <header className={styles.header}><span>{section}</span><ThemeToggle /></header>
     <main id="main" tabIndex={-1} className={styles.main}><Outlet /></main>
-    <footer className={styles.footer}>Thread · Tarea 6 · Interfaz en construcción</footer>
-  </>;
+  </Workspace>;
 }
 
 export function App() {
   const routes = useRoutes([{ element: <Layout />, children: [
     ...featureRoutes,
-    { path: '*', element: <Placeholder title="Página no encontrada" description="Usa la navegación para volver a una sección disponible." /> },
+    { path: '*', element: <section className={styles.notFound}><h1>Página no encontrada</h1><p>La dirección no corresponde a una página disponible.</p><Link to="/channels">Volver al chat</Link></section> },
   ] }]);
   return <IdentityProvider>{routes}</IdentityProvider>;
 }

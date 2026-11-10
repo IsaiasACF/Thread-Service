@@ -1,11 +1,15 @@
-.header { max-width: 76rem; margin: auto; padding: var(--space-5) var(--space-4); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
-.brand { color: var(--text); font-size: 1.5rem; font-weight: 750; text-decoration: none; }
-.brand span { display: block; font-size: .8rem; font-weight: 400; color: var(--muted); }
-.nav { display: flex; flex-wrap: wrap; gap: var(--space-1); }
-.nav a { padding: var(--space-3); border-radius: .5rem; color: var(--muted); text-decoration: none; }
-.nav a[aria-current='page'] { color: var(--accent); background: #e9edfc; font-weight: 600; }
-.main { max-width: 70rem; margin: var(--space-5) auto; padding: 0 var(--space-4); min-height: 60vh; }
-.footer { padding: var(--space-5); text-align: center; color: var(--muted); font-size: .85rem; }
-.skip { position: absolute; top: -10rem; left: 1rem; background: white; padding: 1rem; z-index: 10; }
+.header { height: 58px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0 2rem; border-bottom: 1px solid var(--border); background: var(--surface); font-size: .85rem; }
+.header > span { font-weight: 600; border-left: 3px solid var(--accent); padding-left: .7rem; }
+.header button { display: flex; align-items: center; gap: .75rem; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); padding: .45rem .65rem; border-radius: var(--radius); font-size: .75rem; }
+.header button span { color: var(--muted); font-size: .7rem; }
+.header button [data-switch] { position: relative; width: 30px; height: 17px; border-radius: 10px; background: var(--border-strong); }
+.header button [data-switch]::after { content: ''; position: absolute; top: 3px; left: 3px; width: 11px; height: 11px; border-radius: 50%; background: var(--surface); }
+.header button [data-on='true'] { background: var(--accent); }
+.header button [data-on='true']::after { transform: translateX(13px); background: var(--on-accent); }
+.header button:hover { background: var(--accent-subtle); border-color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .header button [data-switch]::after { transition: transform .18s; } }
+.main { flex: 1; min-width: 0; min-height: 0; overflow: auto; display: flex; flex-direction: column; background: var(--surface); }
+.skip { position: fixed; top: -10rem; left: 1rem; background: var(--surface); color: var(--accent); border: 1px solid var(--accent); padding: 1rem; z-index: 100; }
 .skip:focus { top: 1rem; }
-@media (max-width: 40rem) { .header { align-items: flex-start; flex-direction: column; } .nav { gap: 0; } .nav a { padding: .65rem; } }
+.notFound { padding: 2rem; }
+@media (max-width: 720px) { .header { padding-inline: 1rem; height: 46px; } }
