@@ -102,13 +102,15 @@ def test_reply_response_and_subsequent_read_use_persisted_api_values():
     # This models the REST API's persistence semantics; it does not prove MongoDB durability.
 
 
-def test_pending_domains_do_not_block_chat_in_same_query():
-    with mock_gateway(lambda _:httpx.Response(200,json=USER)) as (client,requests):
-        body=client.post("/graphql",json={"query":'{ user(id:"u-1"){ id displayName } integral(id:"i"){ id } poll(id:"p"){ pollId } }'}).json()
+def test_domain_errors_do_not_block_chat_in_same_query():
+    def handler(request):
+        return httpx.Response(200,json=USER) if request.url.host == 'users.invalid' else httpx.Response(503)
+    with mock_gateway(handler) as (client,requests):
+        body=client.post("/graphql",json={"query":'{ user(id:"u-1"){ id displayName } integral(id:"i"){ id } poll(id:"123e4567-e89b-12d3-a456-426614174000"){ pollId } }'}).json()
         assert body["data"]=={"user":GQL_USER,"integral":None,"poll":None}
         assert {e["extensions"]["service"] for e in body["errors"]}=={"integrals","polls"}
-        assert all(e["extensions"]["code"]=="NOT_IMPLEMENTED" for e in body["errors"])
-        assert len(requests)==1
+        assert {e["extensions"]["code"] for e in body["errors"]}=={"UPSTREAM_UNAVAILABLE"}
+        assert len(requests)==3
         assert requests[0].url.host=="users.invalid"
         assert client.get("/health").json()=={"status":"ok"}
 
