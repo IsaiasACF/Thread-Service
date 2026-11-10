@@ -13,3 +13,6 @@ k8s/*.local.yaml
 kubeconfig
 kubeconfig.*
 Thread-Service
+# Local frontend dependencies/artifacts are not part of Thread Service images.
+**/node_modules
+**/dist

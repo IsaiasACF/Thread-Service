@@ -1,0 +1,89 @@
+{
+  "kind": "real-original-docker-diagnostic",
+  "normal_e2e_passed": false,
+  "administrative_id_recovery_used": true,
+  "operations": {
+    "createUser": {
+      "success": false,
+      "response": {
+        "data": null,
+        "errors": [
+          {
+            "message": "El servicio no pudo completar la solicitud.",
+            "extensions": {
+              "code": "BAD_UPSTREAM_RESPONSE",
+              "service": "users",
+              "httpStatus": 500
+            },
+            "locations": [
+              {
+                "line": 1,
+                "column": 25
+              }
+            ],
+            "path": [
+              "createUser"
+            ]
+          }
+        ]
+      }
+    },
+    "createChannel": {
+      "success": false,
+      "response": {
+        "data": null,
+        "errors": [
+          {
+            "message": "El servicio no pudo completar la solicitud.",
+            "extensions": {
+              "code": "BAD_UPSTREAM_RESPONSE",
+              "service": "channels",
+              "httpStatus": 500
+            },
+            "locations": [
+              {
+                "line": 1,
+                "column": 25
+              }
+            ],
+            "path": [
+              "createChannel"
+            ]
+          }
+        ]
+      }
+    },
+    "sendMessage": {
+      "success": false,
+      "response": {
+        "data": null,
+        "errors": [
+          {
+            "message": "El servicio no pudo completar la solicitud.",
+            "extensions": {
+              "code": "BAD_UPSTREAM_RESPONSE",
+              "service": "messages",
+              "httpStatus": 500
+            },
+            "locations": [
+              {
+                "line": 1,
+                "column": 39
+              }
+            ],
+            "path": [
+              "sendMessage"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "original_defect_reproduced": true,
+  "persisted_after_failed_response": true,
+  "post_counts": {
+    "createUser": 1,
+    "createChannel": 1,
+    "sendMessage": 1
+  }
+}

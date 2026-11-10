@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { docker } = require('../final/docker.cjs');
 
 async function main() {
   const [playwrightModule, browserReport, output, browserExecutable] = process.argv.slice(2);
@@ -16,8 +16,9 @@ async function main() {
   const page = await context.newPage();
   const report = { kind: 'real-docker-outage-recovery', passed: false, steps: {}, fixtures: {}, errors: [] };
   const stopped = new Set();
-  function stop(name) { execFileSync('docker', ['stop', name], { stdio: 'pipe', timeout: 45000 }); stopped.add(name); }
-  function start(name) { execFileSync('docker', ['start', name], { stdio: 'pipe', timeout: 45000 }); stopped.delete(name); }
+  const paused = new Set();
+  function stop(name) { docker(['stop', name]); stopped.add(name); }
+  function start(name) { docker(['start', name]); stopped.delete(name); }
   async function graphql(query, variables) {
     return page.evaluate(async args => (await fetch('/graphql', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(args),
@@ -71,6 +72,15 @@ async function main() {
     assert.equal(unavailable.errors?.[0]?.extensions?.code, 'UPSTREAM_UNAVAILABLE');
     report.steps.polls_outage_does_not_block_chat_threads_integrals = true;
     start('thread-b-app-polls-api-1');
+    if (process.env.FINAL_STACK_DIR) {
+      stop('integrals');
+      const threads = await graphql('query ThreadsWhileIntegralsDown($c:ID!,$m:ID!){replies(channelId:$c,messageId:$m){id}}', {c:f.channelId,m:f.messageId});
+      assert(!threads.errors && threads.data.replies.some(r => r.id === f.replyId));
+      const unavailableIntegral = await graphql('query IntegralDown($id:ID!){integral(id:$id){id}}',{id:f.integralId});
+      assert.equal(unavailableIntegral.errors?.[0]?.extensions?.code,'UPSTREAM_UNAVAILABLE');
+      start('integrals');
+      report.steps.integrals_outage_does_not_block_threads = true;
+    }
     // Close the recovery poll so no deferred test announcement remains pending.
     let result;
     for (let i = 0; i < 30; i++) {
@@ -82,12 +92,44 @@ async function main() {
     const closed = await graphql('mutation CloseRecovery($p:ID!,$u:ID!){closePoll(pollId:$p,authorId:$u){status}}', { p: poll.pollId, u: f.authorId });
     assert.equal(closed.data?.closePoll?.status, 'closed');
     report.steps.recovered_poll_closed = true;
+    if (process.env.FINAL_STACK_DIR) {
+      await page.goto(origin + '/channels/' + f.channelId);
+      const root = page.getByRole('article', {name:'Mensaje '+f.messageId,exact:true});
+      await root.waitFor();
+      await root.getByRole('button',{name:/Ver respuestas/}).click();
+      const draft = 'Resultado incierto local ' + Date.now();
+      await page.getByLabel('Tu respuesta',{exact:true}).fill(draft);
+      let writes = 0;
+      page.on('request', req => { if(req.url().endsWith('/graphql') && /mutation\s+CreateReply\b/.test(req.postDataJSON()?.query || '')) writes++; });
+      docker(['pause','chat-threads']); paused.add('chat-threads');
+      const waiting = page.waitForResponse(r => r.url().endsWith('/graphql') && /mutation\s+CreateReply\b/.test(r.request().postDataJSON()?.query || ''));
+      await page.getByRole('button',{name:/Publicar respuesta/}).click();
+      const timedOut = await (await waiting).json();
+      assert.equal(timedOut.errors?.[0]?.extensions?.code,'UPSTREAM_TIMEOUT');
+      await page.getByText(/El resultado es incierto/).waitFor();
+      assert.equal(await page.getByLabel('Tu respuesta',{exact:true}).inputValue(),draft);
+      docker(['unpause','chat-threads']); paused.delete('chat-threads');
+      const after = await graphql('query AfterUncertainWrite($c:ID!,$m:ID!){replies(channelId:$c,messageId:$m){id content}}',{c:f.channelId,m:f.messageId});
+      assert(!after.errors);
+      const matching = after.data.replies.filter(item=>item.content===draft);
+      assert(matching.length<=1);
+      await page.waitForTimeout(5500);
+      assert.equal(writes,1);
+      assert.equal(await page.getByLabel('Tu respuesta',{exact:true}).inputValue(),draft);
+      report.steps.real_write_timeout_keeps_draft_without_automatic_retry = true;
+      const finalRead = await graphql('query FinalUncertainWrite($c:ID!,$m:ID!){replies(channelId:$c,messageId:$m){id content}}',{c:f.channelId,m:f.messageId});
+      assert(!finalRead.errors);
+      const persisted = finalRead.data.replies.filter(item=>item.content===draft);
+      assert(persisted.length<=1);
+      report.uncertainWrite = {code:'UPSTREAM_TIMEOUT',postCount:writes,persistedIds:persisted.map(item=>item.id),source:'real API read 5.5 seconds after unpause'};
+    }
     report.passed = true;
   } catch (error) {
     report.error = String(error.stack || error);
     process.exitCode = 1;
     await page.screenshot({ path: path.join(output, 'recovery-failure.png'), fullPage: true }).catch(() => {});
   } finally {
+    for (const name of paused) { try { docker(['unpause',name]); } catch { report.passed=false; process.exitCode=1; } }
     for (const name of stopped) {
       try { start(name); } catch (error) { report.errors.push('Failed to restore ' + name); process.exitCode = 1; report.passed = false; }
     }

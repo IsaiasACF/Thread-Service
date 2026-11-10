@@ -1,0 +1,22 @@
+[
+  {
+    "repository": "IsaiasACF/Thread-Service",
+    "url": "https://github.com/IsaiasACF/Thread-Service",
+    "private": false
+  },
+  {
+    "repository": "rmasad/microservicios",
+    "url": "https://github.com/rmasad/microservicios",
+    "private": false
+  },
+  {
+    "repository": "Misulas/modulo-integrales",
+    "url": "https://github.com/Misulas/modulo-integrales",
+    "private": false
+  },
+  {
+    "repository": "TomasCano-Usm/INF326-Microservicio-Polls",
+    "url": "https://github.com/TomasCano-Usm/INF326-Microservicio-Polls",
+    "private": false
+  }
+]

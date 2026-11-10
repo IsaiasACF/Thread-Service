@@ -1,0 +1,10 @@
+{
+  "kind": "fresh-private-directory-source-and-config-verification",
+  "mode": "corrected",
+  "prepared_from_new_directory": true,
+  "source_integrity_verified": true,
+  "compose_services": 19,
+  "duplicate_gateway_frontend": false,
+  "secondary_stack_started": false,
+  "note": "Configuration-only clean-room reproduction; real Docker E2E used the primary isolated project recorded in the other reports."
+}

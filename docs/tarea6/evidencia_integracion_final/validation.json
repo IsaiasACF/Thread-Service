@@ -1,0 +1,25 @@
+{
+  "kind": "regression-summary-distinct-from-real-E2E",
+  "passed": 550,
+  "failed": 0,
+  "skipped": 0,
+  "suites": {
+    "frontend": 63,
+    "gateway": 323,
+    "thread_service_with_real_infrastructure": 107,
+    "kubernetes_offline": 20,
+    "chat_tools": 23,
+    "final_platform": 14
+  },
+  "npm_ci": true,
+  "typescript_vite": true,
+  "docker_original_and_corrected_executed": true,
+  "snapshot_unchanged": true,
+  "main_e2e_passed": true,
+  "recovery_e2e_passed": true,
+  "ui_e2e_passed": true,
+  "persistence_passed": true,
+  "academic_video_public_url": null,
+  "video_narration_pending": true,
+  "base_commit": "fd3bb278c1e840406432e85c55e379ebec185c74"
+}

@@ -1,0 +1,41 @@
+{
+  "kind": "real-interactive-Chromium-recordings-no-still-images",
+  "published": false,
+  "audio_narration": false,
+  "files": [
+    {
+      "path": "/tmp/t6-final-20261109/videos/page@6239e455b31c2d86c0a727c6ccc91bc2.webm",
+      "sha256": "cd0d5da9d08ff21807e3d2ad72b78b929a2361a387ab47b85ad2f86f7d6cb31f",
+      "decoded_without_errors": true,
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "format": {
+        "duration": "14.680000",
+        "size": "1911964"
+      }
+    },
+    {
+      "path": "/tmp/t6-final-20261109/videos/page@d3464f034578c115447097e1b70b705a.webm",
+      "sha256": "2cd9e7a807864e75a1f03073abb5a19f3c02455367a596ea26415c5d37ce0337",
+      "decoded_without_errors": true,
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "format": {
+        "duration": "12.160000",
+        "size": "833928"
+      }
+    }
+  ]
+}

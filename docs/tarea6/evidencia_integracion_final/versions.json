@@ -1,0 +1,35 @@
+{
+  "kind": "actual-final-Docker-runtime",
+  "docker": "28.4.0",
+  "compose": "2.39.2",
+  "chat-users": {
+    "fastapi": "0.115.12",
+    "pymongo": "4.12.1",
+    "pydantic": "2.14.3"
+  },
+  "chat-gateway": {
+    "fastapi": "0.115.12",
+    "ariadne": "0.26.2",
+    "httpx": "0.28.1"
+  },
+  "chat-threads": {
+    "fastapi": "0.162.2",
+    "pymongo": "4.19.0",
+    "pika": "1.4.4"
+  },
+  "integrals": {
+    "fastapi": "0.115.12",
+    "sympy": "1.14.0",
+    "pymongo": "4.12.1"
+  },
+  "polls-api": {
+    "fastapi": "0.162.2",
+    "sqlalchemy": "2.1.8",
+    "asyncpg": "0.32.0"
+  },
+  "chat-users-db": "db version v7.0.14",
+  "polls-postgres": "postgres (PostgreSQL) 16.15",
+  "chat-rabbitmq": "4.3.6",
+  "integrals-rabbitmq": "3.13.7",
+  "polls-rabbitmq": "4.4.0"
+}

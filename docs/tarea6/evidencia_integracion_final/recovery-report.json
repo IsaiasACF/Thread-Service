@@ -1,0 +1,27 @@
+{
+  "kind": "real-docker-outage-recovery",
+  "passed": true,
+  "steps": {
+    "pending_when_messages_down": true,
+    "idempotency_reuses_poll_and_rejects_changed_body": true,
+    "pending_activates_after_messages_recovery": true,
+    "announcement_visible_in_same_messages_service": true,
+    "polls_outage_does_not_block_chat_threads_integrals": true,
+    "integrals_outage_does_not_block_threads": true,
+    "recovered_poll_closed": true,
+    "real_write_timeout_keeps_draft_without_automatic_retry": true
+  },
+  "fixtures": {
+    "pendingPollId": "2e48cce2-b897-410b-aa1e-ec5dd6fe9cee"
+  },
+  "errors": [],
+  "uncertainWrite": {
+    "code": "UPSTREAM_TIMEOUT",
+    "postCount": 1,
+    "persistedIds": [
+      "d388674e-06df-4468-abcd-b7547867c8d5"
+    ],
+    "source": "real API read 5.5 seconds after unpause"
+  },
+  "finishedAt": "2026-11-10T01:33:27.981Z"
+}

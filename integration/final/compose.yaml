@@ -1,0 +1,74 @@
+# Add-on to ../chat/compose.yaml; reuse B's services, never a second chat stack.
+services:
+  chat-users-db:
+    image: mongo:7.0.14@sha256:0032d2ca20db5fa34926f196c8a43b74e34ed239a7f2453ff1505b6f12ba8ea6
+  chat-channels-db:
+    image: mongo:7.0.14@sha256:0032d2ca20db5fa34926f196c8a43b74e34ed239a7f2453ff1505b6f12ba8ea6
+  chat-messages-db:
+    image: mongo:7.0.14@sha256:0032d2ca20db5fa34926f196c8a43b74e34ed239a7f2453ff1505b6f12ba8ea6
+  chat-threads-db:
+    image: mongo:7.0.14@sha256:0032d2ca20db5fa34926f196c8a43b74e34ed239a7f2453ff1505b6f12ba8ea6
+  chat-rabbitmq:
+    image: rabbitmq:4-management@sha256:54cb013d76cd1fd6c0a0708f34062ad61c452bb6f016b434c6c33f1a765d2b58
+  chat-gateway:
+    environment:
+      INTEGRALS_BASE_URL: http://chat-it-integrals:8000
+      POLLS_BASE_URL: http://chat-it-polls:8004
+  integrals:
+    extends: {file: ../overrides/polls-integrals.yaml, service: integrals}
+    environment:
+      USERS_URL: http://chat-it-users:8000
+      MESSAGES_URL: http://chat-it-messages:8000
+      RABBITMQ_URL: amqp://integrals:${FINAL_INTEGRALS_RABBIT_PASSWORD:?Use final/prepare.py}@integrals-rabbitmq:5672/%2F
+      PYTHONDONTWRITEBYTECODE: '1'
+    depends_on:
+      chat-users: {condition: service_healthy}
+      chat-messages: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks:
+      chat-data: {aliases: [chat-it-integrals]}
+  integrals-mongodb:
+    extends: {file: ../overrides/polls-integrals.yaml, service: integrals-mongodb}
+    image: mongo:7.0.14@sha256:0032d2ca20db5fa34926f196c8a43b74e34ed239a7f2453ff1505b6f12ba8ea6
+  integrals-rabbitmq:
+    image: rabbitmq:3.13-management@sha256:e582c0bc7766f3342496d8485efb5a1df782b5ce3886ad017e2eaae442311f69
+    extends: {file: ../overrides/polls-integrals.yaml, service: integrals-rabbitmq}
+    environment:
+      RABBITMQ_DEFAULT_PASS: ${FINAL_INTEGRALS_RABBIT_PASSWORD:?Use final/prepare.py}
+  polls-migrate:
+    extends: {file: ../overrides/polls-integrals.yaml, service: polls-migrate}
+    environment:
+      DATABASE_URL: postgresql+asyncpg://polls:${FINAL_POSTGRES_PASSWORD:?Use final/prepare.py}@polls-postgres:5432/polls
+  polls-api:
+    extends: {file: ../overrides/polls-integrals.yaml, service: polls-api}
+    environment:
+      DATABASE_URL: postgresql+asyncpg://polls:${FINAL_POSTGRES_PASSWORD:?Use final/prepare.py}@polls-postgres:5432/polls
+      MESSAGES_BASE_URL: http://chat-it-messages:8000
+      RABBITMQ_URL: amqp://polls:${FINAL_POLLS_RABBIT_PASSWORD:?Use final/prepare.py}@polls-rabbitmq:5672/%2F
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8004/health', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks:
+      chat-data: {aliases: [chat-it-polls]}
+  polls-postgres:
+    image: postgres:16-alpine@sha256:3c5c8892d184f738f4fe282d14ddaa613a38f00f4189d2d94725ebe6f2909ddb
+    extends: {file: ../overrides/polls-integrals.yaml, service: polls-postgres}
+    environment:
+      POSTGRES_PASSWORD: ${FINAL_POSTGRES_PASSWORD:?Use final/prepare.py}
+  polls-rabbitmq:
+    image: rabbitmq:4-management-alpine@sha256:4841f6384ef8313c3594cd3f2e9f40c10805f8a61c45f08a9a5d9ddea8199267
+    extends: {file: ../overrides/polls-integrals.yaml, service: polls-rabbitmq}
+    environment:
+      RABBITMQ_DEFAULT_PASS: ${FINAL_POLLS_RABBIT_PASSWORD:?Use final/prepare.py}
+networks:
+  integrals-private: {internal: true}
+  polls-private: {internal: true}
+volumes:
+  integrals-local-data: {}
+  polls-local-data: {}

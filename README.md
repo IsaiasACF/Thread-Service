@@ -1,6 +1,20 @@
 
 # Thread Service
 
+## Tarea 6 — entrega integrada
+
+**Arranque completo, pruebas y evidencias:** [ENTREGA_FINAL.md](docs/tarea6/ENTREGA_FINAL.md).
+Integra Chat, Threads, Integrales y Polls con Docker real y fuentes externas
+verificadas, sin depender de carpetas personales. El E2E usa copias docentes
+corregidas únicamente para integración local; los originales siguen intactos.
+
+[Matriz de cumplimiento](docs/tarea6/MATRIZ_CUMPLIMIENTO.md) ·
+[Guion del video](docs/tarea6/GUIÓN_VIDEO.md).
+La integración técnica está comprobada; falta adjuntar el video público de entrega.
+Kubernetes es una alternativa posterior, no un requisito de la Unidad 6.
+
+La documentación siguiente conserva el arranque independiente de Thread Service.
+
 ### Integrantes
 * Andrés Jablonca 202173578-K
 * Isaías Carte 202273606-2
