@@ -1,0 +1,253 @@
+{
+  "kind": "real-docker-database-restart-api-verification",
+  "passed": true,
+  "restarted": [
+    {
+      "name": "chat-users-db",
+      "before": "2026-11-10T01:27:07.380289206Z",
+      "after": "2026-11-10T01:37:13.920938058Z"
+    },
+    {
+      "name": "chat-channels-db",
+      "before": "2026-11-10T01:27:07.40314488Z",
+      "after": "2026-11-10T01:37:14.288296885Z"
+    },
+    {
+      "name": "chat-messages-db",
+      "before": "2026-11-10T01:27:07.434764686Z",
+      "after": "2026-11-10T01:37:13.596457368Z"
+    },
+    {
+      "name": "chat-threads-db",
+      "before": "2026-11-10T01:27:07.417407094Z",
+      "after": "2026-11-10T01:37:13.488660614Z"
+    },
+    {
+      "name": "integrals-mongodb",
+      "before": "2026-11-10T01:27:07.432173181Z",
+      "after": "2026-11-10T01:37:14.12116619Z"
+    },
+    {
+      "name": "polls-postgres",
+      "before": "2026-11-10T01:27:07.407240931Z",
+      "after": "2026-11-10T01:37:13.741698691Z"
+    }
+  ],
+  "before": {
+    "user": {
+      "id": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+      "displayName": "B autor 1794274095788"
+    },
+    "voter": {
+      "id": "e073a4ad-5134-455b-a96a-47df02300851",
+      "displayName": "B votante 1794274095788"
+    },
+    "history": {
+      "total": 23
+    },
+    "channel": {
+      "id": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+      "name": "B integración 1794274095788"
+    },
+    "messages": [
+      {
+        "id": "b29ff793-8a4f-4cf5-af0f-9192bc1d8819",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "Mensaje real B 1794274095788",
+        "createdAt": "2026-11-10T01:28:18.398350Z"
+      },
+      {
+        "id": "d08cb3c1-3fcc-4d88-bf6d-c85ed1b02883",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Nueva encuesta: Encuesta real B 1794274095788\nPoll ID: a827f91e-22e4-46ed-bc5e-3992c897a5f8\nAlternativas:\n- Primera\n- Segunda\nCierre: 2026-11-10 01:43 UTC",
+        "createdAt": "2026-11-10T01:28:23.546354Z"
+      },
+      {
+        "id": "4991dbcb-85ad-49b7-aed6-e4d86929d629",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Encuesta finalizada: Encuesta real B 1794274095788\nResultados finales:\n- Primera: 0 voto(s)\n- Segunda: 1 voto(s)\nTotal de votos: 1",
+        "createdAt": "2026-11-10T01:28:24.815939Z"
+      },
+      {
+        "id": "0e379d69-f03d-45b1-b6b1-f7a2c1447cba",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Nueva encuesta: Recuperación real de Messages 1794274219267\nPoll ID: 585f6e32-56d7-495a-b9f7-eea3963cade1\nAlternativas:\n- Sí\n- No\nCierre: 2026-11-10 01:45 UTC",
+        "createdAt": "2026-11-10T01:30:26.984917Z"
+      },
+      {
+        "id": "bed88089-bf29-4ab7-9ca1-ebf0acc8d176",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Encuesta finalizada: Recuperación real de Messages 1794274219267\nResultados finales:\n- Sí: 0 voto(s)\n- No: 0 voto(s)\nTotal de votos: 0",
+        "createdAt": "2026-11-10T01:30:44.403334Z"
+      },
+      {
+        "id": "f6307e5a-e66f-436e-8fd5-5224bc802659",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Nueva encuesta: Recuperación real de Messages 1794274378598\nPoll ID: 2e48cce2-b897-410b-aa1e-ec5dd6fe9cee\nAlternativas:\n- Sí\n- No\nCierre: 2026-11-10 01:47 UTC",
+        "createdAt": "2026-11-10T01:33:02.333036Z"
+      },
+      {
+        "id": "39be4ef6-77b9-4b38-b527-be3f325be377",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Encuesta finalizada: Recuperación real de Messages 1794274378598\nResultados finales:\n- Sí: 0 voto(s)\n- No: 0 voto(s)\nTotal de votos: 0",
+        "createdAt": "2026-11-10T01:33:16.815850Z"
+      }
+    ],
+    "integral": {
+      "id": "ee5da63b-8d66-4c53-a4ee-d48357426f5e",
+      "status": "calculated",
+      "result": {
+        "latex": "\\frac{1}{3}",
+        "numeric": 0.3333333333333333
+      }
+    },
+    "failed": {
+      "id": "3273b627-b03a-4a11-9c77-17b2bb100163",
+      "status": "failed",
+      "error": {
+        "code": "NOT_AN_INTEGRAL"
+      }
+    },
+    "poll": {
+      "pollId": "a827f91e-22e4-46ed-bc5e-3992c897a5f8",
+      "status": "closed",
+      "totalVotes": 1,
+      "options": [
+        {
+          "optionId": "e89d7ae9-be8d-42d5-a3bb-9cc9596ec446",
+          "voteCount": 0
+        },
+        {
+          "optionId": "664cf18e-a3a7-4711-9055-497e42d88848",
+          "voteCount": 1
+        }
+      ]
+    },
+    "replies": [
+      {
+        "id": "a624f528-5d11-4ba9-b80d-37c6ae0b2b3b",
+        "content": "Respuesta real B 1794274095788"
+      },
+      {
+        "id": "d388674e-06df-4468-abcd-b7547867c8d5",
+        "content": "Resultado incierto local 1794274397595"
+      }
+    ]
+  },
+  "after": {
+    "user": {
+      "id": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+      "displayName": "B autor 1794274095788"
+    },
+    "voter": {
+      "id": "e073a4ad-5134-455b-a96a-47df02300851",
+      "displayName": "B votante 1794274095788"
+    },
+    "history": {
+      "total": 23
+    },
+    "channel": {
+      "id": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+      "name": "B integración 1794274095788"
+    },
+    "messages": [
+      {
+        "id": "b29ff793-8a4f-4cf5-af0f-9192bc1d8819",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "Mensaje real B 1794274095788",
+        "createdAt": "2026-11-10T01:28:18.398350Z"
+      },
+      {
+        "id": "d08cb3c1-3fcc-4d88-bf6d-c85ed1b02883",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Nueva encuesta: Encuesta real B 1794274095788\nPoll ID: a827f91e-22e4-46ed-bc5e-3992c897a5f8\nAlternativas:\n- Primera\n- Segunda\nCierre: 2026-11-10 01:43 UTC",
+        "createdAt": "2026-11-10T01:28:23.546354Z"
+      },
+      {
+        "id": "4991dbcb-85ad-49b7-aed6-e4d86929d629",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Encuesta finalizada: Encuesta real B 1794274095788\nResultados finales:\n- Primera: 0 voto(s)\n- Segunda: 1 voto(s)\nTotal de votos: 1",
+        "createdAt": "2026-11-10T01:28:24.815939Z"
+      },
+      {
+        "id": "0e379d69-f03d-45b1-b6b1-f7a2c1447cba",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Nueva encuesta: Recuperación real de Messages 1794274219267\nPoll ID: 585f6e32-56d7-495a-b9f7-eea3963cade1\nAlternativas:\n- Sí\n- No\nCierre: 2026-11-10 01:45 UTC",
+        "createdAt": "2026-11-10T01:30:26.984917Z"
+      },
+      {
+        "id": "bed88089-bf29-4ab7-9ca1-ebf0acc8d176",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Encuesta finalizada: Recuperación real de Messages 1794274219267\nResultados finales:\n- Sí: 0 voto(s)\n- No: 0 voto(s)\nTotal de votos: 0",
+        "createdAt": "2026-11-10T01:30:44.403334Z"
+      },
+      {
+        "id": "f6307e5a-e66f-436e-8fd5-5224bc802659",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Nueva encuesta: Recuperación real de Messages 1794274378598\nPoll ID: 2e48cce2-b897-410b-aa1e-ec5dd6fe9cee\nAlternativas:\n- Sí\n- No\nCierre: 2026-11-10 01:47 UTC",
+        "createdAt": "2026-11-10T01:33:02.333036Z"
+      },
+      {
+        "id": "39be4ef6-77b9-4b38-b527-be3f325be377",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Encuesta finalizada: Recuperación real de Messages 1794274378598\nResultados finales:\n- Sí: 0 voto(s)\n- No: 0 voto(s)\nTotal de votos: 0",
+        "createdAt": "2026-11-10T01:33:16.815850Z"
+      }
+    ],
+    "integral": {
+      "id": "ee5da63b-8d66-4c53-a4ee-d48357426f5e",
+      "status": "calculated",
+      "result": {
+        "latex": "\\frac{1}{3}",
+        "numeric": 0.3333333333333333
+      }
+    },
+    "failed": {
+      "id": "3273b627-b03a-4a11-9c77-17b2bb100163",
+      "status": "failed",
+      "error": {
+        "code": "NOT_AN_INTEGRAL"
+      }
+    },
+    "poll": {
+      "pollId": "a827f91e-22e4-46ed-bc5e-3992c897a5f8",
+      "status": "closed",
+      "totalVotes": 1,
+      "options": [
+        {
+          "optionId": "e89d7ae9-be8d-42d5-a3bb-9cc9596ec446",
+          "voteCount": 0
+        },
+        {
+          "optionId": "664cf18e-a3a7-4711-9055-497e42d88848",
+          "voteCount": 1
+        }
+      ]
+    },
+    "replies": [
+      {
+        "id": "a624f528-5d11-4ba9-b80d-37c6ae0b2b3b",
+        "content": "Respuesta real B 1794274095788"
+      },
+      {
+        "id": "d388674e-06df-4468-abcd-b7547867c8d5",
+        "content": "Resultado incierto local 1794274397595"
+      }
+    ]
+  },
+  "finishedAt": "2026-11-10T01:37:59.275Z"
+}

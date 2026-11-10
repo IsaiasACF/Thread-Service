@@ -1,0 +1,291 @@
+{
+  "passed": true,
+  "kind": "real-browser-shared-shell-light-dark",
+  "screens": [
+    {
+      "name": "desktop-light-chat",
+      "theme": "light",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(255, 255, 255)",
+      "text": "rgb(32, 33, 36)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "desktop-light-integrals",
+      "theme": "light",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(255, 255, 255)",
+      "text": "rgb(32, 33, 36)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "desktop-light-polls",
+      "theme": "light",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(255, 255, 255)",
+      "text": "rgb(32, 33, 36)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "desktop-dark-polls",
+      "theme": "dark",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "desktop-dark-poll-detail",
+      "theme": "dark",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "desktop-dark-integrals",
+      "theme": "dark",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "desktop-dark-identity",
+      "theme": "dark",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "desktop-dark-chat",
+      "theme": "dark",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "desktop-dark-after-reload",
+      "theme": "dark",
+      "mainLeft": 256,
+      "mainTop": 58,
+      "sidebarWidth": 256,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "mobile-dark-chat",
+      "theme": "dark",
+      "mainLeft": 0,
+      "mainTop": 103,
+      "sidebarWidth": 390,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "mobile-dark-thread",
+      "theme": "dark",
+      "mainLeft": 0,
+      "mainTop": 103,
+      "sidebarWidth": 390,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "mobile-dark-integrals",
+      "theme": "dark",
+      "mainLeft": 0,
+      "mainTop": 103,
+      "sidebarWidth": 390,
+      "mainBackground": "rgb(27, 27, 30)",
+      "text": "rgb(238, 238, 240)",
+      "horizontalOverflow": false
+    },
+    {
+      "name": "mobile-light-integrals",
+      "theme": "light",
+      "mainLeft": 0,
+      "mainTop": 103,
+      "sidebarWidth": 390,
+      "mainBackground": "rgb(255, 255, 255)",
+      "text": "rgb(32, 33, 36)",
+      "horizontalOverflow": false
+    }
+  ],
+  "steps": {
+    "search_filters_real_channels": true,
+    "theme_control_operable_with_keyboard": true,
+    "integral_example_fills_editable_field": true,
+    "real_indefinite_integral_shows_constant": true,
+    "copy_link_uses_real_clipboard": true,
+    "persistent_shell_same_geometry_all_sections": true,
+    "explicit_theme_persists_navigation_and_reload": true,
+    "mobile_thread_keyboard_close_and_focus_return": true,
+    "mobile_navigation_closes_after_selection": true,
+    "mobile_theme_always_accessible": true,
+    "respects_reduced_motion": true,
+    "system_theme_used_until_explicit_override": true,
+    "browser_data_only_graphql": true
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requests": [
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    },
+    {
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql"
+    }
+  ],
+  "indefiniteIntegral": {
+    "id": "b616c8da-dee8-4e45-8fde-98bfebd9d70a",
+    "latex": "\\int x \\, dx",
+    "status": "calculated",
+    "durationMs": 1831,
+    "createdAt": "2026-11-10T01:43:06.119265Z",
+    "result": {
+      "latex": "\\frac{x^{2}}{2}",
+      "numeric": null,
+      "indefinite": true
+    },
+    "error": null,
+    "source": {
+      "kind": "rest",
+      "channelId": null,
+      "authorId": null,
+      "messageId": null
+    }
+  },
+  "finishedAt": "2026-11-10T01:43:09.934Z"
+}

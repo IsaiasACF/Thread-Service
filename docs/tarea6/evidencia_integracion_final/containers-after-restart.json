@@ -1,0 +1,238 @@
+[
+  {
+    "id": "84e3b731bc8757d62057d3cabd019502edaaf944b6cf87b4d8ecc9fcddbbf446",
+    "service": "chat-channels",
+    "image": "sha256:25eb1c4c279eeee88dede8d898fd41cf0df8cd7658edc6d1f39fcfdbb35c7245",
+    "startedAt": "2026-11-10T01:37:39.31237538Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": []
+  },
+  {
+    "id": "b657432493b5587007e31afd965d4fe8313c421c752b6f37300fe3d9c7d2e558",
+    "service": "chat-channels-db",
+    "image": "sha256:aa051a3dd4f7afb41647804a8143e6305b22450d30208d6511f687353d127243",
+    "startedAt": "2026-11-10T01:37:14.288296885Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "tarea6-chat-d0ba265e_chat-channels-data",
+        "destination": "/data/db"
+      },
+      {
+        "name": "fa8300b19d67a738090e8b48e473687da8a99354cd4b1514e688650e2e064e75",
+        "destination": "/data/configdb"
+      }
+    ]
+  },
+  {
+    "id": "0a6a418cdfd4090698839b084bf42539b7699db510c2ccac1f4dde0f2a1d68d5",
+    "service": "chat-frontend",
+    "image": "sha256:bab369ead0086cadff70a196d47b9b7723607fb1948932112028edf10e52f5dc",
+    "startedAt": "2026-11-10T01:37:45.055819849Z",
+    "status": "running",
+    "health": null,
+    "volumes": []
+  },
+  {
+    "id": "d19f6f65131dd43881e8e1afdf157c78a5d75884618c050ac23737e193466b87",
+    "service": "chat-gateway",
+    "image": "sha256:02f7ea80510295309bfc317c80a1b41dc20f4d406a1a29fa1fceba7e244d07e3",
+    "startedAt": "2026-11-10T01:37:38.793798963Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": []
+  },
+  {
+    "id": "3834825519ab3e26d906421a7f0d416db4a7cc9a80034afbbb66b4c349a34177",
+    "service": "chat-messages",
+    "image": "sha256:fb0e1a26080855dd176a26b1299ffd4fa7b3fbe654b86339c8f0860a47b04781",
+    "startedAt": "2026-11-10T01:37:46.357462366Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": []
+  },
+  {
+    "id": "08f8802aac5bd04fc66217f17089b78faf3393f54d523ef5006ef6f4fc08ebe1",
+    "service": "chat-messages-db",
+    "image": "sha256:aa051a3dd4f7afb41647804a8143e6305b22450d30208d6511f687353d127243",
+    "startedAt": "2026-11-10T01:37:13.596457368Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "tarea6-chat-d0ba265e_chat-messages-data",
+        "destination": "/data/db"
+      },
+      {
+        "name": "82f631f4dd7214c0ae71d76b4964d767eeb143c11c181a01553850bf6b609b25",
+        "destination": "/data/configdb"
+      }
+    ]
+  },
+  {
+    "id": "f4eff213dc58f94a834d96c6cd1a4c0c9de6ad00eb9b2ee870720b439bd3c05b",
+    "service": "chat-rabbitmq",
+    "image": "sha256:d97341cd55c6c92065af5ec9e6661cd4c7f1ee71e1c1107a3ecbccc982a22792",
+    "startedAt": "2026-11-10T01:27:07.427695113Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "tarea6-chat-d0ba265e_chat-rabbit-data",
+        "destination": "/var/lib/rabbitmq"
+      }
+    ]
+  },
+  {
+    "id": "d030a1f6aa2fe854b147cc2ad750465c6e57b6307d9d57aac8f0749073a7630a",
+    "service": "chat-threads",
+    "image": "sha256:b8f9859ad628f0bd20cea16a634b2bf11e56e1cc2d17f63e4e0cfab644fb947a",
+    "startedAt": "2026-11-10T01:37:39.315302889Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": []
+  },
+  {
+    "id": "0aa4bfc861d2cb1bdb6951631a230941a376c1b1a30339f97c505816f9c7837d",
+    "service": "chat-threads-db",
+    "image": "sha256:aa051a3dd4f7afb41647804a8143e6305b22450d30208d6511f687353d127243",
+    "startedAt": "2026-11-10T01:37:13.488660614Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "tarea6-chat-d0ba265e_chat-threads-data",
+        "destination": "/data/db"
+      },
+      {
+        "name": "28aa24b1dff969e3a51a0534581d449611df42155de079a0005f1c1afd38d083",
+        "destination": "/data/configdb"
+      }
+    ]
+  },
+  {
+    "id": "3b26203a782c5fdd94455671226bda1e301107611762fcf1e926f5c166d2f979",
+    "service": "chat-users",
+    "image": "sha256:89e9a3090f1dfc6c2b32848ff58c00d18764a23b1b204f6b10291205c346fb21",
+    "startedAt": "2026-11-10T01:37:39.299043544Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": []
+  },
+  {
+    "id": "66baeaa8dcdfd961a8c590c49f6ec3e6fd8a6e278916e77d1a3c2d1ad28289cf",
+    "service": "chat-users-db",
+    "image": "sha256:aa051a3dd4f7afb41647804a8143e6305b22450d30208d6511f687353d127243",
+    "startedAt": "2026-11-10T01:37:13.920938058Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "tarea6-chat-d0ba265e_chat-users-data",
+        "destination": "/data/db"
+      },
+      {
+        "name": "927502fa6aafc8af240e95a65d1e8bd1b56acfd96548ef893f8cfb6e28056227",
+        "destination": "/data/configdb"
+      }
+    ]
+  },
+  {
+    "id": "5eb5b0ea9af55d056bd809f45111be41500a9797f684a7fd2f3ddaec59ed6c3e",
+    "service": "chat-worker",
+    "image": "sha256:b8f9859ad628f0bd20cea16a634b2bf11e56e1cc2d17f63e4e0cfab644fb947a",
+    "startedAt": "2026-11-10T01:37:39.350770305Z",
+    "status": "running",
+    "health": null,
+    "volumes": []
+  },
+  {
+    "id": "1cc09c7ec4cc4b3ed5aa85919fa69b7917bdd174a3e50a02f4ae6b980e03976d",
+    "service": "integrals",
+    "image": "sha256:7da5027a98863916d079def76a16facfd26390fe3ecb886d838a21aa12919e51",
+    "startedAt": "2026-11-10T01:37:52.22473783Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": []
+  },
+  {
+    "id": "f7ef10d27a23dd9b3ce24c82a90043c2be6a1ea1dd37556772bfec37984be3b3",
+    "service": "integrals-mongodb",
+    "image": "sha256:aa051a3dd4f7afb41647804a8143e6305b22450d30208d6511f687353d127243",
+    "startedAt": "2026-11-10T01:37:14.12116619Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "tarea6-chat-d0ba265e_integrals-local-data",
+        "destination": "/data/db"
+      },
+      {
+        "name": "cd8a01e1b68e56853526e5f8f1e31f544254ef4eb0dc473aab483f714b470102",
+        "destination": "/data/configdb"
+      }
+    ]
+  },
+  {
+    "id": "21a8f852b22b065b90fdebca5d02550574c8759293d9d18876d021f3b3c56172",
+    "service": "integrals-rabbitmq",
+    "image": "sha256:de912cbbf07f938bb8aaa5682464a73a00c6a996efdf0880423aeb4eae006c34",
+    "startedAt": "2026-11-10T01:27:07.429655474Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "da6524353b83aad3b14c5e12623b212b5bd450fd71934662109dedec6d03e75d",
+        "destination": "/var/lib/rabbitmq"
+      }
+    ]
+  },
+  {
+    "id": "481ce877235a30b6997c732557cf3b5e3c8ced2fd851e8c9932333d553e6421e",
+    "service": "polls-api",
+    "image": "sha256:3fe113e2f8bf0d2870a521cbb6a88316fb5b5c539ca920cac7c1b41e247d0772",
+    "startedAt": "2026-11-10T01:37:44.206623743Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": []
+  },
+  {
+    "id": "9b37c7e53d73845d69dbecda35e76df411e46ffdad625fc9ef31303308eb5b3c",
+    "service": "polls-migrate",
+    "image": "sha256:3fe113e2f8bf0d2870a521cbb6a88316fb5b5c539ca920cac7c1b41e247d0772",
+    "startedAt": "2026-11-10T01:37:55.390451965Z",
+    "status": "exited",
+    "health": null,
+    "volumes": []
+  },
+  {
+    "id": "e2fe33fbc3e01241694ac0eeff87ecdfa6db7f9e0d694e4ca54dcefa2630085f",
+    "service": "polls-postgres",
+    "image": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+    "startedAt": "2026-11-10T01:37:13.741698691Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "tarea6-chat-d0ba265e_polls-local-data",
+        "destination": "/var/lib/postgresql/data"
+      }
+    ]
+  },
+  {
+    "id": "829d570b34c076936834e2bf595d5f5ce54f7bb9c6a52167a497e529c30e9af8",
+    "service": "polls-rabbitmq",
+    "image": "sha256:9c5c92b5a7efbf167cbcc17c6902dd013057924ef9c5358967fb3f2ddad5081f",
+    "startedAt": "2026-11-10T01:27:07.405349983Z",
+    "status": "running",
+    "health": "healthy",
+    "volumes": [
+      {
+        "name": "4e58ecaa0205694d83f81a0ea5fef60065186ac3b859610487ef3735ea77ad91",
+        "destination": "/var/lib/rabbitmq"
+      }
+    ]
+  }
+]

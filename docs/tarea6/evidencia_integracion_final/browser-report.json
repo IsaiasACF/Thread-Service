@@ -1,0 +1,768 @@
+{
+  "kind": "real-browser-real-docker-services-no-mocks",
+  "passed": true,
+  "startedAt": "2026-11-10T01:28:15.518Z",
+  "origin": "http://127.0.0.1:15173",
+  "steps": {
+    "favicon_resource_no_console_404": true,
+    "identity_channel_message": true,
+    "threads": true,
+    "integral_success_detail_reload": true,
+    "integral_failed_history_filter": true,
+    "poll_create_and_open": true,
+    "poll_announcement_once_in_shared_messages": true,
+    "second_identity_vote_results": true,
+    "duplicate_vote_foreign_close_rejected": true,
+    "author_close_persists_after_reload": true,
+    "close_change_recover_identity_and_reload": true,
+    "real_history_pagination": true,
+    "return_to_chat_threads_and_reload_with_relations": true,
+    "no_automatic_duplicate_writes": true,
+    "mobile_no_horizontal_overflow": true,
+    "browser_data_only_graphql": true
+  },
+  "fixtures": {
+    "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+    "voterId": "e073a4ad-5134-455b-a96a-47df02300851",
+    "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+    "messageId": "b29ff793-8a4f-4cf5-af0f-9192bc1d8819",
+    "replyId": "a624f528-5d11-4ba9-b80d-37c6ae0b2b3b",
+    "integralId": "ee5da63b-8d66-4c53-a4ee-d48357426f5e",
+    "failedIntegralId": "3273b627-b03a-4a11-9c77-17b2bb100163",
+    "pollId": "a827f91e-22e4-46ed-bc5e-3992c897a5f8",
+    "announcementId": "d08cb3c1-3fcc-4d88-bf6d-c85ed1b02883",
+    "optionId": "664cf18e-a3a7-4711-9055-497e42d88848"
+  },
+  "requests": [
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "CreateUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "CreateUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "CreateChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "SendMessage"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "CreateReply"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "CalculateIntegral"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "CalculateIntegral"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "CreatePoll"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "Announcement"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "VotePoll"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "Duplicate"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "Forbidden"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "ClosePoll"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "ClosedVote"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "HistoryCount"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "Relations"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:15173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "expectedErrors": [
+    {
+      "scenario": "duplicate_vote",
+      "code": "CONFLICT"
+    },
+    {
+      "scenario": "foreign_close",
+      "code": "FORBIDDEN"
+    },
+    {
+      "scenario": "closed_poll_vote",
+      "code": "CONFLICT"
+    }
+  ],
+  "mode": "verified-final-stack",
+  "historyPreparation": [],
+  "readBack": {
+    "user": {
+      "id": "c6ac2ffd-71ff-497d-959f-581bd240e5f6"
+    },
+    "channel": {
+      "id": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee"
+    },
+    "messages": [
+      {
+        "id": "b29ff793-8a4f-4cf5-af0f-9192bc1d8819",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "Mensaje real B 1794274095788",
+        "createdAt": "2026-11-10T01:28:18.398350Z"
+      },
+      {
+        "id": "d08cb3c1-3fcc-4d88-bf6d-c85ed1b02883",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Nueva encuesta: Encuesta real B 1794274095788\nPoll ID: a827f91e-22e4-46ed-bc5e-3992c897a5f8\nAlternativas:\n- Primera\n- Segunda\nCierre: 2026-11-10 01:43 UTC",
+        "createdAt": "2026-11-10T01:28:23.546354Z"
+      },
+      {
+        "id": "4991dbcb-85ad-49b7-aed6-e4d86929d629",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "📊 Encuesta finalizada: Encuesta real B 1794274095788\nResultados finales:\n- Primera: 0 voto(s)\n- Segunda: 1 voto(s)\nTotal de votos: 1",
+        "createdAt": "2026-11-10T01:28:24.815939Z"
+      }
+    ],
+    "replies": [
+      {
+        "id": "a624f528-5d11-4ba9-b80d-37c6ae0b2b3b",
+        "channelId": "8b787f24-a26d-48f5-bb75-bd0a3c84a3ee",
+        "messageId": "b29ff793-8a4f-4cf5-af0f-9192bc1d8819",
+        "authorId": "c6ac2ffd-71ff-497d-959f-581bd240e5f6",
+        "content": "Respuesta real B 1794274095788",
+        "createdAt": "2026-11-10T01:28:18.689285Z"
+      }
+    ]
+  },
+  "mutationCounts": {
+    "CreateUser": 2,
+    "CreateChannel": 1,
+    "SendMessage": 1,
+    "CreateReply": 1,
+    "CalculateIntegral": 2,
+    "CreatePoll": 1,
+    "VotePoll": 1,
+    "ClosePoll": 1
+  },
+  "finishedAt": "2026-11-10T01:28:29.746Z"
+}
