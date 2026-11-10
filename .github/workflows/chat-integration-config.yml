@@ -1,10 +1,10 @@
 name: Chat integration setup
 on:
   pull_request:
-    paths: ['integration/chat/**', '.github/workflows/chat-integration-config.yml']
+    paths: ['integration/chat/**', 'integration/final/**', 'integration/overrides/**', '.dockerignore', '.github/workflows/chat-integration-config.yml']
   push:
-    branches: [main, feature/tarea6-chat-integration, feature/tarea6-chat-e2e-final]
-    paths: ['integration/chat/**', '.github/workflows/chat-integration-config.yml']
+    branches: [main, feature/tarea6-chat-integration, feature/tarea6-chat-e2e-final, feature/tarea6-integracion-final]
+    paths: ['integration/chat/**', 'integration/final/**', 'integration/overrides/**', '.dockerignore', '.github/workflows/chat-integration-config.yml']
 permissions:
   contents: read
 jobs:
@@ -28,3 +28,8 @@ jobs:
         run: |
           python integration/chat/prepare.py --directory /tmp/chat-integration-corrected --mode corrected
           python integration/chat/verify_compose.py --env-file /tmp/chat-integration-corrected/compose.env
+      - name: Verify final integration sources and Compose compatibility
+        run: |
+          python integration/final/prepare.py --directory /tmp/tarea6-final-ci --mode corrected
+          python integration/final/run.py --directory /tmp/tarea6-final-ci config
+          python -m pytest integration/final/test_platform.py -q -W error

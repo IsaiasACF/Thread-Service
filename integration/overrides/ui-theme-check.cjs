@@ -17,7 +17,9 @@ async function main() {
     if (!localStorage.getItem('thread.theme.v1')) localStorage.setItem('thread.theme.v1', 'light');
   }, previous.fixtures.authorId);
   const page = await ctx.newPage();
-  const report = { passed: false, kind: 'real-browser-shared-shell-light-dark', screens: [], steps: {}, pageErrors: [] };
+  const report = { passed: false, kind: 'real-browser-shared-shell-light-dark', screens: [], steps: {}, pageErrors: [], consoleErrors: [], requests: [] };
+  page.on('console', message => { if (message.type() === 'error') report.consoleErrors.push(message.text()); });
+  page.on('request', req => { if(['fetch','xhr'].includes(req.resourceType())) { const url=new URL(req.url()); report.requests.push({origin:url.origin,path:url.pathname}); } });
   page.on('pageerror', error => report.pageErrors.push(error.message));
   const origin = previous.origin;
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
@@ -53,12 +55,31 @@ async function main() {
     report.steps.search_filters_real_channels = true;
     await page.locator(sidebar).evaluate(el => { window.__originalSidebar = el; });
     await capture('desktop-light-chat', 'light');
+    const themeButton = page.getByRole('button', {name:'Modo oscuro'});
+    await themeButton.focus();
+    await page.keyboard.press('Space');
+    assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
+    await page.keyboard.press('Space');
+    assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+    report.steps.theme_control_operable_with_keyboard = true;
     await page.getByRole('link', { name: 'Integrales', exact: true }).click();
     await page.waitForURL('**/integrals');
     await page.getByRole('heading', { name: 'Historial', exact: true }).waitFor();
     await page.getByRole('button', { name: 'Integral definida', exact: true }).click();
     assert.equal(await page.getByLabel('Integral en LaTeX', { exact: true }).inputValue(), '\\int_0^1 x^2 \\, dx');
     report.steps.integral_example_fills_editable_field = true;
+    if (process.env.FINAL_STACK_DIR) {
+      await page.getByRole('button', {name:'Integral indefinida',exact:true}).click();
+      const pending = page.waitForResponse(r => r.url().endsWith('/graphql') && /mutation\s+CalculateIntegral\b/.test(r.request().postDataJSON()?.query || ''));
+      await page.getByRole('button',{name:'Calcular integral',exact:true}).click();
+      const body = await (await pending).json();
+      assert(!body.errors && body.data.calculateIntegral.status==='calculated');
+      assert.equal(body.data.calculateIntegral.result.indefinite,true);
+      await page.getByRole('article',{name:'Resultado de integral'}).waitFor();
+      assert((await page.getByLabel('Resultado en LaTeX',{exact:true}).innerText()).endsWith('+ C'));
+      report.indefiniteIntegral = body.data.calculateIntegral;
+      report.steps.real_indefinite_integral_shows_constant = true;
+    }
     await capture('desktop-light-integrals', 'light');
     await page.getByRole('link', { name: 'Encuestas', exact: true }).click();
     await page.waitForURL('**/polls/pendiente');
@@ -69,7 +90,8 @@ async function main() {
     await page.getByRole('button', { name: 'Abrir encuesta', exact: true }).click();
     await page.getByText('Cerrada', { exact: true }).waitFor();
     await capture('desktop-dark-poll-detail', 'dark');
-    await page.getByRole('button', { name: 'Copiar enlace de encuesta' }).click();
+    await page.getByRole('button', { name: 'Copiar enlace de encuesta' }).focus();
+    await page.keyboard.press('Enter');
     await page.getByText('Copiado al portapapeles.', { exact: true }).waitFor();
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + '/polls/' + previous.fixtures.pollId);
     report.steps.copy_link_uses_real_clipboard = true;
@@ -91,6 +113,15 @@ async function main() {
 
     await page.setViewportSize({ width: 390, height: 844 });
     await capture('mobile-dark-chat', 'dark', false);
+    const rootMessage = page.getByRole('article', {name:'Mensaje '+previous.fixtures.messageId,exact:true});
+    const opener = rootMessage.getByRole('button', {name:/Ver respuestas/});
+    await opener.click();
+    await page.getByRole('article', {name:'Mensaje '+previous.fixtures.replyId,exact:true}).waitFor();
+    await capture('mobile-dark-thread', 'dark', false);
+    await page.keyboard.press('Escape');
+    assert.equal(await page.getByRole('dialog', {name:'Respuestas del mensaje'}).count(),0);
+    assert(await opener.evaluate(el=>el===document.activeElement));
+    report.steps.mobile_thread_keyboard_close_and_focus_return = true;
     await page.getByRole('button', { name: 'Canales y navegación' }).click();
     await page.getByRole('link', { name: 'Integrales', exact: true }).click();
     await page.waitForURL('**/integrals');
@@ -116,6 +147,9 @@ async function main() {
     report.steps.system_theme_used_until_explicit_override = true;
     await system.close();
     assert.equal(report.pageErrors.length, 0);
+    assert.equal(report.consoleErrors.length, 0, JSON.stringify(report.consoleErrors));
+    assert(report.requests.every(req => req.origin===origin && req.path==='/graphql'));
+    report.steps.browser_data_only_graphql = true;
     report.passed = true;
   } catch (error) {
     report.error = String(error.stack || error);
