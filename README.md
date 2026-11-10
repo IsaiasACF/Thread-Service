@@ -8,8 +8,12 @@ Integra Chat, Threads, Integrales y Polls con Docker real y fuentes externas
 verificadas, sin depender de carpetas personales. El E2E usa copias docentes
 corregidas únicamente para integración local; los originales siguen intactos.
 
-[Matriz de cumplimiento](docs/tarea6/MATRIZ_CUMPLIMIENTO.md)·
-[Video demostración funcionalidades tarea 6](video-funcionalidades-t6.mp4).
+[Matriz de cumplimiento](docs/tarea6/MATRIZ_CUMPLIMIENTO.md)
+
+[Video demostración funcionalidades tarea 6](video-funcionalidades-t6.mp4)
+
+Link: https://usmcl-my.sharepoint.com/:v:/g/personal/andres_jablonca_usm_cl/IQD-sdhC_XbuT7vFdUS529G6AehyimSJJoRMMliq4zNa8EA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=OPcM1q
+
 La documentación siguiente conserva el arranque independiente de Thread Service.
 
 ### Integrantes
