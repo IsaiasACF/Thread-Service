@@ -8,11 +8,8 @@ Integra Chat, Threads, Integrales y Polls con Docker real y fuentes externas
 verificadas, sin depender de carpetas personales. El E2E usa copias docentes
 corregidas únicamente para integración local; los originales siguen intactos.
 
-[Matriz de cumplimiento](docs/tarea6/MATRIZ_CUMPLIMIENTO.md) ·
-[Guion del video](docs/tarea6/GUIÓN_VIDEO.md).
-La integración técnica está comprobada; falta adjuntar el video público de entrega.
-Kubernetes es una alternativa posterior, no un requisito de la Unidad 6.
-
+[Matriz de cumplimiento](docs/tarea6/MATRIZ_CUMPLIMIENTO.md)·
+[Video demostración funcionalidades tarea 6](video-funcionalidades-t6.mp4).
 La documentación siguiente conserva el arranque independiente de Thread Service.
 
 ### Integrantes
