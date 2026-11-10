@@ -1,0 +1,223 @@
+{
+  "kind": "real-browser-real-docker-services-no-mocks",
+  "passed": false,
+  "startedAt": "2026-11-09T22:18:42.512Z",
+  "origin": "http://localhost:5173",
+  "steps": {
+    "identity_channel_message": true,
+    "threads": true,
+    "integral_success_detail_reload": true
+  },
+  "fixtures": {
+    "authorId": "9f77bae9-7411-4717-828f-f54910ca18aa",
+    "channelId": "23105f76-b30c-4dd1-83ed-2a5dada9bd54",
+    "messageId": "959ce750-5661-494e-926a-1b6a97c4504c",
+    "replyId": "09e1ecbd-bfc0-430c-9b59-abf8622541e5",
+    "integralId": "2d30abf2-2447-417a-8ab1-da479b70b98e",
+    "failedIntegralId": "98050e7d-e06e-4a26-b4bf-4a0bc04dbc7c"
+  },
+  "requests": [
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CreateUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CreateChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "SendMessage"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CreateReply"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CalculateIntegral"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CalculateIntegral"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    }
+  ],
+  "pageErrors": [],
+  "expectedErrors": [],
+  "error": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Estado', { exact: true })\u001b[22m\n\n    at main (C:\\Users\\andre\\Desktop\\Proyectos\\Arqui SW\\Thread-Service\\integration\\overrides\\browser-e2e.cjs:100:56)",
+  "finishedAt": "2026-11-09T22:19:20.667Z"
+}

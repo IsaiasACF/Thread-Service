@@ -1,0 +1,12 @@
+{
+  "integrals": {
+    "repository": "https://github.com/Misulas/modulo-integrales",
+    "commit": "4a03648fb93e80a5b74185cbc9672f0f17087964",
+    "buildSubdirectory": "integrals"
+  },
+  "polls": {
+    "repository": "https://github.com/TomasCano-Usm/INF326-Microservicio-Polls",
+    "commit": "d9b0627a65371da72107e15225f4af6fcd55eb1f",
+    "buildSubdirectory": "."
+  }
+}

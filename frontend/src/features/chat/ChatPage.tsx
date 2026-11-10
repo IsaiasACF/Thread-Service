@@ -8,7 +8,6 @@ import { channelKey, getChannel, getMessages, messagesKey, sendMessage, type Cha
 import { chronological, errorCode, readError } from './errors';
 import { Composer } from './Composer';
 import { MessageCard } from './MessageCard';
-import { Workspace } from './Workspace';
 import styles from './Chat.module.css';
 import { useTimelineScroll } from './useTimelineScroll';
 
@@ -32,8 +31,8 @@ function Conversation({ channel }: { channel: Channel }) {
   }
   return <div className={styles.conversationLayout}>
     <section className={styles.conversation} aria-label={`Conversación de ${channel.name}`}>
-      <header className={styles.conversationHeader}><div><span className={styles.eyebrow}>CONVERSACIÓN</span><h1><span aria-hidden="true">#</span> {channel.name}</h1></div>
-        <button className={styles.textButton} onClick={refresh} disabled={messages.isFetching}>↻ Actualizar mensajes</button></header>
+      <header className={styles.conversationHeader}><div><h1>{channel.name}</h1></div>
+        <button className={styles.textButton} onClick={refresh} disabled={messages.isFetching}>Actualizar mensajes</button></header>
       {!identity.user && <p className={styles.identityBanner}>{identity.checking ? 'Validando tu identidad…' : <>Puedes leer la conversación. <Link to="/">Elige una identidad</Link> para participar.</>}</p>}
       <div ref={scroll.container} className={styles.messages} aria-label="Mensajes del canal" aria-busy={messages.isFetching}>
         {messages.isPending && <LoadingIndicator />}
@@ -57,9 +56,7 @@ function ChannelView({ id }: { id: string }) {
 }
 export default function ChatPage() {
   const { channelId } = useParams();
-  return <Workspace>{channelId ? <ChannelView key={channelId} id={channelId} /> : <div className={styles.welcome}>
-    <span className={styles.welcomeMark}>#</span><span className={styles.eyebrow}>BIENVENIDO A THREAD</span>
-    <h1>Un canal para cada idea.</h1><p>Selecciona una conversación o crea un canal para empezar a compartir.</p>
-    <p className={styles.intro}>Abre las respuestas de un mensaje para seguir el hilo sin perder el contexto.</p>
-  </div>}</Workspace>;
+  return channelId ? <ChannelView key={channelId} id={channelId} /> : <div className={styles.welcome}>
+    <h1>Selecciona un canal</h1><p>Elige un canal de la lista o crea uno para enviar mensajes.</p>
+  </div>;
 }

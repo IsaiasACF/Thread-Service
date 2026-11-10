@@ -1,0 +1,78 @@
+[
+    {
+        "imageId":  "sha256:673df4606ad0651bb1453c8d91103b497dc96e37e68dcdea3f553573674ee176",
+        "container":  "thread-b-app-polls-api-1"
+    },
+    {
+        "imageId":  "sha256:90eaf1cbbd2b478b076793490a0943a75d4196fbcf428930b630e73878e4b845",
+        "container":  "thread-b-app-integrals-1"
+    },
+    {
+        "imageId":  "sha256:4827b299b9d9a6d82a5a549616c4cf4b9a5a1f0cd470d61b230151c06b1795c2",
+        "container":  "thread-b-app-frontend-1"
+    },
+    {
+        "imageId":  "sha256:710c9e68513ccffd43a790e77033ddeef4f79e1c1596a8d9d16baa85842e6f39",
+        "container":  "thread-b-app-polls-migrate-1"
+    },
+    {
+        "imageId":  "sha256:aa6cb33cf4c19c765cefcf48d96176258800870a9a1e930ad126200f9d825139",
+        "container":  "thread-b-app-polls-postgres-1"
+    },
+    {
+        "imageId":  "sha256:e582c0bc7766f3342496d8485efb5a1df782b5ce3886ad017e2eaae442311f69",
+        "container":  "thread-b-app-integrals-rabbitmq-1"
+    },
+    {
+        "imageId":  "sha256:4841f6384ef8313c3594cd3f2e9f40c10805f8a61c45f08a9a5d9ddea8199267",
+        "container":  "thread-b-app-polls-rabbitmq-1"
+    },
+    {
+        "imageId":  "sha256:b6421fd6d1c5ded6377b397d8983e2f82e2100dc5123332dcfda2065a472be5b",
+        "container":  "thread-b-app-integrals-mongodb-1"
+    },
+    {
+        "imageId":  "sha256:1e23824c35a633e88f2afb9ea8dd010bafdbddcdd0d9fa4568346a7ca92ab992",
+        "container":  "thread-b-app-gateway-1"
+    },
+    {
+        "imageId":  "sha256:c45db714dc4fd6602f04b92557ecde2cdbb12d4ef31eae9a21c3b6c6c6ba83d6",
+        "container":  "thread-b-threads-threads-1"
+    },
+    {
+        "imageId":  "sha256:41eec20c95b1c5433b666777b4c7d6b9c89b41de41d724461dee75ef9d5682d1",
+        "container":  "thread-b-threads-worker-1"
+    },
+    {
+        "imageId":  "sha256:54cb013d76cd1fd6c0a0708f34062ad61c452bb6f016b434c6c33f1a765d2b58",
+        "container":  "thread-b-threads-rabbitmq-1"
+    },
+    {
+        "imageId":  "sha256:b6421fd6d1c5ded6377b397d8983e2f82e2100dc5123332dcfda2065a472be5b",
+        "container":  "thread-b-threads-mongodb-1"
+    },
+    {
+        "imageId":  "sha256:b6421fd6d1c5ded6377b397d8983e2f82e2100dc5123332dcfda2065a472be5b",
+        "container":  "thread-b-base-users-mongodb-1"
+    },
+    {
+        "imageId":  "sha256:b6421fd6d1c5ded6377b397d8983e2f82e2100dc5123332dcfda2065a472be5b",
+        "container":  "thread-b-base-messages-mongodb-1"
+    },
+    {
+        "imageId":  "sha256:b6421fd6d1c5ded6377b397d8983e2f82e2100dc5123332dcfda2065a472be5b",
+        "container":  "thread-b-base-channels-mongodb-1"
+    },
+    {
+        "imageId":  "sha256:e8d84b4f605eb479409c5354956fa7c611b4d390a20b1f2dab806f7af440f7ca",
+        "container":  "thread-b-base-messages-1"
+    },
+    {
+        "imageId":  "sha256:a5aa8af5da6e6073b1e67bf129905c32102cbecd6dc2f41d5b049292408cfa55",
+        "container":  "thread-b-base-users-1"
+    },
+    {
+        "imageId":  "sha256:92476f2696eb05ebc985a0605fd524e70897bfb5fa6d9d773bdb55cd53f31ac2",
+        "container":  "thread-b-base-channels-1"
+    }
+]

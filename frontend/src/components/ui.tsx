@@ -5,7 +5,7 @@ export function Button(props: ButtonHTMLAttributes<HTMLButtonElement>) {
   return <button {...props} type={props.type ?? 'button'} className={`${styles.button} ${props.className ?? ''}`} />;
 }
 export function LoadingIndicator() {
-  return <p role="status" aria-live="polite">Cargando…</p>;
+  return <p role="status" aria-live="polite" className={styles.loading}>Cargando…</p>;
 }
 export function ErrorMessage({ message = 'No se pudo completar la solicitud.' }: { message?: string }) {
   return <p role="alert" className={styles.error}>{message}</p>;

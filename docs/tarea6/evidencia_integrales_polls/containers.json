@@ -1,0 +1,116 @@
+[
+    {
+        "Names":  "thread-b-app-polls-api-1",
+        "Image":  "thread-b-app-polls-api",
+        "Status":  "Up About a minute",
+        "Ports":  "8004/tcp"
+    },
+    {
+        "Names":  "thread-b-app-integrals-1",
+        "Image":  "thread-b-app-integrals",
+        "Status":  "Up About a minute",
+        "Ports":  ""
+    },
+    {
+        "Names":  "thread-b-app-frontend-1",
+        "Image":  "thread-b-app-frontend",
+        "Status":  "Up 4 minutes",
+        "Ports":  "0.0.0.0:5173-\u003e5173/tcp, [::]:5173-\u003e5173/tcp"
+    },
+    {
+        "Names":  "thread-b-app-polls-migrate-1",
+        "Image":  "thread-b-app-polls-migrate",
+        "Status":  "Exited (0) 4 minutes ago",
+        "Ports":  ""
+    },
+    {
+        "Names":  "thread-b-app-polls-postgres-1",
+        "Image":  "postgres:16-alpine",
+        "Status":  "Up About a minute (healthy)",
+        "Ports":  "5432/tcp"
+    },
+    {
+        "Names":  "thread-b-app-integrals-rabbitmq-1",
+        "Image":  "rabbitmq:3.13-management",
+        "Status":  "Up 5 minutes (healthy)",
+        "Ports":  "4369/tcp, 5671-5672/tcp, 15671-15672/tcp, 15691-15692/tcp, 25672/tcp"
+    },
+    {
+        "Names":  "thread-b-app-polls-rabbitmq-1",
+        "Image":  "rabbitmq:4-management-alpine",
+        "Status":  "Up 5 minutes (healthy)",
+        "Ports":  "4369/tcp, 5671-5672/tcp, 15671-15672/tcp, 15691-15692/tcp, 25672/tcp"
+    },
+    {
+        "Names":  "thread-b-app-integrals-mongodb-1",
+        "Image":  "mongo:7",
+        "Status":  "Up About a minute (healthy)",
+        "Ports":  "27017/tcp"
+    },
+    {
+        "Names":  "thread-b-app-gateway-1",
+        "Image":  "thread-b-app-gateway",
+        "Status":  "Up 5 minutes (healthy)",
+        "Ports":  "0.0.0.0:5000-\u003e5000/tcp, [::]:5000-\u003e5000/tcp"
+    },
+    {
+        "Names":  "thread-b-threads-threads-1",
+        "Image":  "thread-b-threads-threads",
+        "Status":  "Up 6 minutes (healthy)",
+        "Ports":  "0.0.0.0:8004-\u003e8000/tcp, [::]:8004-\u003e8000/tcp"
+    },
+    {
+        "Names":  "thread-b-threads-worker-1",
+        "Image":  "thread-b-threads-worker",
+        "Status":  "Up 6 minutes",
+        "Ports":  "8000/tcp"
+    },
+    {
+        "Names":  "thread-b-threads-rabbitmq-1",
+        "Image":  "rabbitmq:4-management",
+        "Status":  "Up 6 minutes (healthy)",
+        "Ports":  "127.0.0.1:15672-\u003e15672/tcp"
+    },
+    {
+        "Names":  "thread-b-threads-mongodb-1",
+        "Image":  "mongo:7",
+        "Status":  "Up 6 minutes (healthy)",
+        "Ports":  "27017/tcp"
+    },
+    {
+        "Names":  "thread-b-base-users-mongodb-1",
+        "Image":  "mongo:7",
+        "Status":  "Up 6 minutes",
+        "Ports":  "27017/tcp"
+    },
+    {
+        "Names":  "thread-b-base-messages-mongodb-1",
+        "Image":  "mongo:7",
+        "Status":  "Up 6 minutes",
+        "Ports":  "27017/tcp"
+    },
+    {
+        "Names":  "thread-b-base-channels-mongodb-1",
+        "Image":  "mongo:7",
+        "Status":  "Up 6 minutes",
+        "Ports":  "27017/tcp"
+    },
+    {
+        "Names":  "thread-b-base-messages-1",
+        "Image":  "thread-b-base-messages",
+        "Status":  "Up 2 minutes",
+        "Ports":  "0.0.0.0:8003-\u003e8000/tcp, [::]:8003-\u003e8000/tcp"
+    },
+    {
+        "Names":  "thread-b-base-users-1",
+        "Image":  "thread-b-base-users",
+        "Status":  "Up 6 minutes",
+        "Ports":  "0.0.0.0:8001-\u003e8000/tcp, [::]:8001-\u003e8000/tcp"
+    },
+    {
+        "Names":  "thread-b-base-channels-1",
+        "Image":  "thread-b-base-channels",
+        "Status":  "Up 6 minutes",
+        "Ports":  "0.0.0.0:8002-\u003e8000/tcp, [::]:8002-\u003e8000/tcp"
+    }
+]

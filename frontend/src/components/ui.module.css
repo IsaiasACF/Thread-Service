@@ -1,7 +1,21 @@
-.panel { padding: clamp(1.5rem, 5vw, 3rem); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
-.badge { display: inline-block; padding: var(--space-1) var(--space-3); background: #edf1ff; color: #304aa4; border-radius: 2rem; font-size: .85rem; font-weight: 600; }
-.empty { border: 1px dashed var(--border); border-radius: .6rem; padding: var(--space-5); margin-top: var(--space-5); color: var(--muted); }
-.button { background: var(--accent); color: white; padding: var(--space-3) var(--space-4); border: 0; border-radius: .5rem; cursor: pointer; font: inherit; }
-.button:disabled { opacity: .55; cursor: not-allowed; }
-.error { color: #a22132; background: #fff0f1; padding: var(--space-3); }
+.panel { padding: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.badge { display: inline-block; padding: .25rem .5rem; background: var(--surface-subtle); color: var(--muted); font-size: .8rem; }
+.empty { border: 1px dashed var(--border); border-radius: var(--radius); padding: 1rem; margin-block: 1rem; color: var(--muted); font-size: .875rem; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: var(--accent); color: var(--on-accent); padding: .7rem 1.1rem; border: 1px solid transparent; border-radius: var(--radius); font-weight: 600; font-size: .875rem; }
+.button:hover:not(:disabled) { filter: brightness(.92); }
+.button:disabled { opacity: .5; }
+.error { color: var(--error); background: var(--error-bg); border-left: 2px solid var(--error); padding: .8rem 1rem; font-size: .875rem; }
 .detail { overflow-wrap: anywhere; color: var(--muted); }
+.copyControl { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .65rem; margin-top: .5rem; }
+.copyButton { display: inline-flex; align-items: center; gap: .4rem; background: var(--surface); color: var(--accent); border: 1px solid var(--border); border-radius: var(--radius); padding: .4rem .65rem; font-size: .75rem; }
+.copyButton svg { width: 15px; height: 15px; }
+.copyButton:hover { border-color: var(--accent); background: var(--accent-subtle); }
+.copyStatus { font-size: .75rem; color: var(--muted); }
+.copyStatus:empty { display: none; }
+.loading { display: flex; align-items: center; gap: .6rem; color: var(--muted); font-size: .85rem; }
+.loading::before { content: ''; width: 15px; height: 15px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; }
+@media (prefers-reduced-motion: no-preference) {
+  .loading::before { animation: spin .8s linear infinite; }
+  .button:hover:not(:disabled) { transform: translateY(-1px); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }

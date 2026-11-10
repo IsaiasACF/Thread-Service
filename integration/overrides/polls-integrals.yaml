@@ -1,0 +1,105 @@
+# Local integration only. Sources are checked out separately; do not vendor them here.
+services:
+  gateway:
+    environment:
+      INTEGRALS_BASE_URL: http://integrals:8000
+      POLLS_BASE_URL: http://polls-api:8004
+
+  integrals:
+    build:
+      context: ${INTEGRALS_SOURCE_DIR:?Set the absolute path to modulo-integrales/integrals}
+    environment:
+      MONGODB_URL: mongodb://integrals-mongodb:27017
+      RABBITMQ_URL: amqp://integrals:integrals-local@integrals-rabbitmq:5672/%2F
+      USERS_URL: http://users:8000
+      MESSAGES_URL: http://messages:8000
+    depends_on:
+      integrals-mongodb:
+        condition: service_healthy
+      integrals-rabbitmq:
+        condition: service_healthy
+    networks: [microsvcs, integrals-private]
+
+  integrals-mongodb:
+    image: mongo:7
+    volumes: [integrals-local-data:/data/db]
+    networks: [integrals-private]
+    healthcheck:
+      test: [CMD, mongosh, --quiet, --eval, 'db.adminCommand({ping: 1})']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  integrals-rabbitmq:
+    image: rabbitmq:3.13-management
+    environment:
+      RABBITMQ_DEFAULT_USER: integrals
+      RABBITMQ_DEFAULT_PASS: integrals-local
+    networks: [integrals-private]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  polls-migrate:
+    build:
+      context: ${POLLS_SOURCE_DIR:?Set the absolute path to INF326-Microservicio-Polls}
+    command: [alembic, upgrade, head]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://polls:polls-local@polls-postgres:5432/polls
+    depends_on:
+      polls-postgres:
+        condition: service_healthy
+    networks: [polls-private]
+
+  polls-api:
+    build:
+      context: ${POLLS_SOURCE_DIR:?Set the absolute path to INF326-Microservicio-Polls}
+    environment:
+      DATABASE_URL: postgresql+asyncpg://polls:polls-local@polls-postgres:5432/polls
+      MESSAGES_ENABLED: 'true'
+      MESSAGES_BASE_URL: http://messages:8000
+      RABBITMQ_URL: amqp://polls:polls-local@polls-rabbitmq:5672/%2F
+      RABBITMQ_EXCHANGE: polls.events
+    depends_on:
+      polls-migrate:
+        condition: service_completed_successfully
+      polls-rabbitmq:
+        condition: service_healthy
+    networks: [microsvcs, polls-private]
+
+  polls-postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: polls
+      POSTGRES_USER: polls
+      POSTGRES_PASSWORD: polls-local
+    volumes: [polls-local-data:/var/lib/postgresql/data]
+    networks: [polls-private]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U polls -d polls']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  polls-rabbitmq:
+    image: rabbitmq:4-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: polls
+      RABBITMQ_DEFAULT_PASS: polls-local
+    networks: [polls-private]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+networks:
+  integrals-private:
+    internal: true
+  polls-private:
+    internal: true
+volumes:
+  integrals-local-data:
+  polls-local-data:

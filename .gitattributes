@@ -1,0 +1,3 @@
+# Evidence hashes refer to original bytes, including line endings.
+docs/tarea6/evidencia_integrales_polls/** -text whitespace=cr-at-eol
+docs/tarea6/evidencia_ui_interactiva/** -text whitespace=cr-at-eol

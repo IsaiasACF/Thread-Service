@@ -16,3 +16,6 @@ k8s/*.local.yaml
 .secrets/
 kubeconfig
 kubeconfig.*
+
+# Local frontend design skill
+.codex/skills/frontend-design/

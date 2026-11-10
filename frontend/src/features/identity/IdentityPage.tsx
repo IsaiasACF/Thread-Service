@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Button, ErrorMessage, LoadingIndicator } from '../../components/ui';
-import { Workspace } from '../chat/Workspace';
+import { CopyButton } from '../../components/CopyButton';
 import { characterCount, errorCode, readError } from '../chat/errors';
 import { createUser, getUser, userKey } from './api';
 import { useIdentity } from './IdentityProvider';
@@ -48,27 +48,26 @@ export default function IdentityPage() {
     }
     catch { /* Keep input on failure. */ }
   }
-  return <Workspace><div className={styles.identityPage}>
-    <span className={styles.eyebrow}>TU ESPACIO DE CONVERSACIÓN</span>
-    <h1>Las buenas ideas empiezan<br />con una conversación.</h1>
-    <p className={styles.intro}>Elige cómo quieres participar. Tu identidad se guarda en este navegador para volver a tus conversaciones.</p>
+  return <div className={styles.identityPage}>
+    <h1>Identidad</h1>
+    <p className={styles.intro}>Crea un usuario o recupera uno con su ID. Se recordará en este navegador.</p>
     {identity.checking && <LoadingIndicator />}
     {identity.storageWarning && <ErrorMessage message={identity.storageWarning} />}
     {identity.error && <ErrorMessage message={identity.error} />}
     {identity.user && <section className={styles.activeIdentity} aria-label="Identidad seleccionada">
       <span className={styles.avatar}>{Array.from(identity.user.displayName)[0]?.toUpperCase()}</span>
-      <div><strong>Hola, {identity.user.displayName}</strong><p>Tu ID: <code>{identity.user.id}</code></p></div>
-      <Link to="/channels" className={styles.primaryLink}>Ir a conversaciones →</Link>
+      <div><strong>Hola, {identity.user.displayName}</strong><p>Tu ID: <code>{identity.user.id}</code></p><CopyButton value={identity.user.id} label="Copiar ID de usuario" /></div>
+      <Link to="/channels" className={styles.primaryLink}>Ir a conversaciones</Link>
     </section>}
     <div className={styles.identityForms}>
       <form onSubmit={create} className={styles.identityForm}>
-        <span className={styles.step}>01</span><h2>Crea tu identidad</h2><p>Un nombre para que el resto sepa quién escribe.</p>
+        <h2>Crea tu identidad</h2><p>Este nombre aparecerá junto a tus mensajes.</p>
         <label htmlFor="display-name">Tu nombre</label><input id="display-name" autoComplete="nickname" value={name} onChange={event => setName(event.target.value)} disabled={pending} placeholder="¿Cómo te llamas?" />
         {creation.isError && <ErrorMessage message={errorCode(creation.error) === 'VALIDATION_ERROR' ? readError(creation.error) : 'No pudimos confirmar la creación. El resultado es incierto; revisa el servicio antes de crear otra identidad.'} />}
         <Button type="submit" disabled={pending}>{creation.isPending ? 'Creando identidad…' : 'Crear identidad'}</Button>
       </form>
       <form onSubmit={select} className={styles.identityForm}>
-        <span className={styles.step}>02</span><h2>¿Ya tienes un ID?</h2><p>Recupera una identidad existente con su identificador.</p>
+        <h2>¿Ya tienes un ID?</h2><p>Recupera una identidad existente con su identificador.</p>
         <label htmlFor="existing-user">ID de usuario</label><input id="existing-user" value={id} onChange={event => setId(event.target.value)} disabled={pending} placeholder="Pega tu identificador" autoCapitalize="none" spellCheck={false} />
         {lookup.isError && <ErrorMessage message={lookup.error.message === 'missing-user' || errorCode(lookup.error) === 'NOT_FOUND' ? 'No encontramos esa identidad.' : readError(lookup.error)} />}
         <Button type="submit" disabled={pending}>{lookup.isPending ? 'Validando…' : 'Usar este ID'}</Button>
@@ -76,5 +75,5 @@ export default function IdentityPage() {
     </div>
     {validation && <ErrorMessage message={validation} />}
     <p className={styles.identityNote}>Identidad local, sin contraseñas. Este selector no es un sistema de autenticación segura.</p>
-  </div></Workspace>;
+  </div>;
 }

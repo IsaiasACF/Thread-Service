@@ -55,7 +55,7 @@ export function ThreadsPanel({ message, onClose, returnFocus }: { message: Messa
   return <>
     <div className={styles.backdrop} onClick={onClose} aria-hidden="true" />
     <aside className={styles.threadPanel} ref={panel} role="dialog" aria-label="Respuestas del mensaje" aria-modal={mobile || undefined}>
-      <header className={styles.threadHeader}><div><span className={styles.eyebrow}>SIGUE EL HILO</span><h2>Respuestas</h2></div><button ref={close} className={styles.iconButton} aria-label="Cerrar respuestas" onClick={onClose}>×</button></header>
+      <header className={styles.threadHeader}><h2>Respuestas</h2><button ref={close} className={styles.iconButton} aria-label="Cerrar respuestas" onClick={onClose}>Cerrar</button></header>
       <div ref={scroll.container} className={styles.threadBody}>
         <h3 className={styles.sectionLabel}>Mensaje original</h3><MessageCard message={message} />
         <div className={styles.threadDivider}><h3>Conversación del hilo</h3><button className={styles.textButton} onClick={refresh} disabled={replies.isFetching}>Actualizar respuestas</button></div>

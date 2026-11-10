@@ -70,8 +70,8 @@ describe('Canales y conversación', () => {
     expect(await screen.findByText('Mensaje publicado.')).toBeInTheDocument();
     expect(screen.getByLabelText('Nuevo mensaje')).toHaveValue('');
     expect(await screen.findByRole('article', { name: 'Mensaje m-created' })).toHaveTextContent('Mi idea Con detalle');
-    await waitFor(() => expect(screen.getByRole('button', { name: /↻ Actualizar mensajes/ })).toBeEnabled());
-    await userEvent.click(screen.getByRole('button', { name: /↻ Actualizar mensajes/ }));
+    await waitFor(() => expect(screen.getByRole('button', { name: /Actualizar mensajes/ })).toBeEnabled());
+    await userEvent.click(screen.getByRole('button', { name: /Actualizar mensajes/ }));
     await waitFor(() => expect(screen.getAllByRole('article', { name: 'Mensaje m-created' })).toHaveLength(1));
     expect(calls.filter(call => call.operation === 'SendMessage')).toHaveLength(1);
     expect(calls.find(call => call.operation === 'SendMessage')?.variables).toEqual({ channelId: 'c-1', authorId: 'u-1', content: 'Mi idea\nCon detalle' });
