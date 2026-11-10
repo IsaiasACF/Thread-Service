@@ -589,7 +589,11 @@ extensión y pruebas: [CONTRATO_COMPARTIDO.md](docs/tarea6/CONTRATO_COMPARTIDO.m
 Chat y Threads incluyen identidad local, canales, mensajes y panel de respuestas.
 Guía de uso, pruebas, capturas y límites de integración real:
 [CHAT_FRONTEND.md](docs/tarea6/CHAT_FRONTEND.md).
-Integrales y Polls conservan sus placeholders hasta la implementación de Andrés.
+Integrales y Polls incluyen clientes REST y operaciones GraphQL funcionales:
+calculadora con historial/detalle y encuestas con creación, voto, resultados y cierre.
+Configuración local y contratos de B: [INTEGRALES_POLLS_B.md](docs/tarea6/INTEGRALES_POLLS_B.md).
+Todas las pantallas comparten navegación, búsqueda de canales y tema claro/oscuro:
+[UI_COMPARTIDA.md](docs/tarea6/UI_COMPARTIDA.md).
 Salud e introspección del Gateway funcionan sin servicios externos.
 
 ```sh
@@ -614,3 +618,12 @@ E2E completo con copias docentes corregidas **solo para pruebas locales**:
 [CHAT_E2E_FINAL.md](docs/tarea6/CHAT_E2E_FINAL.md). Se verificaron las nueve
 operaciones, el recorrido React y la persistencia tras reiniciar todos los
 servicios. Las fuentes originales y sus despliegues no se modificaron.
+
+Validación de Integrales/Polls con Docker y Chromium reales, recuperación de
+Messages, idempotencia y reinicio de bases:
+[VALIDACION_INTEGRALES_POLLS_B.md](docs/tarea6/VALIDACION_INTEGRALES_POLLS_B.md).
+La regresión posterior de la interfaz compartida conserva los recorridos completos;
+sus capturas y reportes están en `docs/tarea6/evidencia_ui_interactiva/`.
+La fuente local de chat utilizada para las pruebas de B es un requisito externo,
+identificado por hashes en la evidencia; no se incorpora código de esos servicios.
+El despliegue Kubernetes de frontend/Gateway y el video final siguen pendientes.

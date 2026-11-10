@@ -1,0 +1,17 @@
+{
+  "kind": "real-docker-outage-recovery",
+  "passed": true,
+  "steps": {
+    "pending_when_messages_down": true,
+    "idempotency_reuses_poll_and_rejects_changed_body": true,
+    "pending_activates_after_messages_recovery": true,
+    "announcement_visible_in_same_messages_service": true,
+    "polls_outage_does_not_block_chat_threads_integrals": true,
+    "recovered_poll_closed": true
+  },
+  "fixtures": {
+    "pendingPollId": "270c7c77-a9d9-4088-917b-7dfe66a5b809"
+  },
+  "errors": [],
+  "finishedAt": "2026-11-09T22:20:19.263Z"
+}

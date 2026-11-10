@@ -1,0 +1,6 @@
+# Use the existing shared network without taking ownership of another project's network.
+# Combine with the repository-root docker-compose.demo.yaml, using an isolated project name.
+networks:
+  microsvcs:
+    external: true
+    name: microsvcs

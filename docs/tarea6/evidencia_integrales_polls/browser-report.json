@@ -1,0 +1,377 @@
+{
+  "kind": "real-browser-real-docker-services-no-mocks",
+  "passed": true,
+  "startedAt": "2026-11-09T22:19:37.844Z",
+  "origin": "http://localhost:5173",
+  "steps": {
+    "identity_channel_message": true,
+    "threads": true,
+    "integral_success_detail_reload": true,
+    "integral_failed_history_filter": true,
+    "poll_create_and_open": true,
+    "second_identity_vote_results": true,
+    "duplicate_vote_foreign_close_rejected": true,
+    "author_close_persists_after_reload": true,
+    "mobile_no_horizontal_overflow": true,
+    "browser_data_only_graphql": true
+  },
+  "fixtures": {
+    "authorId": "e8443c17-3ad1-4bf6-800b-a17f0716bbda",
+    "channelId": "453dfd96-c587-4576-9774-58be022c0fe9",
+    "messageId": "c7ffa008-8944-456d-8528-4a37e105531f",
+    "replyId": "58545f18-6da8-46ec-b6e2-9c4b1cdaadf2",
+    "integralId": "eebcc933-a5d7-4790-b60e-5ed5433c6705",
+    "failedIntegralId": "16f6f620-bb90-4cd5-8c66-4b834a537cde",
+    "pollId": "6edce1f6-c236-4d5b-a9dc-a0da4c7f54c8",
+    "voterId": "a5b55fc0-3f93-4206-b8c6-2be7f687d16f",
+    "optionId": "5ba69f79-17a6-4b70-8a83-70a1f13a7d62"
+  },
+  "requests": [
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CreateUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CreateChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannel"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "SendMessage"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetMessages"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CreateReply"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetReplies"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CalculateIntegral"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CalculateIntegral"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "IntegralHistory"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CreatePoll"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetChannels"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "CreateUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "VotePoll"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "Duplicate"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "Forbidden"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "ClosePoll"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "PollDetail"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "GetUser"
+    },
+    {
+      "method": "POST",
+      "origin": "http://localhost:5173",
+      "path": "/graphql",
+      "operation": "ClosedVote"
+    }
+  ],
+  "pageErrors": [],
+  "expectedErrors": [
+    {
+      "scenario": "duplicate_vote",
+      "code": "CONFLICT"
+    },
+    {
+      "scenario": "foreign_close",
+      "code": "FORBIDDEN"
+    },
+    {
+      "scenario": "closed_poll_vote",
+      "code": "CONFLICT"
+    }
+  ],
+  "finishedAt": "2026-11-09T22:19:44.474Z"
+}

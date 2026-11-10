@@ -1,0 +1,33 @@
+{
+    "externalSources":  {
+                            "integrals":  {
+                                              "repository":  "https://github.com/Misulas/modulo-integrales",
+                                              "commit":  "4a03648fb93e80a5b74185cbc9672f0f17087964",
+                                              "buildSubdirectory":  "integrals"
+                                          },
+                            "polls":  {
+                                          "repository":  "https://github.com/TomasCano-Usm/INF326-Microservicio-Polls",
+                                          "commit":  "d9b0627a65371da72107e15225f4af6fcd55eb1f",
+                                          "buildSubdirectory":  "."
+                                      }
+                        },
+    "localBaseFiles":  [
+                           {
+                               "sha256":  "f7299eadbc3b58efe94bec9a33a8f79b04db2631155e4d5c18ac11c714d8dd44",
+                               "path":  "users/app/main.py"
+                           },
+                           {
+                               "sha256":  "3a11d9b1bf6a8dbacc1460fc8694272e712b6950418b8dacad25a6f610657373",
+                               "path":  "channels/app/main.py"
+                           },
+                           {
+                               "sha256":  "8eed9fffa04940f965f43e68ca6806f8f0da648907340a2651950014ebbd8798",
+                               "path":  "messages/app/main.py"
+                           }
+                       ],
+    "baseCommit":  "117c43294a944bbb4674e8ead0c68a47858ac9d0",
+    "docker":  "29.7.2",
+    "branch":  "feature/tarea6-polls-integrals",
+    "recordedAt":  "2026-11-09T22:18:18.7962616Z",
+    "kind":  "real-docker-local-integration"
+}
