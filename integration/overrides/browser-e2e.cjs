@@ -115,7 +115,7 @@ async function main() {
     await screenshot(author, '03-integral-fallida-historial');
 
     await author.goto(origin + '/polls/pendiente');
-    await author.getByLabel('ID del canal', { exact: true }).fill(report.fixtures.channelId);
+    await author.getByLabel('Canal para la encuesta', { exact: true }).selectOption(report.fixtures.channelId);
     await author.getByLabel('Pregunta', { exact: true }).fill(`Encuesta real B ${tag}`);
     await author.getByLabel('Opciones, una por línea', { exact: true }).fill('Primera\nSegunda');
     await author.getByLabel('Duración en minutos').fill('15');

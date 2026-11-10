@@ -41,7 +41,7 @@ describe('Encuestas mediante Gateway', () => {
   it('reutiliza clave de idempotencia después de una respuesta perdida', async () => {
     savedIdentity(); const { calls } = backend({ CreatePoll: () => error('UPSTREAM_TIMEOUT', 'polls') });
     mount('/polls/pendiente');
-    await userEvent.type(screen.getByLabelText('ID del canal'), 'c-1');
+    await userEvent.selectOptions(await screen.findByLabelText('Canal para la encuesta'), 'c-1');
     await userEvent.type(screen.getByLabelText('Pregunta'), 'Q');
     await userEvent.type(screen.getByLabelText('Opciones, una por línea'), 'A\nB');
     const submit = screen.getByRole('button', { name: 'Crear encuesta' });

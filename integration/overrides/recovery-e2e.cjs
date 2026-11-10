@@ -28,7 +28,7 @@ async function main() {
     fs.mkdirSync(output, { recursive: true });
     stop('thread-b-base-messages-1');
     await page.goto(origin + '/polls/pendiente');
-    await page.getByLabel('ID del canal', { exact: true }).fill(f.channelId);
+    await page.getByLabel('Canal para la encuesta', { exact: true }).selectOption(f.channelId);
     await page.getByLabel('Pregunta', { exact: true }).fill('Recuperación real de Messages ' + Date.now());
     await page.getByLabel('Opciones, una por línea').fill('Sí\nNo');
     await page.getByLabel('Duración en minutos').fill('15');

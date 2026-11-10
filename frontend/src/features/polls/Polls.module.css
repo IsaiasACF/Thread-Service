@@ -6,7 +6,7 @@
 .form, .card { display: grid; gap: .85rem; margin-block: 1.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
 .form { max-width: 760px; border-top: 3px solid var(--accent); background: var(--surface-subtle); }
 .form label { display: grid; gap: .4rem; }
-.form input, .form textarea { width: 100%; }
+.form input, .form textarea, .form select { width: 100%; }
 .form textarea { min-height: 8rem; resize: vertical; }
 .form button { justify-self: start; min-width: 150px; }
 .card { border-top: 3px solid var(--accent); }
@@ -26,4 +26,14 @@ fieldset:not(:disabled) .option:hover { background: var(--accent-subtle); cursor
 .toolbar { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; }
 .toolbar button:not(:first-child) { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); }
 .link { overflow-wrap: anywhere; font-size: .85rem; }
+.directory { padding: 1.5rem; border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: var(--radius); background: var(--surface-subtle); }
+.directory h2 { margin-top: 0; }
+.directoryControls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .85rem; }
+.directoryControls label { display: grid; gap: .4rem; flex: 1 1 220px; min-width: 0; }
+.directoryControls select { width: 100%; min-width: 0; text-overflow: ellipsis; }
+.directoryControls button { background: var(--surface); color: var(--text); border-color: var(--border-strong); }
+.hint { font-size: .8rem; color: var(--muted); margin-bottom: 0; }
+.manualLookup { display: flex; align-items: flex-end; flex-wrap: wrap; gap: .8rem; padding-block: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+.manualLookup label { display: grid; gap: .4rem; flex: 1 1 250px; max-width: 550px; }
+.manualLookup input { width: 100%; }
 @media (max-width: 720px) { .page { padding: 1.5rem 1rem; } .form, .card { padding: 1rem; } }

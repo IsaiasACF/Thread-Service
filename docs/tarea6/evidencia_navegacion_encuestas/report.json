@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "kind": "real-browser-poll-discovery-and-channel-selection",
+  "steps": {
+    "context_preselects_channel_and_discovers_existing_poll": true,
+    "opens_existing_poll_without_typing_id": true,
+    "status_filter_excludes_closed_poll": true,
+    "creation_uses_channel_selector_and_updates_directory": true,
+    "channel_filter_does_not_mix_polls": true,
+    "mobile_dark_no_overflow": true,
+    "only_gateway_requests": true
+  },
+  "requests": [
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql",
+    "/graphql"
+  ],
+  "errors": [],
+  "createdPollId": "0ed014f7-a178-491c-a890-a36fac11bbc0"
+}

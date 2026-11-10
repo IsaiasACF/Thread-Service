@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, EmptyState, ErrorMessage, LoadingIndicator } from '../../components/ui';
 import { Icon } from '../../components/Icon';
@@ -8,12 +8,16 @@ import { useIdentity } from '../identity/IdentityProvider';
 import { readError } from '../chat/errors';
 import { closePoll, getPoll, votePoll } from './api';
 import { CreatePollForm } from './CreatePollForm';
+import { PollDirectory } from './PollDirectory';
+import { mergePolls, sessionPollsKey } from './directory';
+import type { Poll } from './api';
 import styles from './Polls.module.css';
 
 const statuses = { pending_announcement: 'Pendiente de publicación', open: 'Abierta', closed: 'Cerrada', creation_failed: 'No se pudo publicar' };
 
 export default function PollPage() {
   const { pollId } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [id, setId] = useState('');
   const [selected, setSelected] = useState('');
@@ -32,10 +36,14 @@ export default function PollPage() {
   const resetClose = close.reset;
   useEffect(() => { setSelected(''); resetVote(); resetClose(); }, [pollId, user?.id, resetVote, resetClose]);
   const poll = detail.data;
+  useEffect(() => {
+    if (poll) cache.setQueryData<Poll[]>(sessionPollsKey, old => mergePolls(old ?? [], [poll]).slice(0, 100));
+  }, [poll, cache]);
   function open(event: FormEvent) { event.preventDefault(); if (id.trim()) navigate(`/polls/${encodeURIComponent(id.trim())}`); }
   const busy = vote.isPending || close.isPending;
   return <section className={styles.page}><div className={styles.heading}><span className={styles.headingIcon}><Icon name="poll" /></span><h1>Encuesta</h1></div>
-    <form onSubmit={open} className={styles.form}>
+    <PollDirectory currentPoll={poll} initialChannel={searchParams.get('channel') ?? ''} />
+    <form onSubmit={open} className={styles.manualLookup}>
       <label>ID de encuesta<input value={id} onChange={e => setId(e.target.value)} required /></label>
       <Button type="submit">Abrir encuesta</Button>
     </form>
@@ -65,6 +73,6 @@ export default function PollPage() {
       {vote.isSuccess && <p role="status">Voto registrado.</p>}
       {(vote.isError || close.isError) && <ErrorMessage message={readError(vote.error ?? close.error)} />}
     </article>}
-    <CreatePollForm />
+    <CreatePollForm initialChannel={searchParams.get('channel') ?? ''} />
   </section>;
 }

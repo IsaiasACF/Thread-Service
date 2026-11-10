@@ -1,15 +1,18 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, ErrorMessage } from '../../components/ui';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button, ErrorMessage, LoadingIndicator } from '../../components/ui';
+import { channelsKey, getChannels } from '../chat/api';
 import { useIdentity } from '../identity/IdentityProvider';
 import { readError } from '../chat/errors';
 import { createPoll, type CreatePollInput } from './api';
+import { mergePolls, sessionPollsKey } from './directory';
+import type { Poll } from './api';
 import styles from './Polls.module.css';
 
-export function CreatePollForm() {
+export function CreatePollForm({ initialChannel = '' }: { initialChannel?: string }) {
   const { user } = useIdentity();
-  const [channel, setChannel] = useState('');
+  const [channel, setChannel] = useState(initialChannel);
   const [question, setQuestion] = useState('');
   const [alternatives, setAlternatives] = useState('');
   const [duration, setDuration] = useState(5);
@@ -17,13 +20,18 @@ export function CreatePollForm() {
   // A retry with an unchanged body must reuse the original key, even after a lost response.
   const attempt = useRef<{ body: string; key: string } | null>(null);
   const cache = useQueryClient();
+  const channels = useQuery({ queryKey: channelsKey, queryFn: ({ signal }) => getChannels(signal), retry: false });
   const creation = useMutation({ mutationFn: ({ input, key }: { input: CreatePollInput; key: string }) => createPoll(input, key),
-    retry: false, onSuccess: poll => { cache.setQueryData(['poll', poll.pollId], poll); } });
+    retry: false, onSuccess: poll => {
+      cache.setQueryData(['poll', poll.pollId], poll);
+      cache.setQueryData<Poll[]>(sessionPollsKey, old => mergePolls(old ?? [], [poll]).slice(0, 100));
+      void cache.invalidateQueries({ queryKey: ['poll-directory', poll.channelId] });
+    } });
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!user || creation.isPending) return;
     const options = alternatives.split('\n').map(x => x.trim());
-    if (!channel.trim() || !question.trim() || options.length < 2 || options.length > 10 ||
+    if (!channels.data?.some(item => item.id === channel) || !question.trim() || options.length < 2 || options.length > 10 ||
         options.some(x => !x) || new Set(options.map(x => x.toLocaleLowerCase())).size !== options.length ||
         !Number.isInteger(duration) || duration < 1 || duration > 1440) {
       setValidation('Indica canal y pregunta, entre 2 y 10 opciones distintas (una por línea) y duración de 1 a 1440 minutos.'); return;
@@ -37,11 +45,17 @@ export function CreatePollForm() {
   return <section><h2>Crear encuesta</h2>
     {!user && <p>Selecciona una identidad en <Link to="/">Inicio</Link> para crear una encuesta.</p>}
     <form className={styles.form} onSubmit={submit}>
-      <label>ID del canal<input value={channel} onChange={e => setChannel(e.target.value)} required /></label>
+      <label>Canal para la encuesta<select aria-label="Canal para la encuesta" value={channel} onChange={e => setChannel(e.target.value)} required disabled={channels.isPending || channels.isError || creation.isPending}>
+        <option value="">Selecciona un canal</option>
+        {channels.data?.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+      </select></label>
+      {channels.isPending && <LoadingIndicator />}
+      {channels.isError && <><ErrorMessage message={readError(channels.error)} /><Button onClick={() => void channels.refetch()}>Reintentar lista de canales</Button></>}
+      {channels.isSuccess && !channels.data.length && <p>No hay canales. <Link to="/channels">Crea uno en el chat</Link> antes de crear una encuesta.</p>}
       <label>Pregunta<input value={question} onChange={e => setQuestion(e.target.value)} required /></label>
       <label>Opciones, una por línea<textarea value={alternatives} onChange={e => setAlternatives(e.target.value)} required /></label>
       <label>Duración en minutos<input type="number" min={1} max={1440} step={1} value={duration} onChange={e => setDuration(Number(e.target.value))} required /></label>
-      <Button type="submit" disabled={!user || creation.isPending}>{creation.isPending ? 'Creando…' : 'Crear encuesta'}</Button>
+      <Button type="submit" disabled={!user || creation.isPending || !channels.data?.some(item => item.id === channel)}>{creation.isPending ? 'Creando…' : 'Crear encuesta'}</Button>
     </form>
     {validation && <ErrorMessage message={validation} />}
     {creation.isError && <><ErrorMessage message={readError(creation.error)} /><p>Se conserva la clave para reintentar esta misma encuesta sin duplicarla.</p></>}

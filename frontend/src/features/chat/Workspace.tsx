@@ -24,6 +24,7 @@ export function Workspace({ children }: PropsWithChildren) {
   currentPath.current = pathname;
   useEffect(() => { setExpanded(false); }, [pathname]);
   const channels = useQuery({ queryKey: channelsKey, queryFn: ({ signal }) => getChannels(signal), retry: false });
+  const activeChannel = channels.data?.find(channel => pathname === `/channels/${encodeURIComponent(channel.id)}`);
   const creation = useMutation({ mutationFn: createChannel, retry: false });
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -74,7 +75,7 @@ export function Workspace({ children }: PropsWithChildren) {
           <NavLink to="/" end><Icon name="user" />Identidad</NavLink>
           <NavLink to="/channels"><Icon name="chat" />Chat</NavLink>
           <NavLink to="/integrals"><Icon name="calculator" />Integrales</NavLink>
-          <Link to="/polls/pendiente" aria-current={pathname.startsWith('/polls') ? 'page' : undefined}><Icon name="poll" />Encuestas</Link>
+          <Link to={activeChannel ? `/polls/pendiente?channel=${encodeURIComponent(activeChannel.id)}` : '/polls/pendiente'} aria-current={pathname.startsWith('/polls') ? 'page' : undefined}><Icon name="poll" />Encuestas</Link>
         </nav>
       </div>
     </aside>
