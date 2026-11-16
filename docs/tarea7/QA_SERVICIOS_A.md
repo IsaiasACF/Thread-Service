@@ -206,9 +206,23 @@ de warnings. Puede usarse esa opción si se reproduce el problema de permisos.
 `pytest.ini` descubre `tests/test_qa_service.py` automáticamente. Los workflows ya
 incluyen mongomock y crean MongoDB/RabbitMQ efímeros para los seis casos opt-in.
 Los casos nuevos siguen aislados aunque CI configure URLs de MongoDB real.
-No se modificó CI ni se añadió un workflow redundante. La compatibilidad por
-descubrimiento/configuración está comprobada; el resultado remoto se informa
-separadamente cuando esté disponible.
+No se modificó CI ni se añadió un workflow redundante.
+
+Evidencia remota sobre el commit de implementación `ed6359e` del
+[PR #11](https://github.com/IsaiasACF/Thread-Service/pull/11):
+
+| Ejecución CI | Aprobadas | Fallidas | Omitidas | Entorno |
+|---|---:|---:|---:|---|
+| [Thread service tests #38](https://github.com/IsaiasACF/Thread-Service/actions/runs/43945650301) | 115 | 0 | 0 | Ubuntu, CPython 3.12.16, MongoDB 7 y RabbitMQ 4 efímeros del job |
+
+El log registra `115 passed in 1.81s`. Incluye los 109 casos locales y los seis
+casos reales antes omitidos: cinco de MongoDB y uno de MongoDB + RabbitMQ.
+Los ocho casos nuevos siguen usando mongomock; su éxito no se confunde con esos
+seis casos de infraestructura real. También pasaron validación Compose y build
+runtime en el mismo job. El workflow
+[Tarea 6 scaffold #20](https://github.com/IsaiasACF/Thread-Service/actions/runs/43945650182)
+terminó correctamente para Gateway y frontend. Esta evidencia corresponde al
+commit indicado; la actualización documental posterior vuelve a disparar CI.
 
 ## E. Rúbrica, alcance y limitaciones
 
