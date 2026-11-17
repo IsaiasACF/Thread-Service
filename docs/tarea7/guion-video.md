@@ -8,7 +8,7 @@ Formato: demostración de pantalla **sin narración**, con títulos breves y pau
 
 Este guion cubre la Tarea 7: pruebas de servicio, aislamiento, contratos e integración de Threads con Users, Channels y Messages. Se prepara a partir de [la planificación](planificacion.md). El alcance confirmado corresponde únicamente a la Tarea 7.
 
-**Estado al redactar:** en este checkout existe la planificación; todavía no están los archivos `tests/test_qa_service.py`, `tests/test_qa_contract.py` ni `integration/qa/`. Los comandos nuevos son los previstos por el plan. Antes de grabar, sustituirlos por los comandos realmente implementados y verificar sus resultados. El guion no acredita que la tarea ya esté terminada.
+**Estado actualizado:** los contratos y el lanzador `integration/qa/` de Andrés están implementados. Las verificaciones de proveedor completaron seis casos aprobados y el flujo Docker pasó en proyectos independientes, incluyendo lectura tras reinicio de Threads. Main incorpora las pruebas de servicio de Isaías mediante el PR #11. La suite local conjunta completó 115 pruebas aprobadas y 6 omitidas de infraestructura opcional. Antes de grabar, revisar los resultados y comandos en [contrato-integracion.md](contrato-integracion.md).
 
 ## Preparación fuera de cámara
 

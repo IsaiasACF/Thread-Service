@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "project": "tarea7-qa-c988e48ae6cb",
+  "sourceMode": "corrected",
+  "providerCommit": "d15f2e20ced1007099b90bf59b720e97be3d2d4a",
+  "projectCommit": "bb8b7e4364d157a5d55ef679a54943365381686f",
+  "worktreeDirty": true,
+  "testedFilesSHA256": {
+    "integration/qa/run.py": "bff55e1b248d76551b68b35b43c8e7e33079982f312b36e24c68aee26a1c37a9",
+    "integration/qa/compose.yaml": "80839b4425a6daae803099a5879ed75b4a2ec3f15bf3be53bba71f5db930a9a2",
+    "integration/qa/Dockerfile": "4c77b3df2dab25f1821f75ade374d2ee771515b2b4998db5f368dde8d7096971",
+    "integration/qa/test_flow.py": "aa09d60971b3f6336880bf1e42aa2fa626480ee5c2bb96e1925e4f4781752411",
+    "integration/qa/sources.py": "ed29ab40477b9824b7e690b495a0ffc0437b17c32f5922d579719996353a85b3",
+    "integration/chat/prepare.py": "8646816e2028c8346f3f7566c8ad3365a31b72d68baf097a069733aeb484a53b",
+    "integration/chat/apply_test_patch.py": "7f06de35d641d86aa96a060092848dfd4c6354e4eb849b38211912403516eeb6",
+    "tests/test_qa_contract.py": "fb06b232b6f5782c9da9949dfe894944b5335f323bd8e6580a561d2382a8dff7",
+    "tests/qa_contract_support.py": "95eea7852ded22d97a85b6a3346308e757257cfe882730a78e31ea9e257491f4"
+  },
+  "startedBefore": "2026-11-16T23:26:54.08683633Z",
+  "startedAfter": "2026-11-16T23:27:12.034000519Z"
+}

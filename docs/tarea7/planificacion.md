@@ -4,7 +4,7 @@
 
 Agregar y acreditar pruebas de servicio, contrato e integración para **Threads**, la capacidad de respuestas de un nivel a mensajes del chat. Esta planificación permite trabajar en paralelo a Isaías, integrante A, y a Andrés, integrante B, y reunir después las evidencias de la rúbrica.
 
-Estado: **plan de implementación; las nuevas pruebas y sus resultados están pendientes**. Revisión del 16 de noviembre de 2026 sobre el checkout local `a7626e168f43f40d9723da8cf23aa299aeefc8fe`. No se modifican aquí aplicaciones, contratos ni infraestructura.
+Estado al 16 de noviembre de 2026: **contratos e integración de B implementados y aprobados**. Main en `8056cb2` incorpora el PR #11 de Isaías. La validación local conjunta completó 115 pruebas aprobadas y 6 omitidas de infraestructura opcional. El diagnóstico inicial se realizó sobre `a7626e168f43f40d9723da8cf23aa299aeefc8fe`. El trabajo de Andrés y sus evidencias se registran en [contrato-integracion.md](contrato-integracion.md).
 
 El flujo a demostrar es: crear usuarios → crear canal → publicar mensaje raíz → publicar respuesta con Threads → consultar la respuesta y comprobar sus relaciones y persistencia. El frontend, Gateway GraphQL, Integrales, Polls y Kubernetes quedan fuera del entorno mínimo de esta tarea. Las pruebas HTTP operan directamente sobre las APIs REST.
 
@@ -62,7 +62,7 @@ main
 | B | `tests/test_qa_contract.py`, `tests/qa_contract_support.py`, `integration/qa/`, `docs/tarea7/contrato-integracion.md` |
 | Coordinación | `docs/tarea7/planificacion.md`, README raíz, requisitos, configuración pytest, Dockerfile y workflows |
 
-Los archivos propuestos todavía deben crearse. Cada integrante evita editar las pruebas, fixtures y scripts propios del otro. Las fixtures nuevas se importan o registran explícitamente desde su módulo; no se introduce un `tests/conftest.py` global que cambie suites ajenas accidentalmente.
+Los archivos de contratos y el lanzador `integration/qa/` de B ya están implementados. Las pruebas de servicio de A están integradas mediante el PR #11. Cada integrante evita editar las pruebas, fixtures y scripts propios del otro. Las fixtures nuevas se importan o registran explícitamente desde su módulo.
 
 Cada PR incluye **What**, **Why**, comandos ejecutados, resultados y limitaciones. Los cambios compartidos de dependencias y CI se acuerdan y reúnen al final. Antes de mezclar trabajo, se preservan los cambios locales existentes; no se incluyen carpetas de demostración ni videos ajenos a Tarea 7. No se hace push directo a `main` como parte de esta planificación.
 
