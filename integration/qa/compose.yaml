@@ -1,0 +1,125 @@
+x-api-health: &api-health
+  test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"]
+  interval: 3s
+  timeout: 3s
+  retries: 40
+
+x-mongo: &mongo
+  image: mongo:7
+  networks: [qa-data]
+  healthcheck:
+    test: [CMD, mongosh, --quiet, --eval, 'db.adminCommand({ping:1})']
+    interval: 3s
+    timeout: 5s
+    retries: 40
+
+x-thread-env: &thread-env
+  THREAD_MONGODB_URL: mongodb://qa-threads-db:27017
+  THREAD_MONGODB_DATABASE: tarea7_threads
+  THREAD_USERS_URL: http://qa-users:8000
+  THREAD_MESSAGES_URL: http://qa-messages:8000
+  THREAD_RABBITMQ_URL: amqp://qa:${QA_RABBIT_PASSWORD:?Prepare the QA directory}@qa-rabbitmq:5672/%2F
+  THREAD_RABBITMQ_QUEUE: qa.thread.reply.created
+
+services:
+  qa-users:
+    build: ${QA_SOURCE:?Prepare provider sources}/users
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']
+    environment:
+      MONGODB_URL: mongodb://qa-users-db:27017
+    depends_on:
+      qa-users-db: {condition: service_healthy}
+    healthcheck: *api-health
+    networks: [qa-data]
+
+  qa-channels:
+    build: ${QA_SOURCE}/channels
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']
+    environment:
+      MONGODB_URL: mongodb://qa-channels-db:27017
+    depends_on:
+      qa-channels-db: {condition: service_healthy}
+    healthcheck: *api-health
+    networks: [qa-data]
+
+  qa-messages:
+    build: ${QA_SOURCE}/messages
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000']
+    environment:
+      MONGODB_URL: mongodb://qa-messages-db:27017
+      USERS_URL: http://qa-users:8000
+      CHANNELS_URL: http://qa-channels:8000
+      RABBITMQ_URL: amqp://qa:${QA_RABBIT_PASSWORD}@qa-rabbitmq:5672/%2F
+    depends_on:
+      qa-messages-db: {condition: service_healthy}
+      qa-users: {condition: service_healthy}
+      qa-channels: {condition: service_healthy}
+      qa-rabbitmq: {condition: service_healthy}
+    healthcheck: *api-health
+    networks: [qa-data]
+
+  qa-threads:
+    build: {context: ../.., target: runtime}
+    environment: *thread-env
+    depends_on:
+      qa-threads-db: {condition: service_healthy}
+      qa-users: {condition: service_healthy}
+      qa-messages: {condition: service_healthy}
+    healthcheck: *api-health
+    networks: [qa-data, microsvcs]
+
+  qa-worker:
+    build: {context: ../.., target: runtime}
+    command: [python, -m, app.workers.outbox]
+    environment: *thread-env
+    depends_on:
+      qa-threads-db: {condition: service_healthy}
+      qa-rabbitmq: {condition: service_healthy}
+    networks: [qa-data]
+
+  qa-users-db:
+    <<: *mongo
+    volumes: [qa-users-data:/data/db]
+  qa-channels-db:
+    <<: *mongo
+    volumes: [qa-channels-data:/data/db]
+  qa-messages-db:
+    <<: *mongo
+    volumes: [qa-messages-data:/data/db]
+  qa-threads-db:
+    <<: *mongo
+    volumes: [qa-threads-data:/data/db]
+
+  qa-rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: qa
+      RABBITMQ_DEFAULT_PASS: ${QA_RABBIT_PASSWORD}
+    networks: [qa-data]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+
+  qa-tests:
+    profiles: [test]
+    build: {context: ../.., dockerfile: integration/qa/Dockerfile}
+    environment:
+      QA_OUTPUT: /evidence
+    volumes:
+      - ${QA_OUTPUT:?Prepare evidence directory}:/evidence
+    networks: [qa-data]
+    command: [python, -m, pytest, -q, -W, error, -p, 'no:cacheprovider', integration/qa/test_flow.py, --junitxml=/evidence/integracion.xml]
+
+volumes:
+  qa-users-data: {}
+  qa-channels-data: {}
+  qa-messages-data: {}
+  qa-threads-data: {}
+
+networks:
+  qa-data: {internal: true}
+  microsvcs:
+    external: true
+    name: microsvcs

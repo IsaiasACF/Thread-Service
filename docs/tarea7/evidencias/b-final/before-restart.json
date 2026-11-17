@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "users": [
+    {
+      "id": "7f4e0b66-e1a9-4ed7-8e2f-346424bd1a85",
+      "display_name": "Andrés"
+    },
+    {
+      "id": "249fea1d-2a7f-4dbe-9d56-be14b5f3624f",
+      "display_name": "Isaías"
+    }
+  ],
+  "channel": {
+    "id": "4a2fb12b-da95-49af-82f5-a602ce5f59d4",
+    "name": "Grupo de estudio"
+  },
+  "root": {
+    "id": "b0dad0c7-6320-411b-a8e7-5b7cd98a2846",
+    "channel_id": "4a2fb12b-da95-49af-82f5-a602ce5f59d4",
+    "created_at": "2026-11-16T23:27:04.418886+00:00",
+    "author_id": "7f4e0b66-e1a9-4ed7-8e2f-346424bd1a85",
+    "content": "¿Repasamos integrales mañana?"
+  },
+  "reply": {
+    "author_id": "249fea1d-2a7f-4dbe-9d56-be14b5f3624f",
+    "content": "¡Sí! Nos vemos después de clases.",
+    "id": "e668d3c3-3d9e-4c2d-a84e-22a7a056cda5",
+    "channel_id": "4a2fb12b-da95-49af-82f5-a602ce5f59d4",
+    "message_id": "b0dad0c7-6320-411b-a8e7-5b7cd98a2846",
+    "created_at": "2026-11-16T23:27:05.367840Z"
+  },
+  "route": "/api/v1/channels/4a2fb12b-da95-49af-82f5-a602ce5f59d4/messages/b0dad0c7-6320-411b-a8e7-5b7cd98a2846/replies",
+  "negativeStatuses": [
+    422,
+    404,
+    404
+  ],
+  "rootMessagesUnchanged": true
+}
