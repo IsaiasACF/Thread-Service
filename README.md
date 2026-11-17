@@ -4,7 +4,9 @@ Microservicio FastAPI para crear y consultar respuestas de un nivel a mensajes d
 
 La Tarea 7 verifica esta capacidad mediante pruebas de servicio con almacenamiento aislado, contratos HTTP con Users y Messages e integración real con Users, Channels y Messages en Docker Compose.
 
-La implementación está integrada en `main` mediante los PR [#11](https://github.com/IsaiasACF/Thread-Service/pull/11) y [#12](https://github.com/IsaiasACF/Thread-Service/pull/12). La documentación anterior completa, incluida la entrega de Tarea 6, se conserva en [readme-tarea-6.md](readme-tarea-6.md).
+Link video demostración tarea 7: https://usmcl-my.sharepoint.com/:v:/g/personal/andres_jablonca_usm_cl/IQAeXd8p4o9PQrJNO0_SUDENAQgSdCuw76TPXrrcyRs_ATE?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=amz8S5
+
+La documentación anterior completa, incluida la entrega de Tarea 6, se conserva en [readme-tarea-6.md](readme-tarea-6.md).
 
 ## Integrantes
 
